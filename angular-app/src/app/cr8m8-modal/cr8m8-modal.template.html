@@ -1,0 +1,447 @@
+<div class="cr8-m8modal" [ngClass]="{'active': appState.get('showCr8M8Modal')}">
+  <div class="cr8-m8-container">
+    <div class="cr8-textholder">
+      <div class="cr8-m8textplay">CR8-M8</div>
+    </div>
+    <div class="cr8-customizeslogan">CRATE CUSTOMIZER</div>
+  </div>
+  <div class="cr8-data">
+    <ul class="cr8-colselectorlist w-list-unstyled">
+      <li class="cr8colselli">ADDED</li>
+      <li class="cr8colselli">EDITOR</li>
+      <li class="cr8colselli">TRACK ARTIST</li>
+      <li class="cr8colselli">BPM</li>
+      <li class="cr8colselli">KEY</li>
+      <li class="cr8colselli">TRACK TITLE</li>
+      <li class="cr8colselli">TAGS</li>
+      <li class="cr8colselli">GENRES</li>
+      <li class="cr8colselli">YEAR</li>
+      <li class="cr8colselli">LENGTH</li>
+    </ul>
+    <div class="colshow">
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+      <div class="colselshow hidebut">HIDE</div>
+    </div>
+    <div class="colshow">
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+      <div class="colselshow">SHOW</div>
+    </div>
+    <div class="cr8-colinput">
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+      <div class="cr8movit"><img src="/assets/images/drag.png" width="30">
+      </div>
+    </div>
+    <div class="cr8tofilter">
+      <div class="clkadded tofilt" data-ix="filter-added"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-editor"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-track"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-bpm"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-key"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-tracktitle"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-tags"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-genres"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-years"><img src="/assets/images/pencil.png" width="30">
+      </div>
+      <div class="tofilt" data-ix="filter-length"><img src="/assets/images/pencil.png" width="30">
+      </div>
+    </div>
+    <div class="cr8-filters">
+      <div class="modal-filters">
+        <div class="filter-addedsleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield" for="field">BEFORE:</label>
+              <input class="formfieldincr8 w-input" id="field" maxlength="256" name="field" placeholder="(select date)" required="required" type="text">
+              <label class="cr8-tagfield" for="field">AFTER:</label>
+              <input class="formfieldincr8 w-input" id="field" maxlength="256" name="field" placeholder="(select date)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-editorsleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield editoris" for="field-3">CONTAINS:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 3" id="field-3" maxlength="256" name="field-3" placeholder="(select Editor)" required="required" type="text">
+              <label class="cr8-tagfield editorisnot" for="field-3">DOES NOT CONTAIN:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 3" id="field-3" maxlength="256" name="field-3" placeholder="(select Editor)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-tracksleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield editoris" for="field-22">IS:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 22" id="field-22" maxlength="256" name="field-22" placeholder="(artists separated by commas)" type="text">
+              <label class="cr8-tagfield editorincludes" for="field-23">INCLUDES:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 23" id="field-23" maxlength="256" name="field-23" placeholder="(artists separated by commas)" type="text">
+              <label class="cr8-tagfield editorisnot" for="field-24">IS NOT:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 24" id="field-24" maxlength="256" name="field-24" placeholder="(artists separated by commas)" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-bpmsleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield greaterthan" for="field-6">GREATER THAN OR EQUAL TO:</label>
+              <input class="formfieldincr8 greatadata w-input" data-name="Field 6" id="field-6" maxlength="256" name="field-6" placeholder="(enter a bpm)" required="required" type="text">
+              <label class="cr8-tagfield lessthan" for="field-7">LESS THAN OR EQUAL TO:</label>
+              <input class="formfieldincr8 greatadata w-input" data-name="Field 7" id="field-7" maxlength="256" name="field-7" placeholder="(enter a bpm)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-keysleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield editoris" for="field-25">IS:</label>
+              <input class="formfieldincr8 selkeys w-input" data-name="Field 25" id="field-25" maxlength="256" name="field-25" placeholder="(SELECT KEY)" type="text">
+              <div class="w-checkbox w-clearfix">
+                <input checked="checked" class="w-checkbox-input" data-name="check to include" id="check-to-include" name="check-to-include" type="checkbox">
+                <label class="inccomp w-form-label" for="check-to-include">INCLUDE COMPATIBLE KEYS?</label>
+              </div>
+              <label class="cr8-tagfield editorisnot" for="field-27">IS NOT:</label>
+              <input class="formfieldincr8 selkeys w-input" data-name="Field 27" id="field-27" maxlength="256" name="field-27" placeholder="(SELECT KEY)" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-titlesleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield editoris" for="field-28">IS:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 28" id="field-28" maxlength="256" name="field-28" placeholder="(input title)" required="required" type="text">
+              <label class="cr8-tagfield editorincludes" for="field-29">INCLUDES:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 29" id="field-29" maxlength="256" name="field-29" placeholder="(input title)" required="required" type="text">
+              <label class="cr8-tagfield editorisnot" for="field-30">IS NOT:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 30" id="field-30" maxlength="256" name="field-30" placeholder="(input title)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-tagssleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield editoris" for="field-31">IS:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 31" id="field-31" maxlength="256" name="field-31" placeholder="(SELECT TAGS)" required="required" type="text">
+              <label class="cr8-tagfield editorincludes" for="field-32">INCLUDES:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 32" id="field-32" maxlength="256" name="field-32" placeholder="(SELECT TAGS)" required="required" type="text">
+              <label class="cr8-tagfield editorisnot" for="field-33">IS NOT:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 33" id="field-33" maxlength="256" name="field-33" placeholder="(SELECT TAGS)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-genressleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield editoris" for="field-34">IS:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 34" id="field-34" maxlength="256" name="field-34" placeholder="(select genres)" required="required" type="text">
+              <label class="cr8-tagfield editorincludes" for="field-35">INCLUDES:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 35" id="field-35" maxlength="256" name="field-35" placeholder="(select genres)" required="required" type="text">
+              <label class="cr8-tagfield editorisnot" for="field-36">IS NOT:</label>
+              <input class="edinclude formfieldincr8 w-input" data-name="Field 36" id="field-36" maxlength="256" name="field-36" placeholder="(select genres)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-yearsleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield greaterthan" for="field-37">GREATER THAN OR EQUAL TO:</label>
+              <input class="formfieldincr8 greatadata w-input" data-name="Field 37" id="field-37" maxlength="256" name="field-37" placeholder="(enter a year)" required="required" type="text">
+              <label class="cr8-tagfield lessthan" for="field-38">LESS THAN OR EQUAL TO:</label>
+              <input class="formfieldincr8 greatadata w-input" data-name="Field 38" id="field-38" maxlength="256" name="field-38" placeholder="(enter a year)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-lengthsleeve">
+          <div class="formwrapadded w-form">
+            <form class="moreformshit" data-name="Email Form 4" id="email-form-4" name="email-form-4">
+              <label class="cr8-tagfield greaterthan" for="field-37">GREATER THAN OR EQUAL TO:</label>
+              <input class="formfieldincr8 greatadata w-input" data-name="Field 37" id="field-37" maxlength="256" name="field-37" placeholder="(enter a length)" required="required" type="text">
+              <label class="cr8-tagfield lessthan" for="field-38">LESS THAN OR EQUAL TO:</label>
+              <input class="formfieldincr8 greatadata w-input" data-name="Field 38" id="field-38" maxlength="256" name="field-38" placeholder="(enter a length)" required="required" type="text">
+            </form>
+            <div class="w-form-done">
+              <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+              <div>Oops! Something went wrong while submitting the form</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+      <div class="cr8-filterselector"></div>
+    </div>
+    <div class="cr8-m8endpanel">
+      <div class="savecratebutton">
+        <div class="cratesavewrapper w-form">
+          <form class="submitcrateform" data-name="Email Form 5" id="email-form-5" name="email-form-5">
+            <label class="savecrateas" for="name">SAVE CRATE AS:</label>
+            <input class="saveboxcrate w-input" data-name="Email" id="email" maxlength="256" name="email" placeholder="(Enter A Name For Your Crate)" required="required" type="email">
+            <input class="submitcrate w-button" data-wait="saving....." type="submit" value="SAVE CRATE" wait="saving.....">
+          </form>
+          <div class="w-form-done">
+            <div>Thank you! Your submission has been received!</div>
+          </div>
+          <div class="w-form-fail">
+            <div>Oops! Something went wrong while submitting the form</div>
+          </div>
+        </div>
+      </div>
+      <div class="mycrates">
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+        <div class="mycrateshead">
+          <div class="savedcratetext">This Is A Saved Crate</div>
+          <div class="savedcrateaction">
+            <div class="smallsaveactions"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="smallsaveactions"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="exitcr8buttons">
+        <div class="resettodefaultcrate">
+          <div>RESET CRATE</div>
+        </div>
+        <div class="resettodefaultcrate" (click)='toggleCr8M8Modal()'>
+          <div>EXIT</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

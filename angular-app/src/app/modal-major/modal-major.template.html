@@ -1,0 +1,281 @@
+<div class="modal-major" [ngClass]="{'active': appState.get('showModalMajor')}">
+  <div class="editorpanel-tabs w-tabs" data-duration-in="300" data-duration-out="100">
+    <div class="tabstrip w-tab-menu">
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'ACCOUNTING'}" (click)="toggleTab('ACCOUNTING')">
+        <div>ACCOUNTING</div>
+      </a>
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'ADD-ONS'}" (click)="toggleTab('ADD-ONS')" data-w-tab="ADD-ONS">
+        <div>ADD-ONS</div>
+      </a>
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'DJ PERSONALITY PROFILE'}" (click)="toggleTab('DJ PERSONALITY PROFILE')" data-w-tab="DJ PERSONALITY PROFILE">
+        <div>DJ PERSONALITY PROFILE</div>
+      </a>
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'DNRLIST'}" (click)="toggleTab('DNRLIST')" data-w-tab="DNRLIST">
+        <div>DNR LIST</div>
+      </a>
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'MY COLLECTIONS'}" (click)="toggleTab('MY COLLECTIONS')" data-w-tab="MY COLLECTIONS">
+        <div>MY COLLECTIONS</div>
+      </a>
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'MY RELEASES'}" (click)="toggleTab('MY RELEASES')" data-w-tab="MY RELEASES">
+        <div>MY TRACKS</div>
+      </a>
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'PUSHd'}" (click)="toggleTab('PUSHd')" data-w-tab="PUSHd">
+        <div>PUSHd</div>
+      </a>
+      <a class="tablink w-inline-block w-tab-link" [ngClass]="{'w--current': appState.get('currentMajorModalTab') == 'UPLOADER'}" (click)="toggleTab('UPLOADER')" data-w-tab="UPLOADER">
+        <div>UPLOADER</div>
+      </a>
+    </div>
+    <div class="tabscontent w-tab-content">
+      <div class="tabpane w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'ACCOUNTING'}" data-w-tab="ACCOUNTING">
+        <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+      </div>
+      <div class="tabpane-addons w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'ADD-ONS'}" data-w-tab="ADD-ONS">
+        <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+      </div>
+      <div class="tabs-personality w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'DJ PERSONALITY PROFILE'}" data-w-tab="DJ PERSONALITY PROFILE">
+        <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+      </div>
+      <div class="tabs-personality w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'DNRLIST'}" data-w-tab="DNRLIST">
+        <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+      </div>
+      <div class="tabcollections w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'MY COLLECTIONS'}" data-w-tab="MY COLLECTIONS">
+        <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+      </div>
+      <div class="tabreleases w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'MY RELEASES'}" data-w-tab="MY RELEASES">
+        <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+      </div>
+      <div class="tabspushd w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'PUSHd'}" data-w-tab="PUSHd">
+        <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+      </div>
+      <uploader></uploader>
+  </div>
+  <div class="modal-background-overlay"></div>
+  <div class="trackeditor-modal">
+    <div class="leftselector trackeditor-modal-sector">
+      <div class="subtitlemenu">TRACK INFORMATION (do not list yourself as an artist, our system will.)</div>
+      <div class="trackeditor-form-wrapper w-form">
+        <form class="trackeditor-form" data-name="Email Form 2" id="email-form-2" name="email-form-2">
+          <input class="formfieldslook w-input" data-name="Track Name" id="Track-Name" maxlength="256" name="Track-Name" placeholder="Track Name" required="required" type="text">
+          <input class="formfieldslook w-input" data-name="Track Version" id="Track-Version" maxlength="256" name="Track-Version" placeholder="Track Version" required="required" type="text">
+          <input class="formfieldslook w-input" data-name="Artist Name" id="Artist-Name" maxlength="256" name="Artist-Name" placeholder="Artist Name" required="required" type="text">
+          <input class="formfieldslook w-input" data-name="Featured Artists" id="Featured-Artists" maxlength="256" name="Featured-Artists" placeholder="Featured Artists (separate by commas)" required="required" type="text">
+          <div class="form-smallfieldholder">
+            <input class="form-bpmfields formfieldslook w-input" data-name="BPM Start" id="BPM-Start" maxlength="256" name="BPM-Start" placeholder="BPM Start" required="required" type="text">
+            <input class="form-bpmfields formfieldslook w-input" data-name="BPM End" id="BPM-End" maxlength="256" name="BPM-End" placeholder="BPM End" type="text">
+            <input class="form-bpmfields formfieldslook w-input" data-name="Release Year" id="Release-Year" maxlength="256" name="Release-Year" placeholder="Release Year" required="required" type="text">
+          </div>
+        </form>
+        <div class="w-form-done">
+          <div>Thank you! Your submission has been received!</div>
+        </div>
+        <div class="w-form-fail">
+          <div>Oops! Something went wrong while submitting the form</div>
+        </div>
+      </div>
+      <div class="subtitlemenu">SELECT ONE (explicit rating)</div>
+      <div class="trackeditor-bottomsector">
+        <div class="multi-selectbox">CLEAN</div>
+        <div class="multi-selectbox">SUPER CLEAN</div>
+        <div class="multi-selectbox">DIRTY</div>
+      </div>
+      <div class="subtitlemenu">SELECT ONE (intro type)</div>
+      <div class="trackeditor-bottomsector">
+        <div class="introtypes">BEAT INTRO</div>
+        <div class="introtypes">ACAP INTRO</div>
+        <div class="introtypes">CLAP INTRO</div>
+        <div class="introtypes">BANG</div>
+        <div class="introtypes">NO INTRO</div>
+      </div>
+      <div class="subtitlemenu">SELECT ONE (intro type)</div>
+      <div class="trackeditor-bottomsector">
+        <div class="outrotypes">ACAP OUTRO</div>
+        <div class="outrotypes">BEAT OUTRO</div>
+        <div class="outrotypes">CLAP OUTRO</div>
+        <div class="outrotypes">NO OUTRO</div>
+      </div>
+      <div class="subtitlemenu">SELECT ONE (version type)</div>
+      <div class="versiontypeholder">
+        <div class="versionhold">
+          <div class="vtypes">ACAPELLA</div>
+          <div class="vtypes">INSTRUMENTAL</div>
+          <div class="vtypes">SUPER SHORT MIX</div>
+        </div>
+        <div class="versionhold">
+          <div class="vtypes">ACAPELLA DIY</div>
+          <div class="vtypes">NOT EDITED</div>
+          <div class="vtypes">BPM TRN UP</div>
+        </div>
+        <div class="versionhold">
+          <div class="vtypes">DJ TOOL</div>
+          <div class="vtypes">SHORT MIX</div>
+          <div class="vtypes">BPM TRN DOWN</div>
+        </div>
+      </div>
+      <div class="subtitlemenu">GENRE SELECTOR (choose up to 3 genres for this track)</div>
+    </div>
+    <div class="trackeditor-modal-sector versiontypesbox">
+      <div class="genregridholder">
+        <div class="genrebox">60's DOWN</div>
+        <div class="genrebox">CLASSIC</div>
+        <div class="genrebox">ELECTRO HOUSE</div>
+        <div class="genrebox">HARDSTYLE</div>
+        <div class="genrebox">LATIN</div>
+        <div class="genrebox">PROGRESSIVE HOUSE</div>
+        <div class="genrebox">TECH HOUSE</div>
+        <div class="genrebox">70'S</div>
+        <div class="genrebox">COUNTRY</div>
+        <div class="genrebox">ELECTRONIC</div>
+        <div class="genrebox">HIP-HOP</div>
+        <div class="genrebox">MASH-UP</div>
+        <div class="genrebox">R&amp;B</div>
+        <div class="genrebox">TECHNO</div>
+        <div class="genrebox">80'S</div>
+        <div class="genrebox">DEEP HOUSE</div>
+        <div class="genrebox">FESTIVAL</div>
+        <div class="genrebox">HOLIDAY</div>
+        <div class="genrebox">MINIMAL</div>
+        <div class="genrebox">REGGAE</div>
+        <div class="genrebox">TRANCE</div>
+        <div class="genrebox">90'S</div>
+        <div class="genrebox">DISCO</div>
+        <div class="genrebox">FREESTYLE</div>
+        <div class="genrebox">HOUSE</div>
+        <div class="genrebox">MOOMBAH-TON</div>
+        <div class="genrebox">REGGAETON</div>
+        <div class="genrebox">TRAP</div>
+        <div class="genrebox">BALTIMORE CLUB</div>
+        <div class="genrebox">DRUM &amp; BASS</div>
+        <div class="genrebox">FUNK</div>
+        <div class="genrebox">INDIE</div>
+        <div class="genrebox">NEW WAVE</div>
+        <div class="genrebox">ROCK</div>
+        <div class="genrebox">TRIBAL</div>
+        <div class="genrebox">BREAKS</div>
+        <div class="genrebox">DUBSTEP</div>
+        <div class="genrebox">FUTURE HOUSE</div>
+        <div class="genrebox">JAZZ</div>
+        <div class="genrebox">PARTY BREAK</div>
+        <div class="genrebox">SOFT &amp; EASY</div>
+        <div class="genrebox">TROPICAL</div>
+        <div class="genrebox">UNDER-GROUND</div>
+        <div class="genrebox">WEST COAST</div>
+        <div class="genrebox">WORLD MUSIC</div>
+        <div class="genrebox">CHILL</div>
+        <div class="genrebox">EAST COAST</div>
+        <div class="genrebox">G-HOUSE</div>
+        <div class="genrebox">JERSEY CLUB</div>
+        <div class="genrebox">POP</div>
+        <div class="genrebox">SOUL</div>
+        <div class="genrebox">TWERK</div>
+      </div>
+    </div>
+    <div class="trackeditor-modal-sector">
+      <div class="trackeditor-form-wrapper w-form">
+        <form class="trackeditor-form" data-name="Email Form 2" id="email-form-2" name="email-form-2">
+          <div class="subtitlemenu">ORIGINAL WORKS</div>
+          <div class="checkfield w-checkbox">
+            <input class="chkbx w-checkbox-input" data-name="is original" id="is-original" name="is-original" type="checkbox">
+            <label class="textcheck w-form-label" for="is-original">This track is an original work.</label>
+          </div>
+          <input class="formfieldslook w-input" data-name="Track Name" id="Track-Name" maxlength="256" name="Track-Name" placeholder="Track Name" required="required" type="text">
+          <input class="formfieldslook w-input" data-name="Track Version" id="Track-Version" maxlength="256" name="Track-Version" placeholder="Track Version" required="required" type="text">
+          <input class="formfieldslook w-input" data-name="Artist Name" id="Artist-Name" maxlength="256" name="Artist-Name" placeholder="Artist Name" required="required" type="text">
+          <input class="formfieldslook w-input" data-name="Featured Artists" id="Featured-Artists" maxlength="256" name="Featured-Artists" placeholder="Featured Artists (separate by commas)" required="required" type="text">
+          <div class="addbutton" data-ix="track-editor-modal-open">+&nbsp;ADD ORIGINAL WORK</div>
+          <div class="selectedoriginalworks">
+            <div class="origworksleeve">ORIGINAL WORK USED</div>
+          </div>
+        </form>
+        <div class="w-form-done">
+          <div>Thank you! Your submission has been received!</div>
+        </div>
+        <div class="w-form-fail">
+          <div>Oops! Something went wrong while submitting the form</div>
+        </div>
+      </div>
+      <div class="trackeditor-form-wrapper w-form">
+        <form class="trackeditor-form" data-name="Email Form 2" id="email-form-2" name="email-form-2">
+          <div class="subtitlemenu">RELEASES</div>
+          <input class="formfieldslook w-input" data-name="release name search" id="release-name-search" maxlength="256" name="release-name-search" placeholder="Search for existing releases by name to associate with track or type in name and click add" required="required" type="text">
+          <div class="addbutton" data-ix="track-editor-modal-open">+&nbsp;ADD RELEASE</div>
+        </form>
+        <div class="w-form-done">
+          <div>Thank you! Your submission has been received!</div>
+        </div>
+        <div class="w-form-fail">
+          <div>Oops! Something went wrong while submitting the form</div>
+        </div>
+      </div>
+      <div class="selectedoriginalworks">
+        <div class="origworksleeve">RELEASE ASSOCIATED WITH TRACK</div>
+      </div>
+      <div class="gigtype">
+        <div class="gigtypemenutop subtitlemenu">GIG TYPES (select one)</div>
+        <div class="gigtypetop">
+          <div class="thegigs">
+            <div class="gigtypebox">MAINSTREAM
+              <br>OPEN FORMAT</div>
+            <div class="gigtypebox">BRUNCH DAY PARTY
+              <br>POOL PARTY</div>
+            <div class="gigtypebox">FESTIVAL</div>
+            <div class="gigtypebox">KIDS INCLUDED</div>
+            <div class="gigtypebox">HIPSTERS</div>
+            <div class="gigtypebox">HIP HOP
+              <br>HOOD PARTY</div>
+            <div class="gigtypebox">MOBILE EVENT
+              <br>(wedding, sweet &nbsp;16)</div>
+            <div class="gigtypebox">CLASSICS / RETRO</div>
+            <div class="gigtypebox">DINNER
+              <br>BACKGROUND</div>
+            <div class="gigtypebox">UNDERGROUND HIP HOP</div>
+            <div class="gigtypebox">BIG ROOM CLUB</div>
+            <div class="gigtypebox">AFTERHOURS</div>
+          </div>
+          <div class="the-gig-choices">
+            <div class="djtiming">
+              <div class="djtimingtext">
+                <div>DJ TIMING</div>
+              </div>
+              <div class="gignumbers">
+                <div class="gignumberbox">1</div>
+                <div class="gignumberbox">2</div>
+                <div class="gignumberbox">3</div>
+              </div>
+            </div>
+            <div class="djtiming">
+              <div class="djtimingtext">
+                <div>TRACK ENERGY</div>
+              </div>
+              <div class="gignumbers">
+                <div class="gignumberbox">1</div>
+                <div class="gignumberbox">2</div>
+                <div class="gignumberbox">3</div>
+              </div>
+            </div>
+            <div class="djtiming">
+              <div class="djtimingtext">
+                <div>POPULARITY</div>
+              </div>
+              <div class="gignumbers">
+                <div class="gignumberbox">1</div>
+                <div class="gignumberbox">2</div>
+                <div class="gignumberbox">3</div>
+              </div>
+            </div>
+            <div class="addone djtimingtext">
+              <div>ADD</div>
+            </div>
+          </div>
+        </div>
+        <div class="gigchosen">
+          <div>(gig you chose &amp; 3 digit rating in here)</div>
+        </div>
+      </div>
+      <div class="navouttrack">
+        <div class="navbuttonstrackout" data-ix="track-editor-modal-open">CLOSE</div>
+        <div class="navbuttonstrackout">NEXT TRACK</div>
+      </div>
+    </div>
+  </div>
+</div>

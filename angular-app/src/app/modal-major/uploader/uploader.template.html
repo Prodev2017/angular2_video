@@ -1,0 +1,93 @@
+<div class="tabsuploader w-tab-pane" [ngClass]="{'w--tab-active': appState.get('currentMajorModalTab') == 'UPLOADER'}" data-w-tab="UPLOADER">
+  <div class="exitaccept" (click)="toggleModalMajor()" data-ix="exitmodal">BACK TO CRATES</div>
+  <div class="uploader-dzsection">
+    <div class="w-dropdown" data-delay="0" (click)="toggleCurrencySelectMenu()">
+      <div class="w-dropdown-toggle" [ngClass]="{'w--open':showCurrencySelectMenu}">
+        <div class="uploader-currency-selector"><span *ngIf="selectedCurrencyForUploads && selectedCurrencyForUploads.label">Uploading To: </span>{{ selectedCurrencyForUploads?.label || 'Select Currency for Uploads' }}</div>
+        <div class="uploader-currency-selector-icon w-icon-dropdown-toggle"></div>
+      </div>
+      <nav *ngIf="currencyService.list" class="w-dropdown-list" [ngClass]="{'w--open': showCurrencySelectMenu}">
+        <a *ngFor="let currency of currencyService.list" class="w-dropdown-link" href="javascript:void(0)" (click)="setCurrencyForUploads(currency._id,currency.name)">{{currency.name}}</a>
+      </nav>
+    </div>
+    <div ng2FileDrop
+    class="dropzone"
+    [uploader]="fileUploader">DROPZONE</div>
+  </div>
+  <div class="uploaderdata">
+    <div class="uploader-selectors">
+      <div class="rejected-tracks" (click)="toggleUploaderTab('REJECTED')">
+        <div class="rejected-block rjishere"  data-ix="open-rjdb">REJECTED</div>
+        <div class="rejected-block rjishere total">{{rejectedTracks.length}}</div>
+      </div>
+      <div class="needediting rejected-tracks" (click)="toggleUploaderTab('NEEDS EDITING')">
+        <div class="needediting rejected-block" data-ix="open-rjdb-2">NEEDS EDITING</div>
+        <div class="needediting rejected-block total">{{tracksNeedingEditing.length}}</div>
+      </div>
+      <div class="aappzz rejected-tracks" (click)="toggleUploaderTab('APPROVED')">
+        <div class="appz rejected-block" data-ix="open-rjdb-3">APPROVED</div>
+        <div class="appz rejected-block total">45</div>
+      </div>
+    </div>
+    <div class="rjdb" [ngClass]="{'uploader-tab-active': appState.get('currentMajorModalUploaderTab') == 'REJECTED'}" >
+      <div class="rjlist">
+        <div class="rejectsleeve" *ngFor="let rejectedTrack of rejectedTracks">
+          <div class="date rjsleevedata1">
+            <div>DATE</div>
+          </div>
+          <div class="filename rjsleevedata1">
+            <div>{{rejectedTrack.originalFileName}}</div>
+          </div>
+          <div class="rejectedfor rjsleevedata1">
+            <div>{{rejectedTrack.message.title}}</div>
+          </div>
+          <div class="actionzz rjsleevedata1"><img class="iconspac" src="/assets/images/trash.png" width="30">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tned" [ngClass]="{'uploader-tab-active': appState.get('currentMajorModalUploaderTab') == 'NEEDS EDITING'}">
+      <div class="tracksneedlisting">
+        <div class="trackneedseditingsleeve" *ngFor="let trackNeedingEditing of tracksNeedingEditing">
+          <div class="tne-title">{{trackNeedingEditing.originalFileName}}</div>
+          <div class="tne-actionholder">
+            <div class="tned-playbutton" (click)="loadTrackToPlay(trackNeedingEditing)"><img src="/assets/images/play-button copy.png" width="30">
+            </div>
+            <div class="tned-playbutton" data-ix="track-editor-modal-open"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="tned-playbutton"><img src="/assets/images/trash.png" width="30">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="apdta" [ngClass]="{'uploader-tab-active': appState.get('currentMajorModalUploaderTab') == 'APPROVED'}">
+      <div class="approvedtracks-list">
+        <div class="apdta-sleeve">
+          <div class="reldate">10/22/2000</div>
+          <div class="apdta-sl1">Track Title In Here</div>
+          <div class="apdta-sl2">Track Version In Here</div>
+          <div class="apdta-tags">
+            <div class="apdta-dirty">DIRTY</div>
+            <div class="apdta-versiontype">SUPER QUICK</div>
+            <div class="apdta-intro">BEAT INTRO</div>
+            <div class="apdta-outro">BEAT OUTRO</div>
+          </div>
+          <div class="apdta-sl4">
+            <div class="apdta-toolbox"><img src="/assets/images/play-button copy.png" width="30">
+            </div>
+            <div class="apdta-toolbox"><img src="/assets/images/pencil.png" width="30">
+            </div>
+            <div class="apdta-toolbox"><img src="/assets/images/check-mark-button.png" width="30">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="approveddata-head">
+        <div class="sendallbox setrel">SET A "GO LIVE" DATE FOR ALL TRACKS</div>
+        <div class="createrelease sendallbox">CREATE A RELEASE / APPEND TRACKS</div>
+        <div class="sendallbox">PROCESS ALL APPROVED TRACKS</div>
+      </div>
+    </div>
+  </div>
+</div>

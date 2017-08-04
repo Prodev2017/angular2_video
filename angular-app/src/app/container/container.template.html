@@ -1,0 +1,44 @@
+<modal-major></modal-major>
+<div class="mainheader">
+  <div class="headerelement">
+    <div class="tabsidebar" [ngClass]="{'sidebar-toggled-on': appState.get('showSidebar'), 'sidebar-toggled-off': !appState.get('showSidebar')}" (click)='toggleSidebar()' >
+      <div class="light"></div>
+    </div>
+    <div class="two">
+      <div class="twotext">2.0</div>
+    </div>
+  </div>
+  <div class="playertexts">
+    <div>
+      <div class="nowpolying">Now Playing...</div>
+    </div>
+    <div>
+      <div class="titletextplayertop">I Just Wanna Love U On The Floor</div>
+    </div>
+    <div>
+      <div class="subtitle">(Crazy Hype Vocal Remix)</div>
+    </div>
+    <div class="titletextplayertop">Mario Santiago, Jay-Z, Rick Ross</div>
+  </div>
+  <div class="mainplayer" id="mainplayer">
+    <div class="img-block">
+      <img class="play-button" (click)="appState.wavesurfer.play()" *ngIf="!appState.wavesurfer.isPlaying()" src="/assets/images/play-button copy.png" width="128">
+      <img class="pause-button" (click)="appState.wavesurfer.pause()" *ngIf="appState.wavesurfer.isPlaying()" src="/assets/images/round-pause-button.png" width="128">
+    </div>
+    <div class="socials">
+      <div class="socialbox"><img class="socialimage" src="/assets/images/facebook.png" width="55">
+      </div>
+      <div class="socialbox"><img class="socialimage" src="/assets/images/twitter.png" width="55">
+      </div>
+      <div class="socialbox"><img class="socialimage" src="/assets/images/vinyl2.png" width="55">
+      </div>
+      <div class="socialbox"><img class="socialimage" src="/assets/images/cloud-computing copy.png" width="56">
+      </div>
+    </div>
+  </div>
+</div>
+<toolstrip></toolstrip>
+<sidebar></sidebar>
+<table-holder></table-holder>
+<cr8m8-modal></cr8m8-modal>
+<router-outlet></router-outlet>
