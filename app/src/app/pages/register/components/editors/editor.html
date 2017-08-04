@@ -1,0 +1,95 @@
+<div class="auth-main">
+  <div class="auth-block">
+    <h1><img [src]="logoUrl" /></h1>
+
+    <p>Please provide the following information and include two sample tracks for us to review using a publicly accessible URL, such as SoundCloud, Google Drive, Dropbox, etc.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)" class="form-horizontal">
+      <div class="form-group row" [ngClass]="{'has-error': (!name.valid && name.touched), 'has-success': (name.valid && name.touched)}">
+        <label for="inputName3" class="col-sm-3 control-label">Name</label>
+
+        <div class="col-sm-9">
+          <input [formControl]="name" type="text" class="form-control" id="inputName3" placeholder="Full Name">
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'has-error': (!email.valid && email.touched), 'has-success': (email.valid && email.touched)}">
+        <label for="inputEmail3" class="col-sm-3 control-label">Email</label>
+
+        <div class="col-sm-9">
+          <input [formControl]="email" type="email" class="form-control" id="inputEmail3" placeholder="Email">
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'has-error': !passwords.valid && (password.touched || repeatPassword.touched) || !password.valid, 'has-success': (passwords.valid && (password.touched || repeatPassword.touched)) && password.valid}">
+        <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+
+        <div class="col-sm-9">
+          <input [formControl]="password" type="password" class="form-control" id="inputPassword3" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'has-error': (!passwords.valid && (password.touched || repeatPassword.touched)) || !repeatPassword.valid, 'has-success': (passwords.valid && (password.touched || repeatPassword.touched)) && repeatPassword.valid}">
+        <label for="inputPassword4" class="col-sm-3 control-label">Repeat</label>
+
+        <div class="col-sm-9">
+          <input [formControl]="repeatPassword" type="password" class="form-control" id="inputPassword4" placeholder="Repeat">
+          <span class="help-block sub-little-text" *ngIf="!password.valid || !repeatPassword.valid">Password must be at least 8 characters long.</span>
+          <span *ngIf="!passwords.valid" class="help-block sub-little-text">Passwords don't match.</span>
+        </div>
+      </div>
+
+      <div class="form-group row" [ngClass]="{'has-error': (!country.valid && country.touched), 'has-success': (country.valid && country.touched)}">
+        <label for="country" class="col-sm-3 control-label">Country</label>
+
+        <div class="col-sm-9">
+          <select [formControl]="country" class="form-control" id="country" name="country">
+            <option *ngFor="let country of countries;" [value]="country">{{country}}</option>
+          </select>
+          <span *ngIf="!country.valid && (country.touched || country.touched)" class="help-block sub-little-text">Please specify a country.</span>
+        </div>
+      </div>
+
+      <div class="form-group row" [ngClass]="{'has-error': (!stageName.valid && stageName.touched), 'has-success': (stageName.valid && stageName.touched)}">
+        <label for="stageName" class="col-sm-3 control-label">Stage Name</label>
+
+        <div class="col-sm-9">
+          <input [formControl]="stageName" type="text" class="form-control" id="stageName" placeholder="Stage Name">
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'has-error': (!editorApplicationSampleLink1.valid && editorApplicationSampleLink1.touched), 'has-success': (editorApplicationSampleLink1.valid && editorApplicationSampleLink1.touched)}">
+        <label for="editorApplicationSampleLink1" class="col-sm-3 control-label">Sample Track URL #1</label>
+
+        <div class="col-sm-9">
+          <input [formControl]="editorApplicationSampleLink1" type="text" class="form-control" id="editorApplicationSampleLink1" placeholder="Sample Track URL">
+                                            <span *ngIf="!editorApplicationSampleLink1.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+
+        </div>
+      </div>
+      <div class="form-group row" [ngClass]="{'has-error': (!editorApplicationSampleLink2.valid && editorApplicationSampleLink2.touched), 'has-success': (editorApplicationSampleLink2.valid && editorApplicationSampleLink2.touched)}">
+        <label for="editorApplicationSampleLink2" class="col-sm-3 control-label">Sample Track URL #2</label>
+
+        <div class="col-sm-9">
+          <input [formControl]="editorApplicationSampleLink2" type="text" class="form-control" id="editorApplicationSampleLink2" placeholder="Sample Track URL">
+                                            <span *ngIf="!editorApplicationSampleLink2.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+
+        </div>
+      </div>
+                  <p>The Crooklyn Clan Vault 2.0 "Web Application" Is An Audio And Video Customization Service For Working Dj's.<br> The service was built to enhance live performance through the use of technology, audio and video utilities, and professional guidance.<br>
+        <br>
+        <strong>Ability to Accept Terms of Service</strong><br>
+        <br> Please view, print or save the documents linked below. By clicking Sign Up, I hereby affirm: <br>
+        <br>
+        <strong>1</strong>. That I am entering and accessing this Site solely in my capacity as an entertainment industry professional whose profession is disc jockeying (producing, promoting and any other activities customarily performed by such a disc
+        jockey) and I agree to use the site solely for those purposes;<br>
+        <br>
+        <strong>2</strong>. I am at least 13 years of age; and<br>
+        <br>
+        <strong>3</strong>. I have read am fully competent to enter into the terms, conditions, obligations, affirmations, representations, and warranties set forth in the <a href="https://www.crooklynclan.net/termsofuse" target="_blank" class="tl" style="color:red; text-decoration: underline!important;">Terms of Use</a>, <a href="https://www.crooklynclan.net/privacypolicy" target="_blank" class="tl" style="color:red; text-decoration: underline!important;">Privacy Policy</a>, <a href="https://www.crooklynclan.net/editoragreement" target="_blank" class="tl" style="color:red; text-decoration: underline!important;">Editor Agreement</a> and to abide by and comply with the terms of service. <br><br>
+        <strong>IF YOU DO NOT,OR CAN NOT AFFIRM THE FOREGOING TERMS, DO NOT ACCESS OR USE THE SITE. BY ACCESSING OR USING THE SITE, YOU AND THE ENTITY YOU ARE AUTHORIZED TO REPRESENT ("YOU" OR "YOUR") AGREE TO BE BOUND BY ALL OF ITS TERMS AND CONDITIONS.</strong></p>
+
+      <div class="form-group row">
+        <div class="col-sm-offset-3 col-sm-9">
+          <button [disabled]="!form.valid" type="submit" class="btn btn-default btn-auth">Sign up</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

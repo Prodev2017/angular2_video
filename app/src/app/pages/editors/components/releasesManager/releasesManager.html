@@ -1,0 +1,23 @@
+<p-dataTable styleClass="table-flex" [value]="releases.list" expandableRows="true">
+      <p-column expander="true" styleClass="col-icon"></p-column>
+    <p-column field="name" header="Release Name"></p-column>
+  <p-column header="Publish Status">
+            <template let-car="rowData" pTemplate type="body">
+              <p-inputSwitch onLabel="Publish" offLabel="Draft" ></p-inputSwitch>
+
+        </template>
+    </p-column>
+  <template let-release>
+    <div class="row">
+      <div class="col-md-12">
+        <table>
+          <tbody>
+          <tr *ngFor="let track of release.tracks">
+            <td>{{track.name}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </template>
+</p-dataTable>

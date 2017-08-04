@@ -1,0 +1,252 @@
+<div class="track-list-container">
+  <div class="row">
+    <div class="col-md-12 store-controls">
+      <store-selector></store-selector>
+      <div class="row">
+        <div class="col-md-12">
+
+          <p-dropdown [options]="accountingPeriods" [(ngModel)]="selectedAccountingPeriod" [style]="{'width': 'auto'}"></p-dropdown>
+          <button class="btn btn-primary" (click)="selectAccountingPeriod()">Show Period</button>
+          <button class="btn btn-warning" (click)="toggleFilterPanel()"><i class="fa fa-filter"></i>&nbsp;Search/Filter</button>
+          Earnings: {{ accountingData?.earnings | currency:'USD':true:'1.2-2' }} 
+          Upload Count: {{ accountingData?.trackUploadCount }} 
+          Currency Quota: {{ accountingData?.currencyUploadQuotaToQualifyForEarnings }} 
+          Quota Met? {{ accountingData?.metQuota }} 
+          Expected Payout: 
+          <span *ngIf="accountingData?.metQuota">{{ accountingData?.earnings | currency:'USD':true:'1.2-2' }} </span>
+          <span *ngIf="!accountingData?.metQuota">$0.00 (quota not met)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-2" style="margin-top: 15px;">
+
+          <p style="font-weight: 900;">Manage Collections</p>
+
+          <div #sidebar class="sidebar" style="overflow: hidden; overflow-y: scroll;">
+            <p>View Current Collection</p>
+            <p-dropdown [options]="collections" [(ngModel)]="selectedCollection" (onChange)="getCollection(selectedCollection._id)" [style]="{'width':'150px'}" filter="filter" placeholder="Select collection"></p-dropdown>
+              <p style="margin-top: 15px;" *ngIf="loadedCollection._id">Edit Collection</p>
+              <div class="form-group" *ngIf="loadedCollection._id && loadedCollection.name">
+              <input type="text" class="form-control" name="crateName" placeholder="Collection name" [(ngModel)]="loadedCollection.name" />
+            </div>
+            <div class="form-group" *ngIf="loadedCollection._id && loadedCollection.description">
+              <textarea  class="form-control" [innerText]="loadedCollection.description" placeholder="Enter collection description" [(ngModel)]="loadedCollection.description"></textarea>
+            </div>
+
+            <p><button class="btn btn-xs btn-primary" *ngIf="loadedCollection._id" (click)="clearCurrentCrate()">View My Tracks</button></p>
+            <p><button class="btn btn-xs btn-primary" *ngIf="loadedCollection._id" (click)="updateCollection()">Update Collection</button></p>
+            <p><button class="btn btn-xs btn-primary" *ngIf="loadedCollection._id" (click)="addTracksToCollection()">Add Selected Tracks To Collection</button></p>
+            <p><button class="btn btn-xs btn-danger" *ngIf="loadedCollection._id" (click)="removeTracksFromCollection()">Remove Selected Tracks From Collection</button></p>
+            <p><button class="btn btn-xs btn-danger" *ngIf="loadedCollection._id" (click)="removeCollection(loadedCollection._id)">Delete Collection</button></p>
+
+            <hr style="background-color: white; marign-left: 5%; margin-right: 5%;" />
+            
+            <p>Create a new collection:</p>
+            
+            <div class="form-group">
+              <input type="text" class="form-control" name="crateName" placeholder="Collection name" [(ngModel)]="newCollection.name" />
+            </div>
+            <div class="form-group">
+              <textarea  class="form-control" [innerText]="newCollection.description" placeholder="Enter collection description" [(ngModel)]="newCollection.description"></textarea>
+            </div>
+            
+            <button class="btn btn-primary" style="white-space: normal;" [disabled]="!newCollection.name || !newCollection.description || newCollection.name.length == 0 || newCollection.description.length == 0" (click)="createCollection()">Create Collection from Selected Tracks</button>
+          </div>
+
+        </div>
+        <div class="col-md-10">
+      <div class="filters-panel hide" [ngClass]="{'show': showFilters, 'hide': !showFilters }">
+        <div class="row">
+          <div class="col-md-10">
+            <div class="row">
+              <div class="col-md-6">
+                <span>Title</span>
+                <div class="form-group">
+                  <input class="form-control column-filter" type="text" [(ngModel)]="trackListFilters.trackName" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <span>Artists</span>
+
+                <div class="form-group">
+                  <input class="form-control column-filter" type="text" [(ngModel)]="trackListFilters.artistName" />
+                </div>
+
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p>BPM</p>
+
+                <div class="form-group">
+
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.startBpm" type="number" step="1" min="0" maxlength="3" max="250" placeholder="Min" />
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.endBpm" min="0" max="250" step="1" maxlength="3" placeholder="Max" />
+                </div>
+                <p>Year</p>
+                <div class="form-group">
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.minYear" type="number" step="1" min="1950" maxlength="4" [max]="this.currentYear" placeholder="Min" />
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.maxYear" min="1950" [max]="this.currentYear" step="1" maxlength="4" placeholder="Max" />
+                </div>
+
+
+              </div>
+              <div class="col-md-2">
+                <p>Keys</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="keyList" [(ngModel)]="trackListFilters.keys" filter="filter" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                <p>Tags</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="tagList" [(ngModel)]="trackListFilters.tags" filter="filter" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                <p>Genres</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="genresList" [(ngModel)]="trackListFilters.genres" filter="filter" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                <p>Show Columns</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="trackColumns" [(ngModel)]="trackColumnsSelected" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                            <p><button class="btn btn-sm col-md-12 btn-primary crate-button" (click)="filterTrackList()">Apply</button></p>
+                           <p> <button class="btn btn-sm col-md-12 btn-primary crate-button" (click)="clearCurrentCrate()">Reset</button></p>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+          <p-dataTable #trackTable class="table track-list" sortField="publishDate" sortOrder="-1" scrollable="true" [value]="tracks.list" scrollWidth="100%" expandableRows="true" [lazy]="true" [totalRecords]="tracks.totalRecords" [rows]="25" [paginator]="true" [pageLinks]="10" (onLazyLoad)="filterTrackList($event)"
+            [responsive]="true" [rowsPerPageOptions]="[10,25,50]">
+                        <p-column>
+
+              <template let-col let-track="rowData" pTemplate="body">
+              <p-checkbox name="tracks" [value]="track" [(ngModel)]="tracksSelected"></p-checkbox>
+
+            </template>
+
+            </p-column>
+                        <p-column header="Actions" [style]="{'width': '50px'}">
+
+              <template let-col let-track="rowData" pTemplate="body">
+              <div class="text-left" *ngIf="track.status == 'published'">
+                <i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != track._id"></i>
+                <i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && isPlayerPlaying)" ></i>
+              </div>
+            </template>
+            </p-column>
+
+
+
+            <p-column *ngIf="isTrackColumnSelected('added')" field="publishDate" [sortable]="true" header="Added">
+              <template let-col let-track="rowData" pTemplate="body">
+              <span *ngIf="track.publishDate">{{ track[col.field] | date: 'MM/dd/y' }}</span>
+              <span *ngIf="!track.publishDate">{{ track.createdAt | date: 'MM/dd/y' }}</span>
+            </template>
+            </p-column>
+
+            <p-column *ngIf="isTrackColumnSelected('artist')" field="artistPrimaryName" [sortable]="true" header="Artist" [style]="{'width': trackColumnWidths.artist + '%', 'text-align' : 'left' } ">
+
+              <template let-col let-track="rowData" pTemplate="body">
+              {{ track[col.field] || track.artistText }}<br/><span *ngIf="track.artistsFeaturedDisplayName || track.artistsFeaturedText" class="version-subtitle">{{ track.artistsFeaturedDisplayName || track.artistsFeaturedText }}</span>
+            </template>
+            </p-column>
+            <p-column *ngIf="isTrackColumnSelected('bpm')" field="startBpm" [sortable]="true" header="BPM" [style]="{'width': trackColumnWidths.bpm + '%' } ">
+            </p-column>
+            <p-column *ngIf="isTrackColumnSelected('key')" [sortable]="true" header="Key" [style]="{'width': trackColumnWidths.key + '%' } ">
+              <template let-col let-track="rowData" pTemplate="body">
+              <span *ngIf="track.inKey && track.inKey.camelotKey && track.inKey.musicKey">{{track.inKey?.camelotKey}}<br/>{{track.inKey?.musicKey}}</span><span *ngIf="!track.inKey || !track.inKey.camelotKey || !track.inKey.musicKey">N/A</span>
+            </template>
+
+            </p-column>
+            <p-column field="name" header="Title" [sortable]="true" [style]="{'width': trackColumnWidths.title + '%', 'text-align' : 'left' } ">
+              <template let-col let-track="rowData" pTemplate="body">
+              {{ track[col.field] }}<br/><span class="version-subtitle">{{ track.version }}</span>
+            </template>
+            </p-column>
+            <p-column *ngIf="isTrackColumnSelected('tags')" header="Tags" [style]="{'width': trackColumnWidths.tags + '%' } ">
+
+              <template let-col let-track="rowData" pTemplate="body">
+              
+              <p class="tag-item" *ngIf="track.cleanDirty" [style.color]="track.cleanDirty.color">{{track.cleanDirty.name}}</p>
+              <p class="tag-item" *ngIf="track.versionType" [style.color]="track.versionType.color">{{track.versionType.name}}</p>
+              <p class="tag-item" *ngIf="track.introType" [style.color]="track.introType.color">{{track.introType.name}}</p>
+              <p class="tag-item" *ngIf="track.outroType" [style.color]="track.outroType.color">{{track.outroType.name}}</p>
+              
+            </template>
+
+            </p-column>
+            <p-column *ngIf="isTrackColumnSelected('genres')" header="Genres" [style]="{'width': trackColumnWidths.genres + '%' } ">
+
+              <template let-col let-track="rowData" pTemplate="body">
+              <p class="well tag-item" *ngFor="let genre of track.genres">{{genre.name}}</p>
+            </template>
+
+            </p-column>
+
+            <p-column *ngIf="isTrackColumnSelected('year')"  field="releaseYear" [sortable]="true" header="Year">
+            </p-column>
+
+            <p-column *ngIf="isTrackColumnSelected('downloadCountForPeriod') || !loadedCollection._id"  field="downloadCountForPeriod" [sortable]="true"  header="DLs">
+            </p-column>
+
+            <p-column *ngIf="isTrackColumnSelected('time')"  field="trackLength" [sortable]="true" header="Time">
+              <template let-col let-track="rowData" pTemplate="body">
+              
+              {{ track.trackLength | secondsToTime }}
+              
+            </template>
+            </p-column>
+            <p-column field="status" [sortable]="true" header="Status"></p-column>
+            <p-column expander="true" styleClass="col-icon" [style]="{'width' : '25px', 'text-align':'center' }"></p-column>
+
+            <template let-track pTemplate="rowexpansion">
+            <div class="row">
+              <div class="col-md-12">
+                <p class="text-left" *ngIf="track.description"><strong>Description</strong></p>
+                <p class="text-left">{{track.description}}</p>
+              </div>
+              <div class="col-md-6" *ngIf="track.tracksInSameReleases && track.tracksInSameReleases.length > 0">
+                                  <p class="text-left"><strong>You Also Get</strong></p>
+
+                    <div class="text-left" *ngFor="let affiliatedTrack of track.tracksInSameReleases">
+                      <p>{{affiliatedTrack?.formattedName}}                 
+                      <i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(affiliatedTrack)" *ngIf="(trackCurrentlyLoaded._id == affiliatedTrack?._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != affiliatedTrack?._id"></i>
+                      <i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(affiliatedTrack)" *ngIf="(trackCurrentlyLoaded._id == affiliatedTrack?._id && isPlayerPlaying)" ></i>                
+</p>
+                </div>
+                    
+                
+                
+              </div>
+              <div class="col-md-6">
+                <p class="text-left"><strong>Original Works Included In This Edit Are</strong></p>
+                <p class="text-left" *ngFor="let originalWork of track.originalWorks">
+                  {{originalWork.displayName}}
+                </p>
+              </div>
+              <div class="col-md-6">
+                &nbsp;
+              </div>
+            </div>
+          </template>
+
+          </p-dataTable>
+        </div>
+      </div>
+      <!--<p-contextMenu #cm [model]="contextMenuItemsForTableColumns"></p-contextMenu>-->
+
+    </div>
+  </div>

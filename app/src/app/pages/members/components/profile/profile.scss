@@ -1,0 +1,43 @@
+.my-drop-zone {
+    border: dashed 1px white;
+    padding: 10px;
+  text-align:center;
+  margin-bottom: 10px;
+}
+
+.img-preview {
+  max-height: 250px;
+  margin:auto;
+  display:block;
+}
+
+.editor-profile-container {
+    overflow-y: scroll;
+    height: 67vh;
+    max-height: 67vh;
+}
+.has-success {
+    
+    .img-preview {
+        
+        border: 1px solid #a2db59;
+        
+    }
+    
+}
+
+.has-error {
+    
+    .img-preview {
+        
+        border: 1px solid #fa758e;
+        
+    }
+    
+}
+
+
+.block-center {
+    float:none;
+    margin:auto;
+}

@@ -1,0 +1,17 @@
+@import '../../theme/sass/auth';
+
+
+h1 img {
+  max-width: 100%;
+}
+
+
+.auth-block {
+  a.auth-link,
+  .forgot-pass {
+    color: #ddd;
+    &:hover {
+      color: white;
+    }
+  }
+}
