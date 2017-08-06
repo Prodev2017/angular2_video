@@ -1,0 +1,15 @@
+<div class="container">
+  <h1>Login</h1>
+  <form #accountData="ngForm" (ngSubmit)="loginUser()" method="post">
+    <div class="form-group">
+      <input type="email" class="form-control has-feedback" [ngClass]="{'has-success': email.valid, 'has-error': !email.valid}" [(ngModel)]="user.email" name="email" placeholder="Email Address" ngControl="email" #email="ngModel" required>
+      <span *ngIf="!email.valid && !email.pristine" class="alert alert-danger help-block">Email is required</span>
+    </div>
+    <div class="form-group">
+      <input type="password" class="form-control" [(ngModel)]="user.password" placeholder="Password" name="password" ngControl="password" #password="ngModel"  required>
+      <span *ngIf="!password.valid && !password.pristine" class="alert alert-danger help-block">Password is required</span>
+    </div>
+    <p *ngIf="account.response">{{account.response}}</p>
+    <button type="submit" class="btn btn-default">Login</button>
+  </form>
+</div>

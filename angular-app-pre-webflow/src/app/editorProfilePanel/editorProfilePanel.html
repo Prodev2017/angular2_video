@@ -1,0 +1,48 @@
+<div class="row editor-panel" [ngClass]="{show: showEditorPanel}" *ngIf="activeEditor">
+  <div class="col-md-3 image-container">
+    <img class="img-responsive" *ngIf="activeEditor?.photo?.url" src="{{activeEditor.photo.url}}">
+    <img class="img-logo-bug" *ngIf="activeEditor?.logo?.url" src="{{activeEditor.logo.url}}" />
+  </div>
+  <div class="col-md-9">
+    <h1 class="text-center">
+      Editor Rundown <span (click)="toggleEditorPanel()" (click)="removeTemporaryFilter()" class="btn btn-lg close-button">x Close</span>
+
+    </h1>
+    <div class="row">
+      <div class="col-md-4">
+        <ul>
+          <li>Name: {{activeEditor.stageName}}</li>
+          <li>Rank: General</li>
+          <li>Country: {{activeEditor?.address?.country}}</li>
+          <li>Current City: {{activeEditor?.address?.suburb}}</li>
+          <li>Specialty: Open Format</li>
+          <li>Years DJ'ing: {{activeEditor.yearStarted}}</li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <ul>
+          <li>Most Downloaded All-Time</li>
+          <li>Current Trending Bangers</li>
+          <li>My Featured Playlists</li>
+          <li>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <ul>
+          <li>Current Standing: 1</li>
+          <li>All Time Rank: 3</li>
+          <li>Months on Board: 55</li>
+          <li>Months Ranked #1: 48</li>
+          <li>Tracks Ranked #1: 547</li>
+          <li>Favorited: 36112</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

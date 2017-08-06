@@ -1,0 +1,1484 @@
+<div class="container-fluid">
+  <div class="row editor-track-upload" [ngClass]="{show: showTrackUploadPanel}" *ngIf="account.profileData?.userRole == 'editor' && showTrackUploadPanel">
+    <div class="col-md-12">
+      <div ng2FileDrop *ngIf="showUploadQueueTable"
+      [ngClass]="{'hover': hasBaseDropZoneOver}"
+      (fileOver)="fileOverBase($event)"
+      [uploader]="uploader"
+      class="well file-drop-zone">
+      Base drop zone
+    </div>
+    <div class="form-group" *ngIf="showUploadQueueTable">
+      Multiple
+      <input type="file" ng2FileSelect [uploader]="uploader" multiple  /><br/>
+    </div>
+    <div *ngIf="showUploadQueueTable">
+      <h3>Upload queue</h3>
+      <p>Queue length: {{ uploader?.queue?.length }}</p>
+      <div>
+        <div>
+          Queue progress:
+          <div class="progress" style="">
+            <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }"><p>{{uploader.progress}}%</p></div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-success btn-sm"
+        (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+        <span class="glyphicon glyphicon-upload"></span> Upload all
+      </button>
+      <button type="button" class="btn btn-warning btn-sm"
+      (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+      <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+    </button>
+    <button type="button" class="btn btn-danger btn-sm"
+    (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+    <span class="glyphicon glyphicon-trash"></span> Remove all
+  </button>
+</div>
+</div>
+<table class="table" *ngIf="showUploadQueueTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Size</th>
+      <th>Progress</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of uploader.queue">
+      <td><strong>{{ item?.file?.name }}</strong></td>
+      <td>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+      <td>
+        <div class="progress" style="margin-bottom: 0;">
+          <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }">{{item.progress}}%</div>
+        </div>
+      </td>
+      <td class="text-center">
+        <span *ngIf="item.isUploading"><img class="loading-spinner" src="/assets/img/spin.gif"/></span>
+
+        <span *ngIf="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+        <span *ngIf="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+        <span *ngIf="item.isError" class="text-danger"><i class="glyphicon glyphicon-remove"></i>{{item.errorMessage}}</span>
+      </td>
+      <td nowrap>
+        <button type="button" class="btn btn-success btn-xs"
+        (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess || item.isError">
+        <span class="glyphicon glyphicon-upload"></span> Upload
+      </button>
+      <button type="button" class="btn btn-warning btn-xs" (click)="item.cancel()" [disabled]="!item.isUploading">
+        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+      </button>
+      <button type="button" class="btn btn-danger btn-xs"
+      (click)="item.remove()">
+      <span class="glyphicon glyphicon-trash"></span> Remove
+    </button>
+  </td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<div id="upload-queue" *ngIf="showTrackUploadPanel">
+  <div class="row">
+    <div class="col-md-9">&nbsp;</div>
+    <div class="col-md-1 text-right">
+      <label *ngIf="uploadService.tracksToModify">Check All <input type="checkbox" (change)="uploadService.tracksToModify = toggleTrackIsOriginalForAll($event,uploadService.tracksToModify)"/></label>
+    </div>
+    <div class="col-md-2 text-right">
+      <button *ngIf="uploadService.tracksToModify" class="btn btn-sm btn-success pull-right" (click)="submitApprovedTracks()">Process Approved Tracks</button>
+    </div>
+  </div>
+  <div class="row" *ngIf="uploadService.badTracks">
+    <div class="col-md-12">
+      <p>Upload Errors: </p>
+      <ul>
+        <li *ngFor="let track of uploadService.badTracks">{{track.originalFileName}}: {{track.message.title}}</li>
+      </ul>
+    </div>
+  </div>
+  <h3>Draft Track Uploads</h3>
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let track of uploadService.tracksToModify; let trackIndex = index">{{track.originalFileName || '(no title)'}} <span *ngIf="track.version">({{track.version}})</span> {{track.artistText}} <span *ngIf="track.artistsFeaturedText">({{track.artistsFeaturedText}})</span> Length: {{track.trackLength | seconds2time}} Key: {{track.keyPrimaryName}} Bit Rate: {{track.hiBitRateFileBitRate}}
+      <!--<span class="text-danger" *ngIf="track.hiBitRateFileBitRateRaw < 320000" >This track's bitrate is too low and must be replaced with a 320Kbps bit rate minimum</span>
+      <label *ngIf="track.hiBitRateFileBitRateRaw < 320000" for="replace-track">Select replacement track: <input type="file" name="replace_track" id="replace_track" #replacementForBadTrack type="file" (change)="replaceBadTrack($event,trackIndex)" /></label>-->
+      <button *ngIf="track.hiBitRateFile" [ngClass]="{show: !appState.get('isPlaying'), hide: appState.get('isPlaying') && appState.get('trackUrl') === track.hiBitRateFile.url}" (click)="playTrackHi(track)" type="button" class="btn btn-default play-button" aria-label="Left Align">
+          <i class="fa fa-play-circle"></i>
+      </button>
+      <button *ngIf="track.hiBitRateFile" (click)="waveSurferService.wavesurfer.pause()" (click)="pauseTrack()" [ngClass]="{show: appState.get('isPlaying') && appState.get('trackUrl') === track.hiBitRateFile.url, hide: !appState.get('isPlaying') || appState.get('trackUrl') !== track.hiBitRateFile.url}" type="button" class="btn btn-default play-button" aria-label="Left Align">
+        <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+      </button>
+      <button class="btn btn-primary" (click)="toggleTrackEditor(trackIndex)" data-toggle="modal" data-target="#edit-track">Edit</button>
+      <button class="btn btn-danger" *ngIf="!track.crooklynClanv1ProductID" (click)="uploadService.removeTrack(trackIndex)"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+
+      <button *ngIf="track.validation?.isTrackValid" [ngClass]="{'btn-success': track.validation?.isTrackValid, 'btn-danger': !track.validation?.isTrackValid}">Clear to Upload</button>
+      <button *ngIf="!track.validation?.isTrackValid" [ngClass]="{'btn-success': track.validation?.isTrackValid, 'btn-danger': !track.validation?.isTrackValid}" class="btn" (click)="toggleTrackEditor(trackIndex)" data-toggle="modal" data-target="#edit-track">Needs Editing</button>
+    </li>
+  </ul>
+
+
+  <!-- <div class="row track-preview" *ngFor="let track of uploadService.tracksToModify; let trackIndex = index">
+
+  <div class="col-md-12" *ngIf="!track.error">
+  <div class="row track-highlights ">
+  <div class="col-md-4 text-left track-meta">
+  <p class="display-inline-block" *ngIf="track.originalFileName">{{track.originalFileName}}</p>
+  <p class="display-inline-block" *ngIf="track.name">{{track.name}}</p>
+</div>
+<div class="col-md-3 track-meta">
+<p class="display-inline-block"  class="text-success">Length: {{track.trackLength | seconds2time}}</p>
+<p class="display-inline-block" class="text-success">Key: {{track.keyPrimaryName}}</p>
+<p class="display-inline-block"  class="text-success">Bit Rate: {{track.hiBitRateFileBitRate}}</p>
+</div>
+<div class="col-md-5">
+<div class="col-md-6">&nbsp;</div>
+<div class="col-md-3 text-right track-meta">
+<label class="center-padding">Is original? <input type="checkbox" name="isOriginal[]" #isOriginalTrack
+[checked]="track.isOriginal"
+(change)="toggleTrackIsOriginal($event, trackIndex)">
+</label>
+
+</div>
+<div class="col-md-3 text-right track-meta">
+
+<p *ngIf="track.validation?.isTrackValid"  [ngClass]="{'text-success': track.validation?.isTrackValid, 'text-danger': !track.validation?.isTrackValid}" class="status-indicator">READY <i class="fa-square fa" ></i></p>
+<p *ngIf="!track.validation?.isTrackValid" [ngClass]="{'text-success': track.validation?.isTrackValid, 'text-danger': !track.validation?.isTrackValid}" class="status-indicator">NOT READY <i class="fa-square fa ready-indicator" ></i></p>
+<button *ngIf="track.lowBitRateFile" [ngClass]="{show: !appState.get('isPlaying'), hide: appState.get('isPlaying') && appState.get('trackUrl') === track.lowBitRateFile.url}" (click)="playTrack(track)" type="button" class="btn btn-default play-button" aria-label="Left Align">
+<i class="fa fa-play-circle"></i>
+</button>
+<button *ngIf="track.lowBitRateFile" (click)="waveSurferService.wavesurfer.pause()" (click)="pauseTrack()" [ngClass]="{show: appState.get('isPlaying') && appState.get('trackUrl') === track.lowBitRateFile.url, hide: !appState.get('isPlaying') || appState.get('trackUrl') !== track.lowBitRateFile.url}" type="button" class="btn btn-default play-button" aria-label="Left Align">
+<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+</button>
+<button class="btn btn-xs btn-danger" (click)="uploadService.removeTrack(trackIndex)"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+
+</div>
+</div>
+
+
+</div>
+<div class="row">
+<div [ngClass]="{'show-edit-panel': track.editTrack}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Title</h3>
+<div class="popover-content">
+<input type="text" class="form-control" #trackName [value]="track.name">
+<button class="btn btn-primary"
+(click)="track.editTrack = !track.editTrack"
+(click)="uploadService.updateField('name', trackName.value,trackIndex)">
+<i class="fa fa-check"></i>
+</button>
+</div>
+</div>
+<div [ngClass]="{'show-edit-panel': track.editArtist}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Artist</h3>
+<div class="popover-content">
+<input type="text" class="form-control" #trackArtist [value]="track.artistText">
+<button class="btn btn-primary"
+(click)="track.editArtist = !track.editArtist"
+(click)="uploadService.updateField('artistText', trackArtist.value, trackIndex)">
+<i class="fa fa-check"></i>
+</button>
+</div>
+</div>
+<div [ngClass]="{'show-edit-panel': track.editVersion}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Version</h3>
+<div class="popover-content">
+<input type="text" class="form-control" #trackVersion [value]="track.version">
+<button class="btn btn-primary"
+(click)="track.editVersion = !track.editVersion"
+(click)="uploadService.updateField('version',trackVersion.value,trackIndex)">
+<i class="fa fa-check"></i>
+</button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editFeaturedArtist}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Featured Artists</h3>
+<div class="popover-content">
+<input type="text" class="form-control" #trackArtistsFeatured [value]="track.artistsFeaturedText">
+<button class="btn btn-primary"
+(click)="track.editFeaturedArtist = !track.editFeaturedArtist"
+(click)="uploadService.updateField('artistsFeaturedText',trackArtistsFeatured.value,trackIndex)">
+<i class="fa fa-check"></i>
+</button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editStartBpm}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Start BPM</h3>
+<div class="popover-content">
+<input type="text" class="form-control" #trackStartBpm [value]="track.startBpm">
+<button class="btn btn-primary"
+(click)="track.editStartBpm = !track.editStartBpm"
+(click)="uploadService.updateField('startBpm',trackStartBpm.value,trackIndex)"
+(click)="uploadService.updateField('endBpm',trackStartBpm.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editEndBpm}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit End BPM</h3>
+<div class="popover-content">
+<input type="text" class="form-control" #trackEndBpm [value]="track.endBpm">
+<button class="btn btn-primary"
+(click)="track.editEndBpm = !track.editEndBpm"
+(click)="uploadService.updateField('endBpm',trackEndBpm.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editTag1}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Clean/Dirty</h3>
+<div class="popover-content">
+<select class="form-control" #selectedCleanDirty [value]="track.cleanDirty">
+<option *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 1'}]" [ngValue]="tag" value="{{tag._id}}">{{tag.name}}</option>
+</select>
+<button class="btn btn-primary"
+(click)="track.editTag1 = !track.editTag1"
+(click)="uploadService.updateField('cleanDirty',selectedCleanDirty.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editTag3}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Intro Type</h3>
+<div class="popover-content">
+<select class="form-control" #selectedIntroType [value]="track.introType" >
+<option *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 3'}]" [ngValue]="tag" value="{{tag._id}}">{{tag.name}}</option>
+</select>
+<button class="btn btn-primary"
+(click)="track.editTag3 = !track.editTag3"
+(click)="uploadService.updateField('introType',selectedIntroType.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+
+<div [ngClass]="{'show-edit-panel': track.editTag2}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Version Type</h3>
+<div class="popover-content">
+<select class="form-control" #selectedVersionType [value]="track.versionType">
+<option *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 2'}]" [ngValue]="tag" value="{{tag._id}}">{{tag.name}}</option>
+</select>
+<button class="btn btn-primary"
+(click)="track.editTag2 = !track.editTag2"
+(click)="uploadService.updateField('versionType',selectedVersionType.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editTag4}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Outro Type</h3>
+<div class="popover-content">
+<select class="form-control" #selectedOutroType [value]="track.outroType">
+<option *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 4'}]" [ngValue]="tag" value="{{tag._id}}">{{tag.name}}</option>
+</select>
+<button class="btn btn-primary"
+(click)="track.editTag4 = !track.editTag4"
+(click)="uploadService.updateField('outroType',selectedOutroType.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editGenres}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Genres</h3>
+<div class="popover-content">
+
+<ng-select #selectedGenres
+[multiple]="true"
+[data]="value"
+[items]="genres.list"
+[initData]="track.genres"
+(selected)="selected($event,trackIndex,'genres')"
+(removed)="removed($event,trackIndex,'genres')"
+placeholder="No genre selected"></ng-select>
+
+<button class="btn btn-primary"
+(click)="track.editGenres = !track.editGenres">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editReleaseYear}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Release Year</h3>
+<div class="popover-content">
+<input type="text" class="form-control" #trackReleaseYear [value]="track.releaseYear">
+<button class="btn btn-primary"
+(click)="track.editReleaseYear = !track.editReleaseYear"
+(click)="uploadService.updateField('releaseYear',trackReleaseYear.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editPopularityRating}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Popularity</h3>
+<div class="popover-content">
+<select class="form-control" #selectedPopularityRating [value]="track.popularityRating" >
+<option *ngFor="let popularityRating of [{name: 1, id: 1},{name: 2, id: 2}, {name: 3, id: 3}]" [ngValue]="popularityRating" value="{{popularityRating.id}}">{{popularityRating.name}}</option>
+</select>
+<button class="btn btn-primary"
+(click)="track.editPopularityRating = !track.editPopularityRating"
+(click)="uploadService.updateField('popularityRating',selectedPopularityRating.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editEnergyRating}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Energy</h3>
+<div class="popover-content">
+<select class="form-control" #selectedEnergyRating [value]="track.energyRating" >
+<option *ngFor="let energyRating of [{name: 1, id: 1},{name: 2, id: 2}, {name: 3, id: 3}]" [ngValue]="energyRating" value="{{energyRating.id}}">{{energyRating.name}}</option>
+</select>
+<button class="btn btn-primary"
+(click)="track.editEnergyRating = !track.editEnergyRating"
+(click)="uploadService.updateField('energyRating',selectedEnergyRating.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editDJTiming}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit DJ Timing</h3>
+<div class="popover-content">
+<select class="form-control" #selectedDJTiming [value]="track.DJTiming" >
+<option *ngFor="let djTiming of [{name: 1, id: 1},{name: 2, id: 2}, {name: 3, id: 3}]" [ngValue]="djTiming" value="{{djTiming.id}}">{{djTiming.name}}</option>
+</select>
+<button class="btn btn-primary"
+(click)="track.editDJTiming = !track.editDJTiming"
+(click)="uploadService.updateField('DJTiming',selectedDJTiming.value,trackIndex)">
+<i class="fa fa-check"></i></button>
+</div>
+</div>
+
+<div [ngClass]="{'show-edit-panel': track.editGigTypes}" class="popover fade top in" role="tooltip">
+<h3 class="popover-title">Edit Gig Types</h3>
+<div class="popover-content">
+<ng-select #selectedGigTypes
+[multiple]="true"
+[data]="value"
+[items]="gigTypes.list"
+[initData]="track.gigTypes"
+(selected)="selected($event,trackIndex,'gigTypes')"
+(removed)="removed($event,trackIndex,'gigTypes')"
+placeholder="No gig types selected"></ng-select>
+
+<button class="btn btn-primary"
+(click)="track.editGigTypes = !track.editGigTypes">
+<i class="fa fa-check"></i>
+</button>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="track-data-panel">
+<table class="table">
+<thead>
+<tr>
+<th class="text-left">Title</th>
+<th class="text-left">Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="text-left">
+<div class="field-wrapper">
+<p class="editable-field"
+(click)="track.editTrack = !track.editTrack"
+[ngClass]="{'text-success': uploadService.validateTrackField('name',track.name).isValid, 'text-danger': !uploadService.validateTrackField('name',track.name).isValid}">
+{{track.name || "Set title" }}
+</p>
+</div>
+</td>
+<td class="text-left">
+<div class="field-wrapper">
+<p class="editable-field"
+(click)="track.editVersion = !track.editVersion"
+[ngClass]="{'text-success': uploadService.validateTrackField('version',track.version).isValid, 'text-danger': !uploadService.validateTrackField('version',track.version).isValid}">{{track.version || "Set version" }}
+</p>
+
+</div>
+
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="track-data-panel">
+<table class="table">
+<thead>
+<tr>
+<th class="text-left">Artist</th>
+<th class="text-left">Featuring</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="text-left">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editArtist = !track.editArtist"
+[ngClass]="{'text-success': uploadService.validateTrackField('artistText',track.artistText).isValid, 'text-danger': !uploadService.validateTrackField('artistText',track.artistText).isValid}">{{track.artistText || "Set artist(s)" }}
+</p>
+
+</div>
+</td>
+<td class="text-left">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editFeaturedArtist = !track.editFeaturedArtist"
+[ngClass]="{'text-success': uploadService.validateTrackField('artistsFeatured',track.artistsFeatured).isValid, 'text-danger': !uploadService.validateTrackField('artistsFeatured',track.artistsFeatured).isValid}">{{track.artistsFeaturedText || "None"}}
+</p>
+
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="col-md-3 reduced-padding">
+<div class="track-data-panel">
+<table class="table">
+<thead>
+<tr>
+<th>BPM Start</th>
+<th>Tag 1</th>
+<th>Tag 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editStartBpm = !track.editStartBpm"
+[ngClass]="{'text-success': uploadService.validateTrackField('startBpm',track.startBpm).isValid, 'text-danger': !uploadService.validateTrackField('startBpm',track.startBpm).isValid}">{{track.startBpm || "Set BPM" }}
+</p>
+</div>
+</td>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editTag1 = !track.editTag1"
+[ngClass]="{'text-success': uploadService.validateTrackField('cleanDirty',track.cleanDirty).isValid, 'text-danger': !uploadService.validateTrackField('cleanDirty',track.cleanDirty).isValid}">{{getPropertyValue('tags',track.cleanDirty) || "Set clean/dirty" }}
+</p>
+
+</div>
+</td>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editTag3 = !track.editTag3"
+[ngClass]="{'text-success': uploadService.validateTrackField('introType',track.introType).isValid, 'text-danger': !uploadService.validateTrackField('introType',track.introType).isValid}">{{getPropertyValue('tags',track.introType) || "None"}}
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="track-data-panel">
+<table class="table">
+<thead>
+<tr>
+<th>BPM End</th>
+<th>Tag 2</th>
+<th>Tag 4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editEndBpm = !track.editEndBpm"
+[ngClass]="{'text-success': uploadService.validateTrackField('endBpm',track.endBpm).isValid, 'text-danger': !uploadService.validateTrackField('endBpm',track.endBpm).isValid}">{{track.endBpm || "Set BPM" }}</p>
+</div>
+</td>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editTag2 = !track.editTag2"
+[ngClass]="{'text-success': uploadService.validateTrackField('versionType',track.versionType).isValid, 'text-danger': !uploadService.validateTrackField('versionType',track.versionType).isValid}">{{getPropertyValue('tags',track.versionType) || "Set type" }}
+</p>
+</div>
+</td>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editTag4 = !track.editTag4"
+[ngClass]="{'text-success': uploadService.validateTrackField('outroType',track.outroType).isValid, 'text-danger': !uploadService.validateTrackField('outroType',track.outroType).isValid}">{{getPropertyValue('tags',track.outroType) || "Set type"}}
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="col-md-5 reduced-padding">
+<div class="col-md-3">
+<div class="track-data-panel">
+<table class="table double-row">
+<thead>
+<tr>
+<th>Genres</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<div class="editable-field"
+(click)="track.editGenres = !track.editGenres"
+[ngClass]="{'text-success': uploadService.validateTrackField('genres',track.genres).isValid, 'text-danger': !uploadService.validateTrackField('genres',track.genres).isValid}">
+<p *ngFor="let genreSelected of track.genres">{{ genreSelected.text }}</p>
+<p *ngIf="!uploadService.validateTrackField('genres',track.genres).isValid">Set genre(s)</p>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="col-md-3">
+<div class="track-data-panel">
+<table class="table">
+<thead>
+<tr>
+<th>Year</th>
+<th>Pop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editReleaseYear = !track.editReleaseYear"
+[ngClass]="{'text-success': uploadService.validateTrackField('releaseYear',track.releaseYear).isValid, 'text-danger': !uploadService.validateTrackField('releaseYear',track.releaseYear).isValid }">{{track.releaseYear || "Set year"}}</p>
+</div>
+</td>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editPopularityRating = !track.editPopularityRating"
+[ngClass]="{'text-success': uploadService.validateTrackField('popularityRating',track.popularityRating).isValid, 'text-danger': !uploadService.validateTrackField('popularityRating',track.popularityRating).isValid}">{{track.popularityRating  || "Set" }}</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="track-data-panel">
+<table class="table">
+<thead>
+<tr>
+<th>Energy</th>
+<th>Timing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editEnergyRating = !track.editEnergyRating"
+[ngClass]="{'text-success': uploadService.validateTrackField('energyRating',track.energyRating).isValid, 'text-danger': !uploadService.validateTrackField('energyRating',track.energyRating).isValid}">{{track.energyRating || "Set" }}</p>
+</div>
+</td>
+<td class="vertical-middle">
+<div class="field-wrapper" >
+<p class="editable-field"
+(click)="track.editDJTiming = !track.editDJTiming"
+[ngClass]="{'text-success': uploadService.validateTrackField('DJTiming',track.DJTiming).isValid, 'text-danger': !uploadService.validateTrackField('DJTiming',track.DJTiming).isValid}">{{track.DJTiming || "Set"}}</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="col-md-3">
+<div class="track-data-panel">
+<table class="table double-row">
+<thead>
+<tr>
+<th>Originals</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<div class="field-wrapper" >
+<p class="editable-field" data-toggle="modal" data-target="#edit-original-works"
+(click)="editTrackOriginalWorks(trackIndex)"
+[ngClass]="{'text-success': uploadService.validateTrackField('originalWorks',track.originalWorks).isValid, 'text-danger': !uploadService.validateTrackField('originalWorks',track.originalWorks).isValid}">
+<span *ngFor="let originalWork of track.originalWorks"> {{originalWork.name}} ({{originalWork.version}})</span>
+<span *ngIf="track.originalWorks && track.originalWorks.length == 0">
+Set original works
+</span>
+</p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="col-md-3">
+<div class="track-data-panel">
+<table class="table double-row">
+<thead>
+<tr>
+<th>Gig Types</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<div class="field-wrapper" >
+<div class="editable-field"
+(click)="editTrackGigTypes(trackIndex)"
+data-toggle="modal" data-target="#edit-gig-types"
+[ngClass]="{'text-success': uploadService.validateTrackField('gigTypes',track.gigTypes).isValid, 'text-danger': !uploadService.validateTrackField('gigTypes',track.gigTypes).isValid}">
+<p *ngFor="let gigTypeSelected of track.gigTypes">{{ gigTypeSelected.text }}</p>
+<p *ngIf="!uploadService.validateTrackField('gigTypes',track.gigTypes).isValid">Set type(s)</p>
+</div>
+</div>
+
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+</div>-->
+</div>
+<div class="row editor-panel" [ngClass]="{show: showEditorPanel}" *ngIf="activeEditor">
+  <div class="col-md-3 image-container">
+    <img class="img-responsive" *ngIf="activeEditor?.photo?.url" src="{{activeEditor.photo.url}}">
+    <img class="img-logo-bug" *ngIf="activeEditor?.logo?.url" src="{{activeEditor.logo.url}}" />
+  </div>
+  <div class="col-md-9">
+    <h1 class="text-center">
+      Editor Rundown <span (click)="toggleEditorPanel()" (click)="removeTemporaryFilter()" class="btn btn-lg close-button">x Close</span>
+
+    </h1>
+    <div class="row">
+      <div class="col-md-4">
+        <ul>
+          <li>Name: {{activeEditor.stageName}}</li>
+          <li>Rank: General</li>
+          <li>Country: {{activeEditor?.address?.country}}</li>
+          <li>Current City: {{activeEditor?.address?.suburb}}</li>
+          <li>Specialty: Open Format</li>
+          <li>Years DJ'ing: {{activeEditor.yearStarted}}</li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <ul>
+          <li>Most Downloaded All-Time</li>
+          <li>Current Trending Bangers</li>
+          <li>My Featured Playlists</li>
+          <li>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+            <i class="fa fa-facebook-square" aria-hidden="true"></i>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <ul>
+          <li>Current Standing: 1</li>
+          <li>All Time Rank: 3</li>
+          <li>Months on Board: 55</li>
+          <li>Months Ranked #1: 48</li>
+          <li>Tracks Ranked #1: 547</li>
+          <li>Favorited: 36112</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row profile-panel" *ngIf="account.profileData" [ngClass]="{show: showProfilePanel}">
+  <div class="col-md-8 col-md-push-2">
+    <h1 class="text-center">
+      My Profile <span (click)="toggleProfilePanel()" class="btn btn-lg close-button">x Close</span>
+    </h1>
+    <form #accountData="ngForm" (ngSubmit)="updateUser()" method="post" *ngIf="account.profileData && account?.response?.status != 'updated'">
+      <div class="form-group">
+        <input type="email" class="form-control has-feedback" [ngClass]="{'has-success': email.valid, 'has-error': !email.valid}" [(ngModel)]="account.profileData.email" name="email" placeholder="Email Address" ngControl="email" #email="ngModel" required>
+        <span *ngIf="!email.valid && !email.pristine" class="alert alert-danger help-block">Email is required</span>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" [(ngModel)]="account.profileData.password" placeholder="Password" name="password" ngControl="password" #password="ngModel">
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" [(ngModel)]="account.profileData.password_confirm" placeholder="Confirm Password" name="password_confirm" ngControl="passwordConfirm" #passwordConfirm="ngModel">
+        <span *ngIf="!password.valid && !passwordConfirm.valid && !password.pristine && !passwordConfirm.pristine" class="alert alert-danger help-block">Passwords do not match.</span>
+      </div>
+      <div class="form-group">
+        <input type="text" ngControl="name" class="form-control" [(ngModel)]="account.profileData.name.first" placeholder="First Name" name="name[first]" ngControl="firstName" #firstName="ngModel" required>
+        <span *ngIf="!firstName.valid && !firstName.pristine" class="alert alert-danger help-block">First name is required.</span>
+      </div>
+      <div class="form-group">
+        <input type="text" ngControl="name" class="form-control" [(ngModel)]="account.profileData.name.last" name="name[last]"  placeholder="Last Name"  ngControl="lastName" #lastName="ngModel" required>
+        <span *ngIf="!lastName.valid && !lastName.pristine" class="alert alert-danger help-block">Last name is required.</span>
+
+      </div>
+      <div class="row form-group">
+        <div class="col-md-12">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.address.country" name="address[country]" placeholder="Country" ngControl="addressCountry" #addressCountry="ngModel" required>
+          <span *ngIf="!addressCountry.valid && !addressCountry.pristine" class="alert alert-danger help-block">Country is required.</span>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-12">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.address.street1" name="address[street1]" placeholder="Street Address" ngControl="addressStreet1" #addressStreet1="ngModel" required>
+          <span *ngIf="!addressStreet1.valid && !addressStreet1.pristine" class="alert alert-danger help-block">Street address is required.</span>
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-12">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.address.street2" name="address[street2]" placeholder="Apt #, Suite #, etc." ngControl="addressStreet2" #addressStreet2="ngModel">
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.address.suburb" name="address[suburb]" placeholder="City" ngControl="addressSuburb" #addressSuburb="ngModel" required>
+          <span *ngIf="!addressSuburb.valid && !addressSuburb.pristine" class="alert alert-danger help-block">City is required.</span>
+        </div>
+        <div class="col-md-2">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.address.state" name="address[state]" placeholder="State" ngControl="addressState" #addressState="ngModel" required>
+          <span *ngIf="!addressState.valid && !addressState.pristine" class="alert alert-danger help-block">State is required.</span>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.address.postcode" name="address[postcode]" placeholder="ZIP Code"  ngControl="addressPostcode" #addressPostcode="ngModel" required>
+          <span *ngIf="!addressPostcode.valid && !addressPostcode.pristine" class="alert alert-danger help-block">ZIP Code is required.</span>
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-md-8">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.stageName" name="stageName" placeholder="Performance / DJ Name"  ngControl="stageName" #stageName="ngModel" required>
+          <span *ngIf="!stageName.valid && !stageName.pristine" class="alert alert-danger help-block">ZIP Code is required.</span>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" [(ngModel)]="account.profileData.yearStarted" name="yearStarted" placeholder="Year Started" ngControl="yearStarted" #yearStarted="ngModel" required>
+          <span *ngIf="!yearStarted.valid && !yearStarted.pristine" class="alert alert-danger help-block">ZIP Code is required.</span>
+        </div>
+      </div>
+      <div *ngIf="account.profileData.userRole == 'editor'" class="editors-profile">
+        <div class="row">
+          <div class="col-md-12">
+            <h2>Editor Settings</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="account.profileData.payPalAddress" name="payPalAddress" placeholder="PayPal Email Address (for payouts)"  ngControl="payPalAddress" #payPalAddress="ngModel">
+                <span *ngIf="!payPalAddress.valid && !payPalAddress.pristine" class="alert alert-danger help-block">PayPal Address is required.</span>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="account.profileData.taxId" name="taxId" placeholder="Tax ID"  ngControl="taxId" #taxId="ngModel">
+                <span *ngIf="!taxId.valid && !taxId.pristine" class="alert alert-danger help-block">Tax ID is required.</span>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-4">
+                <img src="{{account.profileData.logo.url}}" *ngIf="account.profileData.logo?.url" />
+              </div>
+              <div class="col-md-8">
+                <label for="logo_upload">Logo</label>
+                <input type="file" (change)="setLogoFileToUpload($event)" />
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-4">
+                <img src="{{account.profileData.photo.url}}" *ngIf="account.profileData.photo?.url" />
+              </div>
+              <div class="col-md-8">
+                <label for="photo_upload">Photo</label>
+                <input type="file" (change)="setPhotoFileToUpload($event)" />
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-12">
+                <textarea class="form-control" [(ngModel)]="account.profileData.biography" name="biography" placeholder="Your biography"  ngControl="biography" #biography="ngModel">{{account.profileData.biography}}</textarea>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="account.profileData.facebookUrl" name="facebookUrl" placeholder="Facebook Page URL"  ngControl="facebookUrl" #facebookUrl="ngModel">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="account.profileData.twitterUrl" name="twitterUrl" placeholder="Twitter URL"  ngControl="twitterUrl" #twitterUrl="ngModel">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="account.profileData.youtubeUrl" name="youtubeUrl" placeholder="YouTube URL"  ngControl="youtubeUrl" #youtubeUrl="ngModel">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="account.profileData.soundcloudUrl" name="soundcloudUrl" placeholder="SoundCloud URL"  ngControl="soundcloudUrl" #soundcloudUrl="ngModel">
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-md-12">
+                <input type="text" class="form-control" [(ngModel)]="account.profileData.googleUrl" name="googleUrl" placeholder="Google+ URL"  ngControl="googleUrl" #googleUrl="ngModel">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  </div>
+</div>
+<div id="crate-toolbar" class="row">
+  <div class="col-md-2">
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#edit-filters" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false, 'border-color': (currency.settings && currency.settings.color) ? currency.settings.color : false}">Edit Crate</button>
+    <button type="button" class="btn btn-primary btn-lg" (click)="toggleProfilePanel()" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false, 'border-color': (currency.settings && currency.settings.color) ? currency.settings.color : false}">Edit Profile</button>
+    <button type="button" class="btn btn-primary btn-lg" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false, 'border-color': (currency.settings && currency.settings.color) ? currency.settings.color : false}" (click)="toggleTrackUploadPanel()" *ngIf="account.profileData?.userRole == 'editor'">Upload Tracks</button>
+
+    <button type="button" *ngIf="temporaryFilter != ''" class="btn btn-primary btn-lg" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false, 'border-color': (currency.settings && currency.settings.color) ? currency.settings.color : false}" (click)="removeTemporaryFilter()">Go Back</button>
+  </div>
+  <div class="col-md-4">
+    <p class="bubble-wrap">Crate Name</p>
+  </div>
+  <div class="col-md-4">
+    <input class="form-control" type="search" placeholder="Search Crate Here" id="crate-search" [(ngModel)]="autocompleteQuery" (keyup)="updateTracks(rules,1)">
+  </div>
+  <div class="col-md-2">
+    <p class="bubble-wrap">
+      Currency Balance <span class="number">122</span>
+    </p>
+  </div>
+</div>
+<div class="row" id="crate-manager">
+  <div class="col-md-2" id="sidebar">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel-group" id="sidebar-menu" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="currency-chooser-heading" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#sidebar-menu" href="#currency-chooser-collapse" aria-expanded="true" aria-controls="collapseOne">
+                  Select Store
+                </a>
+              </h4>
+            </div>
+            <div id="currency-chooser-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="currency-chooser-heading">
+              <div class="panel-body">
+                <ul class="available-options">
+                  <li *ngFor="let currencyItem of currency.list" (click)="selectCurrency(currencyItem._id)">{{currencyItem.name}} <span class="currency-count">#</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="featured-collections-heading" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#sidebar-menu" href="#featured-collections-collapse" aria-expanded="true" aria-controls="collapseOne">
+                  Featured Collections
+                </a>
+              </h4>
+            </div>
+            <div id="featured-collections-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="featured-collections-heading">
+              <div class="panel-body">
+                <ul class="available-options">
+                  <li *ngFor="let collection of currencyCollections.list" (click)="filterByCollection(collection._id)">{{collection.name}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="saved-crates-heading" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#sidebar-menu" href="#saved-crates-collapse" aria-expanded="true" aria-controls="collapseOne">
+                  My Saved Crates
+                </a>
+              </h4>
+            </div>
+            <div id="saved-crates-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="saved-crates-heading">
+              <div class="panel-body">
+                <ul class="available-options">
+                  <li *ngFor="let crate of currencyCrates.list">{{crate.name}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="charts-heading" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#sidebar-menu" href="#charts-collapse" aria-expanded="true" aria-controls="collapseOne">
+                  Charts
+                </a>
+              </h4>
+            </div>
+            <div id="charts-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="charts-heading">
+              <div class="panel-body">
+                <ul class="available-options">
+                  <li *ngFor="let chart of currencyCharts.list">{{chart.name}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <button class="btn full-width-button btn-primary" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false, 'border-color': (currency.settings && currency.settings.color) ? currency.settings.color : false}">My Playlists</button>
+        <button class="btn full-width-button btn-primary" [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false, 'border-color': (currency.settings && currency.settings.color) ? currency.settings.color : false}">My Purchases</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-10" id="content">
+    <div class="tablet-holder">
+
+
+
+      <table class="table track-list table" >
+        <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+          <tr>
+            <th class="table-column-publish-date sortable" (click)="sortOrder('publishDate')" [ngClass]="{'sort-up': sortByColumn == 'publishDate' && sortDirection == '', 'sort-down': sortByColumn == 'publishDate' && sortDirection == '-'}" >Date</th>
+            <th class="table-column-artists sortable" (click)="sortOrder('artistPrimaryName')" [ngClass]="{'sort-up': sortByColumn == 'artistPrimaryName' && sortDirection == '', 'sort-down': sortByColumn == 'artistPrimaryName' && sortDirection == '-'}">Artists</th>
+            <th class="table-column-bpm sortable" (click)="sortOrder('bpm')" [ngClass]="{'sort-up': sortByColumn == 'bpm' && sortDirection == '', 'sort-down': sortByColumn == 'bpm' && sortDirection == '-'}" >BPM</th>
+            <th class="table-column-key sortable" (click)="sortOrder('keyPrimaryName')" [ngClass]="{'sort-up': sortByColumn == 'keyPrimaryName' && sortDirection == '', 'sort-down': sortByColumn == 'keyPrimaryName' && sortDirection == '-'}" >Key</th>
+            <th class="table-column-title sortable" (click)="sortOrder('name')" [ngClass]="{'sort-up': sortByColumn == 'name' && sortDirection == '', 'sort-down': sortByColumn == 'name' && sortDirection == '-'}" >Title</th>
+            <th class="table-column-tags">Tags</th>
+            <th class="table-column-genre sortable" (click)="sortOrder('genrePrimaryName')" [ngClass]="{'sort-up': sortByColumn == 'genrePrimaryName' && sortDirection == '', 'sort-down': sortByColumn == 'genrePrimaryName' && sortDirection == '-'}">Genre</th>
+            <th class="table-column-editor sortable" (click)="sortOrder('editorPrimaryName')" [ngClass]="{'sort-up': sortByColumn == 'editorPrimaryName' && sortDirection == '', 'sort-down': sortByColumn == 'editorPrimaryName' && sortDirection == '-'}">Editor</th>
+            <th class="table-column-year sortable" (click)="sortOrder('releaseYear')" [ngClass]="{'sort-up': sortByColumn == 'releaseYear' && sortDirection == '', 'sort-down': sortByColumn == 'releaseYear' && sortDirection == '-'}" >Year</th>
+            <th class="table-column-length sortable" (click)="sortOrder('length')" [ngClass]="{'sort-up': sortByColumn == 'length' && sortDirection == '', 'sort-down': sortByColumn == 'length' && sortDirection == '-'}" >Length</th>
+            <th class="table-column-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="!tracks.list || tracks.list.length === 0">
+            <td colspan="11">There are no tracks that meet your criteria. Please change your criteria and try again.</td>
+          </tr>
+          <!--infinite-scroll [infiniteScrollDistance]="20" (scrolled)="onScrollTowardsBottomOfTracksList()" -->
+          <tr *ngFor="let track of tracks.list" >
+            <td class="table-column-publish-date"><span *ngIf="track.publishDate">{{track.publishDate | string2Date | date: 'MM-dd-y'}}</span></td>
+            <td class="table-column-artists"><a href="javascript:void(0)" (click)="showSimilarTracks('artist', track.artistPrimaryName)">{{track.artistPrimaryName}}</a></td>
+            <td class="table-column-bpm">{{track.startBpm}}</td>
+            <td class="table-column-key"><span>{{track.inKey.camelotKey}}</span><br/><br/><span>{{track.inKey.musicKey}}</span></td>
+            <td class="table-column-title"><a href="javascript:void(0)" (click)="showSimilarTracks('title', track.name)">{{track.name}}</a> <span *ngIf="track.version">({{track.version}})</span>
+              <button class="btn  btn-primary" *ngIf="track.release" (click)="showTracksInRelease(track.release)">R</button></td>
+              <td class="table-column-tags">
+                <a href="#" class="btn btn-primary tag" [ngStyle]="{'background': (track.cleanDirty?.color) ? track.cleanDirty?.color : false, color: (track.cleanDirty?.textColor) ? track.cleanDirty?.textColor : false }" >{{track.cleanDirty?.name}}</a>
+                <a href="#" class="btn btn-primary tag" [ngStyle]="{'background': (track.versionType?.color) ? track.versionType?.color : false, color: (track.versionType?.textColor) ? track.versionType?.textColor : false }" >{{track.versionType?.name}}</a>
+                <a href="#" class="btn btn-primary tag" *ngIf="track.introType" [ngStyle]="{'background': (track.introType?.color) ? track.introType?.color : false, color: (track.introType?.textColor) ? track.introType?.textColor : false }" >{{track.introType?.name}}</a>
+                <a href="#" class="btn btn-primary tag"  *ngIf="track.outroType" [ngStyle]="{'background': (track.outroType?.color) ? track.outroType?.color : false, color: (track.outroType?.textColor) ? track.outroType?.textColor : false }" >{{track.outroType?.name}}</a>
+              </td>
+              <td class="table-column-genre">
+                    <a *ngFor="let genre of track.genres" class="btn btn-secondary" href="#">{{genre.name}}</a>
+                </td>
+                <td class="table-column-editor">
+                  <img *ngIf="track.editor?.logo" src="{{track.editor?.logo.url}}" width="37" height="37" alt="image description"/>
+                  <strong class="title"><a href="javascript:void(0)" (click)="getEditorProfile(track.editor)" (click)="showSimilarTracks('editor', track.editorPrimaryName)">{{track.editorPrimaryName}}</a></strong>
+                </td>
+                <td class="table-column-year">{{track.releaseYear}}</td>
+                <td class="table-column-length">{{track.trackLength | seconds2time }}</td>
+                <td class="table-column-actions">
+                  <ul class="music-list list-inline">
+                    <li><!--a href="javascript:void(0)" *ngIf="track.lowBitRateFile" (click)="playTrack(track.lowBitRateFile.url)"><i class="play-icon">play</i></a-->
+                      <button *ngIf="track.lowBitRateFile" [ngClass]="{show: !appState.get('isPlaying'), hide: appState.get('isPlaying') && appState.get('trackUrl') === track.lowBitRateFile.url}" (click)="playTrack(track)" type="button" class="btn btn-default play-button" aria-label="Left Align">
+                        <i class="fa fa-play-circle"></i>
+                      </button>
+                      <button *ngIf="track.lowBitRateFile" (click)="waveSurferService.wavesurfer.pause()" (click)="pauseTrack()" [ngClass]="{show: appState.get('isPlaying') && appState.get('trackUrl') === track.lowBitRateFile.url, hide: !appState.get('isPlaying') || appState.get('trackUrl') !== track.lowBitRateFile.url}" type="button" class="btn btn-default play-button" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                      </button>
+                      <!--button [ngClass]="{hide: !appState.isPlaying, show: appState.isPlaying}" (click)="wavesurfer.pause()" (click)="playOrPause()" type="button"  class="btn btn-default pause-button " aria-label="Left Align">
+                      <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                    </button-->
+                  </li>
+                  <li><a href="#"><i class="listen-icon">listen</i></a></li>
+                  <li><a href="javascript:void(0)" (click)="downloadHiBitRateTrack(track._id)"><i class="download-icon">download</i></a></li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal fade" id="edit-filters" tabindex="-1" role="dialog" aria-labelledby="editFilters">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <form id="filterForm" name="filterForm">
+
+              <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Manage Rules</h4>
+              </div>
+              <div class="modal-body">
+
+                <div *ngFor="let rule of rules; let i1 = index;" class="row filter-rule">
+                  <div class="col-md-3">
+                    <select class="form-control" #selectedCriterion (change)="setKey(selectedCriterion.value,i1)" name="ruleKey" [(ngModel)]="rule.key">
+                      <option value="">Select criterion</option>
+                      <option *ngFor="let criterion of availableCriteria; let i2 = index" [value]="criterion.key">{{criterion.label}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <select class="form-control" #selectedOperator  (change)="setOperator(selectedOperator.value,i1)" *ngIf="rules[i1].availableOperators && rules[i1].availableOperators.length > 0" [(ngModel)]="rule.selectedOperator">
+                      <option *ngFor="let operator of rules[i1].availableOperators" [value]="operator.operator">{{operator.label}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <select *ngIf="rules[i1].type === 'list' && rules[i1].type && rules[i1].type.length > 0" class="form-control" name="{{selectedCriterion.value}}[]" #selectedOption (change)="setValue(selectedOption.value,i1)" [(ngModel)]="rule.value">
+                      <option *ngFor="let option of rules[i1].options" [value]="option._id">{{option.name}}</option>
+                    </select>
+                    <input *ngIf="rules[i1].type !== 'list' && rules[i1].type && rules[i1].type.length > 0" type="text" class="form-control" name="{{selectedCriterion.value}}[]"  #userValue (change)="setValue(userValue.value,i1)" [(ngModel)]="rule.value"/>
+                  </div>
+                  <div class="col-md-2">
+                    <button class="btn btn-sm btn-primary" (click)="addNewRule($event)"> + </button>
+                    <button class="btn btn-sm btn-primary" *ngIf="rules.length > 1" (click)="removeRule($event, i1)"> - </button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" (click)="resetRules()">Reset Rules</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="updateTracks(rules)">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!--<div class="modal fade" id="edit-original-works" *ngIf="editOriginalWorks" tabindex="-1" role="dialog" aria-labelledby="edit-original-works">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Manage Original Works for {{uploadService.tracksToModify[trackEditOriginalWorksIndex].hiBitRateFile.originalname}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+           <input class="form-control" placeholder="Enter search term to find existing original work" #existingOriginalWorkSearch value="" (keydown)="getSuggestedOriginalWorks(existingOriginalWorkSearch.value)" />
+            <div class="suggestion-box" *ngIf="suggestedOriginalWorks && suggestedOriginalWorks.length > 0">
+              <ul>
+                <li *ngFor="let suggestedOriginalWork of suggestedOriginalWorks">
+                  <span (click)="existingOriginalWorkSearch.value = ''" (click)="suggestedOriginalWorks = null" (click)="addOriginalWorkToTrack(trackEditOriginalWorksIndex, suggestedOriginalWork.name, suggestedOriginalWork.version, suggestedOriginalWork.artistsDisplayName, suggestedOriginalWork.artistsFeaturedDisplayName, suggestedOriginalWork._id)">{{suggestedOriginalWork.displayName}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table enter-custom-original-work">
+              <thead>
+                <tr>
+                  <td><input class="form-control" placeholder="Enter title" #originalWorkNameEntry/></td>
+                  <td><input class="form-control" placeholder="Enter version" #originalWorkVersionEntry/></td>
+                  <td><input class="form-control" placeholder="Enter artists" #originalWorkArtistsEntry/></td>
+                  <td><input class="form-control" placeholder="Enter featured artists" #originalWorkArtistsFeaturedEntry/></td>
+                  <td>            <button class="btn btn-xs btn-primary"
+                    (click)="addOriginalWorkToTrack(trackEditOriginalWorksIndex,
+                    originalWorkNameEntry.value,
+                    originalWorkVersionEntry.value,
+                    originalWorkArtistsEntry.value,
+                    originalWorkArtistsFeaturedEntry.value)"
+                    (click)="originalWorkNameEntry.value = ''; originalWorkVersionEntry.value=''; originalWorkArtistsEntry.value=''; originalWorkArtistsFeaturedEntry.value=''"> ADD </button>
+                  </td>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Version</th>
+                  <th>Artists</th>
+                  <th>Featured Artists</th>
+                  <th>-</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let originalWork of uploadService.tracksToModify[trackEditOriginalWorksIndex].originalWorks; let originalWorkIndex = index;">
+                  <td>{{originalWork.name}}</td>
+                  <td>{{originalWork.version}}</td>
+                  <td>{{originalWork.artists}}</td>
+                  <td>{{originalWork.artistsFeatured}}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="removeOriginalWorkToTrack(originalWorkIndex)"> - </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="showOriginalWorks(uploadService.tracksToModify[trackEditOriginalWorksIndex].originalWorks)">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="edit-gig-types" *ngIf="editGigTypes" tabindex="-1" role="dialog" aria-labelledby="edit-gig-types">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Manage Gig Types for {{uploadService.tracksToModify[trackEditGigTypesIndex].hiBitRateFile.originalname}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table enter-gig-type">
+              <thead>
+                <tr>
+                  <td>
+                    <select class="form-control" #selectedGigTypeName>
+                      <option *ngFor="let gigType of gigTypes.list" [ngValue]="gigType">{{gigType}}</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-control" #selectedGigTypePopularity>
+                      <option *ngFor="let gigType of [{setting: 1},{setting: 2},{setting: 3}]" [ngValue]="gigType.setting">{{gigType.setting}}</option>
+                    </select>
+                  </td>
+                  <td>                    <select class="form-control" #selectedGigTypeEnergy>
+                    <option *ngFor="let gigType of [{setting: 1},{setting: 2},{setting: 3}]" [ngValue]="gigType.setting">{{gigType.setting}}</option>
+                  </select>
+                </td>
+                <td>
+                  <select class="form-control" #selectedGigTypeDJTiming>
+                    <option *ngFor="let gigType of [{setting: 1},{setting: 2},{setting: 3}]" [ngValue]="gigType.setting">{{gigType.setting}}</option>
+                  </select>
+                </td>
+
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Popularity</th>
+                <th>Energy</th>
+                <th>DJ Timing</th>
+                <th>-</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let gigType of uploadService.tracksToModify[trackEditGigTypesIndex].gigTypes; let gigTypesIndex = index;">
+                <td>{{gigType.name}}</td>
+                <td>{{gigType.popularity}}</td>
+                <td>{{gigType.energy}}</td>
+                <td>{{gigType.djTiming}}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary" (click)="removeGigTypeToTrack(gigTypesIndex)"> - </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="showOriginalWorks(uploadService.tracksToModify[trackEditOriginalWorksIndex].originalWorks)">Close</button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+    </div>
+  </div>
+</div>
+</div>-->
+
+
+
+
+<div class="modal fade" id="edit-track" *ngIf="uploadService.tracksToModify[uploadService.trackCurrentlyEditing]" tabindex="-1" role="dialog" aria-labelledby="edit-track">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          Edit Track Details for {{uploadService.tracksToModify[uploadService.trackCurrentlyEditing].originalFileName}}</h4>
+        </div>
+        <div class="modal-body">
+
+
+          <div class="row">
+            <div class="col-md-12">
+              Enter the info requested in the boxes below.  Be sure to spell everything correctly and use proper punctuation.   If our system suggests track information about your upload that is accurate, select the suggestion to auto-fill the rest of the fields.  If something is different, change the fields accordingly.
+
+              <table class="table table-bordered">
+                <thead>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <label>Title:</label>
+                      <textarea type="text" #trackName rows="2" (change)="uploadService.updateField('name',trackName.value,uploadService.trackCurrentlyEditing)">{{uploadService.tracksToModify[uploadService.trackCurrentlyEditing].name}}</textarea>
+                    </td>
+                    <td>
+                      <label>Version:</label>
+
+                      <textarea type="text" #trackVersion rows="2" (change)="uploadService.updateField('version',trackVersion.value,uploadService.trackCurrentlyEditing)">{{uploadService.tracksToModify[uploadService.trackCurrentlyEditing].version}}</textarea>
+                    </td>
+                    <td>
+                      <label>Start BPM:</label>
+                      <input type="text" #trackStartBPM [value]="uploadService.tracksToModify[uploadService.trackCurrentlyEditing].startBpm" (change)="uploadService.updateField('startBpm',trackStartBPM.value,uploadService.trackCurrentlyEditing)" (change)="uploadService.updateField('endBpm',trackStartBPM.value,uploadService.trackCurrentlyEditing)">
+                    </td>
+                    <td>
+                      <label>Release Year:</label>
+
+                      <input min="1900" step="1" #trackReleaseYear type="number" [value]="uploadService.tracksToModify[uploadService.trackCurrentlyEditing].releaseYear" [max]="currentYear" (change)="uploadService.updateField('releaseYear',trackReleaseYear.value,uploadService.trackCurrentlyEditing)" >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label>Artists:</label>
+
+                      <textarea type="text" #trackArtistText rows="2" (change)="uploadService.updateField('artistText',trackArtistText.value,uploadService.trackCurrentlyEditing)">{{uploadService.tracksToModify[uploadService.trackCurrentlyEditing].artistText}}</textarea>                    </td>
+                      <td>
+                        <label>Featured Artists:</label>
+
+                        <textarea type="text" #trackArtistsFeaturedText rows="2" (change)="uploadService.updateField('artistsFeaturedText',trackArtistsFeaturedText.value,uploadService.trackCurrentlyEditing)">{{uploadService.tracksToModify[uploadService.trackCurrentlyEditing].artistsFeaturedText}}</textarea>
+                      </td>
+                        <td>
+                          <label>End BPM:</label>
+
+                          <input type="text" #trackEndBPM [value]="uploadService.tracksToModify[uploadService.trackCurrentlyEditing].endBpm"  (change)="uploadService.updateField('endBpm',trackEndBPM.value,uploadService.trackCurrentlyEditing)">
+                        </td>
+                        <td>Cal</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-3">
+                  <table class="table table-bordered">
+                    <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+                      <tr>
+                        <th colspan="3">Select One: Clean / Dirty</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 1'}]" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].cleanDirty == tag._id) ? 'green' : 'none'}"><span class="display-inline-block" (click)="uploadService.updateField('cleanDirty',tag._id,uploadService.trackCurrentlyEditing)">{{tag.name}}</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-5">
+                  <table class="table table-bordered">
+                    <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+                      <tr>
+                        <th colspan="5">SELECT ONE: INTRO TYPE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 3'}]" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].introType == tag._id) ? 'green' : 'none'}"><span class="display-inline-block" (click)="uploadService.updateField('introType',tag._id,uploadService.trackCurrentlyEditing)">{{tag.name}}</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-4">
+                  <table class="table table-bordered">
+                    <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+                      <tr>
+                        <th colspan="4">SELECT ONE: OUTRO TYPE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 4'}]" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].outroType == tag._id) ? 'green' : 'none'}"><span class="display-inline-block" (click)="uploadService.updateField('outroType',tag._id,uploadService.trackCurrentlyEditing)">{{tag.name}}</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <table class="table table-bordered">
+                    <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+                      <tr>
+                        <th colspan="9">SELECT ONE: TRACK VERSION TYPE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td *ngFor="let tag of tags.list | filterTagOptionsForSetting:[{tagField: 'Tag 2'}]" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].versionType == tag._id) ? 'green' : 'none'}"><span class="display-inline-block" (click)="uploadService.updateField('versionType',tag._id,uploadService.trackCurrentlyEditing)">{{tag.name}}</span></td>
+
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <table class="table table-bordered">
+                    <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+                      <tr>
+                        <th>SELECT UP TO THREE GENRES</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <span *ngFor="let genre of genres.list" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].genres.indexOf(genre.id) !== -1) ? 'green' : 'none'}"
+                          (click)="uploadService.updateField('genres',genre.id,uploadService.trackCurrentlyEditing)" class="col-md-2 btn btn-link">{{genre.name}}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  Select a minimum of 1 event type and fill in the ratings based on how you feel about the track TODAY.  You can go back if you change your opinion on the track later and update it via the Editor Panel.
+
+                  <table class="table table-bordered">
+                    <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+                      <tr>
+                        <th colspan="4">SELECT EVENT TYPE:</th>
+                        <th>SELECT DJ TIMING:</th>
+                        <th>SELECT TRACK ENERGY:</th>
+                        <th>SELECT TRACK POPULARITY:</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td colspan="4">
+                          <span *ngFor="let gigType of gigTypes.distinctList" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].gigTypeEntry?.name == gigType) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('name',gigType,uploadService.trackCurrentlyEditing)" class="btn btn-link">{{gigType}}</span>
+                        </td>
+                        <td>
+                          <span *ngFor="let option of [1,2,3]" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].gigTypeEntry?.djTiming == option) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('djTiming',option,uploadService.trackCurrentlyEditing)" class="btn btn-link">{{option}}</span>
+                        </td>
+                        <td>
+                          <span *ngFor="let option of [1,2,3]" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].gigTypeEntry?.energy == option) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('energy',option,uploadService.trackCurrentlyEditing)" class="btn btn-link">{{option}}</span>
+                        </td>
+                        <td>
+                          <span *ngFor="let option of [1,2,3]" [ngStyle]="{background: (uploadService.tracksToModify[uploadService.trackCurrentlyEditing].gigTypeEntry?.popularity == option) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('popularity',option,uploadService.trackCurrentlyEditing)" class="btn btn-link">{{option}}</span>
+                        </td>
+                        <td>
+                          <button class="btn btn-lg" (click)="uploadService.updateField('gigTypeEntry',uploadService.tracksToModify[uploadService.trackCurrentlyEditing].gigTypeEntry,uploadService.trackCurrentlyEditing)">+</button>
+                        </td>
+                      </tr>
+                    </tbody>
+
+                    <tbody>
+                      <tr *ngFor="let gigType of uploadService.tracksToModify[uploadService.trackCurrentlyEditing].gigTypes; let gigTypeIndex = index">
+                        <td colspan="4">{{gigType?.name}}</td>
+                        <td>{{gigType?.djTiming}}</td>
+                        <td>{{gigType?.energy}}</td>
+                        <td>{{gigType?.popularity}}</td>
+                        <td>
+                          <button class="btn btn-lg" (click)="uploadService.updateField('gigTypeRemove',gigTypeIndex,uploadService.trackCurrentlyEditing)">-</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <label><input type="checkbox" name="isOriginal[]" #isOriginalTrack
+[checked]="uploadService.tracksToModify[uploadService.trackCurrentlyEditing].isOriginal"
+                                (change)="toggleTrackIsOriginal($event, uploadService.trackCurrentlyEditing)">This track is an original work.</label>
+
+                  <table class="table table-bordered">
+                    <thead [ngStyle]="{background: (currency.settings && currency.settings.color) ? currency.settings.color : false}">
+                      <tr>
+                        <th>ORIGINAL WORK TITLE:</th>
+                        <th>ORIGINAL WORK VERSION:</th>
+                        <th>ORIGINAL WORK ARTIST:</th>
+                        <th>ORIGINAL WORK FEATURED ARTISTS:</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                  <td> <input class="form-control" placeholder="Enter title" #originalWorkNameEntry [(ngModel)]="draftOriginalWork.name" (keydown)="getSuggestedOriginalWorks(draftOriginalWork)" />
+</td>
+                  <td><input class="form-control" placeholder="Enter version" #originalWorkVersionEntry [(ngModel)]="draftOriginalWork.version" (keydown)="getSuggestedOriginalWorks(draftOriginalWork)"/></td>
+                  <td><input class="form-control" placeholder="Enter artists" #originalWorkArtistsEntry [(ngModel)]="draftOriginalWork.artists" (keydown)="getSuggestedOriginalWorks(draftOriginalWork)"/></td>
+                  <td><input class="form-control" placeholder="Enter featured artists" #originalWorkArtistsFeaturedEntry [(ngModel)]="draftOriginalWork.artistsFeatured" (keydown)="getSuggestedOriginalWorks(draftOriginalWork)"/></td>
+                  <td>
+                    <button class="btn btn-xs btn-primary"
+                    (click)="addOriginalWorkToTrack(uploadService.trackCurrentlyEditing,
+                    draftOriginalWork)"
+                    (click)="draftOriginalWork = {name: '',version:'',artists:'',artistsFeatured:''}"> ADD </button>
+                  </td>
+                </tr>
+                  <tr>
+                    <td colspan="5">
+                      <div class="suggestion-box" *ngIf="showSuggestedOriginalWorks && suggestedOriginalWorks && suggestedOriginalWorks.length > 0">
+                        <i class="fa fa-close close-suggested-works" (click)="showSuggestedOriginalWorks = false"></i>
+                        <ul>
+                          <li *ngFor="let suggestedOriginalWork of suggestedOriginalWorks">
+                            <span (click)="originalWorkNameEntry.value = ''" (click)="suggestedOriginalWorks = null" (click)="addOriginalWorkToTrack(uploadService.trackCurrentlyEditing, suggestedOriginalWork.name, suggestedOriginalWork.version, suggestedOriginalWork.artistsDisplayName, suggestedOriginalWork.artistsFeaturedDisplayName, suggestedOriginalWork._id)">{{suggestedOriginalWork.displayName}}</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let originalWork of uploadService.tracksToModify[uploadService.trackCurrentlyEditing].originalWorks; let originalWorkIndex = index;">
+                  <td>{{originalWork.name}}</td>
+                  <td>{{originalWork.version}}</td>
+                  <td>{{originalWork.artists}}</td>
+                  <td>{{originalWork.artistsFeatured}}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" (click)="removeOriginalWorkToTrack(originalWorkIndex)"> - </button>
+                  </td>
+                </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>

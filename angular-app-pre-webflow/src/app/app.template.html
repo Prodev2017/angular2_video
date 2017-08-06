@@ -1,0 +1,125 @@
+
+<header id="header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="header-holder">
+            <strong class="logo"><a href="#"><img src="/assets/img/logo.png" alt="CROOKLYN CLAN The Vault"></a></strong>
+            <div class="music-area">
+              <div class="song-area">
+                <div class="text-area">
+                  <!--<a href="#" class="opener"><i class="glyphicon glyphicon-th-list"></i><span class="text">Now Playing</span></a>
+                  <div class="slide">
+                    <div class="jcf-scrollable">
+                      <ul class="songs-list list-unstyled">
+                        <li>
+                          Ariana Grande - The Amazing Song
+                          <a href="#" class="icon-cancel"></a>
+                          <a href="#" class="icon-download"></a>
+                        </li>
+                        <li>
+                          Ariana Grande - The Amazing Song
+                          <a href="#" class="icon-cancel"></a>
+                          <a href="#" class="icon-download"></a>
+                        </li>
+                        <li>
+                          Ariana Grande - The Amazing Song
+                          <a href="#" class="icon-cancel"></a>
+                          <a href="#" class="icon-download"></a>
+                        </li>
+                        <li>
+                          Ariana Grande - The Amazing Song
+                          <a href="#" class="icon-cancel"></a>
+                          <a href="#" class="icon-download"></a>
+                        </li>
+                      </ul>
+                      <ul class="list-inline list-option">
+                        <li><a href="#">Clear All</a></li>
+                        <li class="download"><a href="#">Download All</a></li>
+                      </ul>
+                    </div>
+                  </div>-->
+                    <div class="player-meta">
+                      <p><span class="title">{{ waveSurferService.trackTitle || "Default Title" }}</span><br/>
+                        <span class="subtitle">{{ waveSurferService.trackVersion || "Default Version" }}</span>
+                      </p>
+                      <p>
+                        <span class="title">{{ waveSurferService.trackArtist || "Default Artist" }}</span><br/>
+                        <span class="subtitle">{{ waveSurferService.trackArtistsFeatured || "Default Featured Artist" }}</span>
+                      </p>
+                    </div>
+                </div>
+              </div>
+              <div class="player-controls">
+                <button [ngClass]="{show: !appState.get('isPlaying'), hide: appState.get('isPlaying') }"
+                (click)="waveSurferService.wavesurfer.play()"
+                (click)="waveSurferService.playOrPause()" type="button" class="btn btn-default play-button" aria-label="Left Align">
+                  <i class="fa fa-play-circle"></i>
+                  </button>
+                <button [ngClass]="{hide: !appState.get('isPlaying'), show: appState.get('isPlaying')}"
+                (click)="waveSurferService.wavesurfer.pause()"
+                (click)="waveSurferService.playOrPause()" type="button"  class="btn btn-default pause-button " aria-label="Left Align">
+                  <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                </button>
+                <p class="previously-played">Previously Played</p>
+              </div>
+              <div class="current-playing">
+                <div class="song-frame">
+                  <div id="waveform">
+                  </div>
+                  <!--img src="/assets/img/img1.png" alt="image description"-->
+                  <span class="lable-text">MOST POPUlAR</span>
+                  <ul class="list-inline buttons-list">
+                    <li [ngStyle]="{'background': (waveSurferService.cleanDirty?.color) ? waveSurferService.cleanDirty?.color : false, color: (waveSurferService.cleanDirty?.textColor) ? waveSurferService.cleanDirty?.textColor : false }" >{{waveSurferService.cleanDirty?.name}}</li>
+                    <li [ngStyle]="{'background': (waveSurferService.versionType?.color) ? waveSurferService.versionType?.color : false, color: (waveSurferService.versionType?.textColor) ? waveSurferService.versionType?.textColor : false }" >{{waveSurferService.versionType?.name}}</li>
+                    <li *ngIf="waveSurferService.introType" [ngStyle]="{'background': (waveSurferService.introType?.color) ? waveSurferService.introType?.color : false, color: (waveSurferService.introType?.textColor) ? waveSurferService.introType?.textColor : false }" >{{waveSurferService.introType?.name}}</li>
+                    <li *ngIf="waveSurferService.outroType" [ngStyle]="{'background': (waveSurferService.outroType?.color) ? waveSurferService.outroType?.color : false, color: (waveSurferService.outroType?.textColor) ? waveSurferService.outroType?.textColor : false }" >{{waveSurferService.outroType?.name}}</li>
+                  </ul>
+                <ul class="player-right-side-buttons">
+                  <li class="facebook"><a href="javascript:void(0)"></a></li>
+                  <li class="twitter"><a href="javascript:void(0)"></a></li>
+                  <li class="download"><a href="javascript:void(0)"></a></li>
+                  <li class="music"><a href="javascript:void(0)"></a></li>
+                </ul>
+                </div>
+
+              </div>
+              <ul class="list-unstyled btns-area">
+                <p>Welcome!</p>
+                <p>{{account.profileData?.name?.first}} {{account.profileData?.name?.last}}</p>
+                <li><a [routerLink]="['./login']" *ngIf="!account.loggedIn" class="btn btn-login">Login</a></li>
+                <li><a (click)="logout()" *ngIf="account.loggedIn" class="btn btn-login">Logout</a></li>
+                <li><a [routerLink]="['./register']" *ngIf="!account.loggedIn" class="btn btn-primary">Sign Up</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+  <!--<footer id="footer" class="text-center">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <nav class="footer-nav">
+            <ul class="list-inline">
+              <li><a href="#">Home</a></li>
+              <li><a href="#">New Releases</a></li>
+              <li><a href="#">Tracks</a></li>
+              <li><a href="#">Charts</a></li>
+              <li><a href="#">Daily Sales</a></li>
+              <li><a href="#">Artists</a></li>
+              <li><a href="#">Genres</a></li>
+            </ul>
+          </nav>
+          <p>&copy; Copyright 2015 <a href="#" class="link">Crooklyn Clan.</a> All Rights Reserved.</p>
+          <strong class="footer-logo">
+            <a href="#"><img src="/assets/img/logo-footer.png" alt="CROOKLYN CLAN The Vault"/></a>
+          </strong>
+        </div>
+      </div>
+    </div>
+  </footer>-->

@@ -1,0 +1,40 @@
+<form id="filterForm" name="filterForm">
+
+  <div class="modal-header">
+    <h4 class="modal-title" id="myModalLabel">Manage Rules</h4>
+  </div>
+  <div class="modal-body">
+
+    <div *ngFor="#rule of rules; #i1 = index;" class="row">
+      <div class="col-md-4">
+        <select #criterion (change)="setType(criterion.value,i1)" [(ngModel)]="rule.type">
+          <option value="">Select criterion</option>
+          <option *ngFor="#type of availableCriteria; #i2 = index" [value]="type.key">{{type.label}}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select >
+          <option>is</option>
+          <option>is not</option>
+        </select>
+
+      </div>
+      <div class="col-md-4">
+        <select name="{{criterion.type}}[]" #selectedOption (change)="setValue(selectedOption.value,i1)" [(ngModel)]="rule.value">
+          <optgroup *ngFor="#option of rules[i1].options">
+            <option [value]="option._id">{{option.name}}</option>
+            <option *ngFor="#childOption of option.children" [value]="childOption._id">&nbsp;&nbsp;&nbsp;{{childOption.name}}</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-sm" (click)="addNewRule($event)"> + </button>
+        <button class="btn btn-sm" (click)="removeRule($event, i)"> - </button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" (click)="updateTracks(rules)">Save changes</button>
+  </div>
+</form>
