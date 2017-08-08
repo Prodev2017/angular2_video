@@ -1,0 +1,24 @@
+@import '../../../../sass/conf/conf';
+
+.currency-counts {
+    font-size: 0.8vw;
+    margin-left: 15px;
+    
+}
+
+
+.disabled {
+    background-color: grey;
+    cursor:not-allowed!important;
+   &:hover {
+     color: #b8b8b8;
+   }   
+
+}
+
+.al-sidebar-sublist > ba-menu-item > li.disabled a:hover {
+     
+     cursor:not-allowed!important;
+     color: #b8b8b8;
+
+}

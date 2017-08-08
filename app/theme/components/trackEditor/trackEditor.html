@@ -1,0 +1,431 @@
+<div bsModal #trackEditorModal="bs-modal" class="modal fade track-editor-modal" [config]="{backdrop: false}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" (onShow)="scrollUp()" (onHide)="stopPolling()">
+  <div id="previous-track" (click)="goToPreviousTrack()"><i class="fa fa-angle-left"></i></div>
+  <div id="next-track" (click)="goToNextTrack()"><i class="fa fa-angle-right"></i></div>
+
+  <div class="modal-dialog modal-lg" *ngIf="uploadService.trackList.results[trackIndexCurrentlyEditing] && uploadService.trackList.results[trackIndexCurrentlyEditing].validation">
+    <div class="modal-content">
+      <div class="loading-overlay" [ngClass]="{'show': isUpdating}">
+        <div class="submit-track-in-progress"></div>
+      </div>
+      <div class="modal-header">
+        <div class="row">
+          <div class="col-md-12 text-right">
+            <button type="button" class="close" aria-label="Close" (click)="hideModal()">
+          <span aria-hidden="true"><i class="fa fa-times-circle text-link"></i></span>
+        </button>
+            <i class="fa fa-play-circle bigger text-link" [hidden]="(trackCurrentlyLoaded == uploadService.trackList.results[trackIndexCurrentlyEditing]._id && isPlayerPlaying)" (click)="togglePlayPause(uploadService.trackList.results[trackIndexCurrentlyEditing])"></i>
+            <i class="fa fa-pause-circle bigger text-link" [hidden]="(trackCurrentlyLoaded == uploadService.trackList.results[trackIndexCurrentlyEditing]._id && !isPlayerPlaying) || trackCurrentlyLoaded != uploadService.trackList.results[trackIndexCurrentlyEditing]._id"
+              (click)="togglePlayPause(track)"></i>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h4 class="modal-title">Edit Track Data for {{ trackEditorTitle }} [Length: {{uploadService.trackList.results[trackIndexCurrentlyEditing].trackLength | secondsToTime}}]</h4>
+
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-body">
+
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group form-inline copy-from-autocomplete">
+              <label for="copyFrom">Copy From Publish Tracks & ZIPs: </label>
+              <p-autoComplete inputStyleClass="form-control" [(ngModel)]="trackToCopyFrom" [suggestions]="availableTracksToCopyFrom" (completeMethod)="searchExistingTracks($event)" field="name" [size]="60" (onSelect)="copyTrack()" placeholder="Enter title"></p-autoComplete>
+            </div>
+          </div>
+        </div>
+        <div class="animated fadeIn card has-error" *ngIf="uploadService.trackList.results[trackIndexCurrentlyEditing].draftFlaggedAsDuplicate">
+          <div class="card-header clearfix">
+            <h3 class="card-title">Track Flagged as Duplicate</h3>
+          </div>
+          <div class="card-body has-error">
+            <p>This track matches another published track in our system for the i12 Inch pool because the title, version, artist, clean/dirty, intro type, outro type and version type settings are the same. Please remove this track or correct any settings.</p>
+          </div>
+        </div>
+        <div class="animated fadeIn card">
+          <div class="card-header clearfix">
+            <h3 class="card-title">Basic Information</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.name?.isValid}">
+                  <label for="trackName">Track Name</label> <i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Enter the track name exactly how it appears." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+                  <input type="text" class="form-control" id="trackName" #trackName [value]="uploadService.trackList.results[trackIndexCurrentlyEditing].name" (change)="uploadService.updateField('name',trackName.value,trackIndexCurrentlyEditing,currentTrackList)" placeholder="Track Name">
+                </div>
+                <div class="form-group" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.version?.isValid}">
+                  <label for="trackVersion">Track Version</label><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="This is the version of the track, not the explicit rating or intro type.  If the version is “Starjack Prime Bootleg Mix” then that is what goes in this field."
+                    tooltipsterPosition="top" tooltipsterEvent="click"></i><button class="btn btn-xs btn-primary" [ngStyle]="{background: 'green'}" (click)="uploadService.updateField('version','Orig. Mix',trackIndexCurrentlyEditing,currentTrackList)">Orig. Mix</button>
+                  <button class="btn btn-xs btn-primary" [ngStyle]="{background: 'green'}" (click)="uploadService.updateField('version','Remix',trackIndexCurrentlyEditing,currentTrackList)">Remix</button>
+                  <input type="text" class="form-control" id="trackVersion" #trackVersion [value]="uploadService.trackList.results[trackIndexCurrentlyEditing].version" (change)="uploadService.updateField('version',trackVersion.value,trackIndexCurrentlyEditing,currentTrackList)"
+                    placeholder="Track Version">
+                </div>
+                <div class="form-group" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.artistText?.isValid}">
+                  <label for="trackArtist">Track Artist</label><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Track Artist for all tracks being uploaded to the Audio Vault will automatically add the original works artist names AFTER what you put in this box.  So if you put “Starjack” in this box the Artist  field on the site and ID3 tag will display “Starjack VS. Original Artist VS. Original Artist”.  Our system will do this automatically, you need only list yourself and anyone else you may have collaborated with to make this track."
+                    tooltipsterPosition="top" tooltipsterEvent="click"></i>
+                  <input type="text" class="form-control" id="trackArtist" #trackArtist [value]="uploadService.trackList.results[trackIndexCurrentlyEditing].artistText" (change)="uploadService.updateField('artistText',trackArtist.value,trackIndexCurrentlyEditing,currentTrackList)"
+                    placeholder="Track Artist">
+                </div>
+                <div class="form-group">
+                  <label for="trackFeaturedArtists">Track Featured Artists</label>
+                  <input type="text" class="form-control" id="trackFeaturedArtists" #trackFeaturedArtists [value]="uploadService.trackList.results[trackIndexCurrentlyEditing].artistsFeaturedText" (change)="uploadService.updateField('artistsFeaturedText',trackFeaturedArtists.value,trackIndexCurrentlyEditing,currentTrackList)"
+                    placeholder="Track Featured Artists">
+                </div>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="form-group" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.startBpm?.isValid}">
+                      <label for="trackBPMStart">BPM Start</label><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="The BPM of the song." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+                      <input type="text" class="form-control" id="trackBPMStart" #trackBPMStart [value]="uploadService.trackList.results[trackIndexCurrentlyEditing].startBpm" (change)="uploadService.updateField('startBpm',trackBPMStart.value,trackIndexCurrentlyEditing,currentTrackList)"
+                        (blur)="uploadService.updateField('startBpm',trackBPMStart.value,trackIndexCurrentlyEditing,currentTrackList)" (focus)="trackBPMStart.value = (trackBPMStart.value === '0') ? '' : trackBPMStart.value" placeholder="BPM Start">
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.endBpm?.isValid}">
+                      <label for="trackBPMEnd">BPM End</label><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="If it’s a bpm transition the ending bpm of the song, if not leave blank." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+                      <input type="text" class="form-control" id="trackBPMEnd" #trackBPMEnd [value]="uploadService.trackList.results[trackIndexCurrentlyEditing].endBpm" (change)="uploadService.updateField('endBpm',trackBPMEnd.value,trackIndexCurrentlyEditing,currentTrackList)"
+                        (blur)="uploadService.updateField('endBpm',trackBPMEnd.value,trackIndexCurrentlyEditing,currentTrackList)" (focus)="trackBPMEnd.value = (trackBPMEnd.value === '0') ? '' : trackBPMEnd.value" placeholder="BPM End">
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.releaseYear?.isValid}">
+                      <label for="trackReleaseYear">Release Year</label><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="The exact release year this track was made public. (that would be this year if you are releasing it)" tooltipsterPosition="top"
+                        tooltipsterEvent="click"></i>
+                      <input type="text" class="form-control" id="trackReleaseYear" #trackReleaseYear [value]="uploadService.trackList.results[trackIndexCurrentlyEditing].releaseYear" (blur)="uploadService.updateField('releaseYear',trackReleaseYear.value,trackIndexCurrentlyEditing,currentTrackList)"
+                        (focus)="trackReleaseYear.value = (trackReleaseYear.value === '0') ? '' : trackReleaseYear.value" placeholder="Release Year">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="trackDescription">Track Description</label><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Just like in 1.0." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+                      <textarea id="trackDescription" class="form-control" #trackDescription [(ngModel)]="uploadService.trackList.results[trackIndexCurrentlyEditing].description" (blur)="uploadService.updateField('description',trackDescription.value,trackIndexCurrentlyEditing,currentTrackList)"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="animated fadeIn card" *ngIf="!uploadService.trackList.results[trackIndexCurrentlyEditing].crooklynClanv1AutoMigrated">
+          <div class="card-header clearfix">
+            <h3 class="card-title">Custom Snippet</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                <p>We will automatically generate a low-quality preview snippet for you at 64kbps, 3:30 in length starting from the beginning of the track. If you would like to upload a custom snippet, drop it here.</p>
+
+                <div class="form-group snippet-dropzone">
+                  Snippet Preview: <span *ngIf="uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFileStatus == 'processed'">{{uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFile?.originalname}}</span>
+
+                  <span *ngIf="!uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFileStatus">Not Set</span>
+
+
+                  <span *ngIf="uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFileStatus == 'processing'">Snippet is being processed. This may take a few seconds or several minutes.</span>
+
+                  <span class="submit-track-in-progress" *ngIf="trackSampleUpload.queue && trackSampleUpload.queue[0]">
+                    <div class="progress" style="margin-bottom: 0;">
+                      <span class="status-message" *ngIf="trackSampleUpload.queue[0]?.actualProgress < 100">{{trackSampleUpload.queue[0]?.actualProgress}}%</span>
+                  <span class="status-message" *ngIf="trackSampleUpload.queue[0]?.actualProgress == 100 || uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFileStatus == 'processing'">Processing...</span>
+                  <div class="progress-bar text-center" role="progressbar" [ngStyle]="{ 'width': trackSampleUpload.queue[0]?.actualProgress + '%' }">
+                  </div>
+                </div>
+                </span>
+
+                <i class="fa fa-play-circle text-link" *ngIf="!isPlayerPlaying && !trackSampleUpload.queue[0] && uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFile?.url && uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFileStatus == 'processed'"
+                  (click)="togglePlayPausePreview(uploadService.trackList.results[trackIndexCurrentlyEditing])"></i>
+
+                <i class="fa fa-pause-circle text-link" *ngIf="isPlayerPlaying && !trackSampleUpload.queue[0] && uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFile?.url && uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFileStatus == 'processed'"
+                  (click)="togglePlayPausePreview(uploadService.trackList.results[trackIndexCurrentlyEditing])"></i>
+
+                <i class="fa fa-trash text-link" *ngIf="!trackSampleUpload.queue[0] && uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFile?.url && uploadService.trackList.results[trackIndexCurrentlyEditing].customDraftSnippetFileStatus == 'processed'" (click)="uploadService.updateField('customDraftSnippetFile','remove',trackIndexCurrentlyEditing, currentTrackList); uploadService.updateField('customDraftSnippetFileStatus',null,trackIndexCurrentlyEditing, currentTrackList);"></i>
+
+                <div ng2FileDrop id="track-sample-upload" class="well my-drop-zone" [uploader]="trackSampleUpload">DROP SNIPPET PREVIEW</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="animated fadeIn card" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.versionType?.isValid}">
+        <div class="card-header clearfix">
+          <h3 class="card-title">Version Type (Select One)</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="This is the type of version the track is.  If it’s just a full length mix of what you are making choose “main mix”, if one of the other choices make more sense choose it."
+            tooltipsterPosition="top" tooltipsterEvent="click"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12 alphabetical-list">
+              <button type="button" *ngFor="let tag of tags.list | filterTagOptionsForSetting: [{tagField: 'Tag 2'}]" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].versionType == tag._id) ? 'green' : 'none'}" (click)="uploadService.updateField('versionType',tag._id,trackIndexCurrentlyEditing, currentTrackList)"
+                class="btn btn-primary col-xs-12 track-setting">{{tag.name}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="animated fadeIn card" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.cleanDirty?.isValid}">
+        <div class="card-header clearfix">
+          <h3 class="card-title">Explicit Rating (Select One)</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Be precise please.  Super Clean is a radio edit with nothing remotely explicit about it." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+        </div>
+        <div class="card-body">
+
+          <div class="row">
+            <div class="col-md-12">
+              <button type="button" *ngFor="let tag of tags.list | filterTagOptionsForSetting: [{tagField: 'Tag 1'}]" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].cleanDirty == tag._id) ? 'green' : 'none'}" (click)="uploadService.updateField('cleanDirty',tag._id,trackIndexCurrentlyEditing, currentTrackList)"
+                class="btn btn-primary col-xs-4 track-setting">{{tag.name}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="animated fadeIn card" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.introType?.isValid}">
+        <div class="card-header clearfix">
+          <h3 class="card-title">Intro Type (Select One)</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="If this track has a mixable intro, define the type here." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+        </div>
+        <div class="card-body">
+
+
+          <div class="row">
+            <div class="col-md-12 alphabetical-list">
+
+              <button type="button" *ngFor="let tag of tags.list | filterTagOptionsForSetting: [{tagField: 'Tag 3'}]" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].introType == tag._id) ? 'green' : 'none'}" (click)="uploadService.updateField('introType',tag._id,trackIndexCurrentlyEditing,currentTrackList)"
+                class="btn btn-primary col-xs-12 track-setting">{{tag.name}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="animated fadeIn card" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.outroType?.isValid}">
+        <div class="card-header clearfix">
+          <h3 class="card-title">Outro Type (Select One)</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="If this track has a mixable outro, define the type here." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12 alphabetical-list">
+              <button type="button" *ngFor="let tag of tags.list | filterTagOptionsForSetting: [{tagField: 'Tag 4'}]" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].outroType == tag._id) ? 'green' : 'none'}" (click)="uploadService.updateField('outroType',tag._id,trackIndexCurrentlyEditing,currentTrackList)"
+                class="btn btn-primary col-xs-12 track-setting">{{tag.name}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="animated fadeIn card" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.genres?.isValid}">
+        <div class="card-header clearfix">
+          <h3 class="card-title">Genres (Select Up To 3)</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Select at least one genre, but we suggest going with the 3 that make the most sense for the track.  Each genre you add will chart your track in that genre respectively.  Be accurate."
+            tooltipsterPosition="top" tooltipsterEvent="click"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12 alphabetical-list">
+              <button type="button" *ngFor="let genre of genres.list" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].genres.indexOf(genre.id) != -1) ? 'green' : 'none'}" (click)="uploadService.updateField('genres',genre.id,trackIndexCurrentlyEditing,currentTrackList)"
+                class="btn btn-primary col-md-12 track-setting">{{genre.name}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="animated fadeIn card" id="originalWorks" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.originalWorks?.isValid}">
+        <div class="card-header clearfix">
+          <h3 class="card-title">Original Works</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="This is where you claim the tracks used to make this production.  The fields are mandatory except for Featured Artist. Enter each and every original work you used to produce this track exactly how it appears on the version you used."
+            tooltipsterPosition="top" tooltipsterEvent="click"></i>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <ba-checkbox *ngIf="selectedCurrency.uploadsCanBeOriginalWorks" [(ngModel)]="uploadService.trackList.results[trackIndexCurrentlyEditing].isOriginal" (ngModelChange)="toggleTrackIsOriginal()" [label]="'This track is an original work.'"></ba-checkbox>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="trackOriginalWorkDraftName">Work Title</label>
+
+                <p-autoComplete inputStyleClass="form-control col-md-12" [style]="{'display':'block'}" #originalWorkNameField (onSelect)="addOriginalWorkToTrack(trackIndexCurrentlyEditing, originalWorkNameField.value)" id="originalWorkName" [(ngModel)]="draftOriginalWork.name"
+                  field="displayName" [suggestions]="suggestedOriginalWorksFromName" (completeMethod)="getSuggestedOriginalWorks($event, draftOriginalWork)"></p-autoComplete>
+
+
+              </div>
+              <div class="form-group">
+                <label for="trackOriginalWorkDraftVersion">Work Version</label><button class="btn btn-xs btn-primary" [ngStyle]="{background: 'green'}" (click)="draftOriginalWork.version = 'Orig. Mix'">Orig. Mix</button><button class="btn btn-xs btn-primary"
+                  [ngStyle]="{background: 'green'}" (click)="draftOriginalWork.version = 'Remix'">Remix</button>
+                <p-autoComplete inputStyleClass="form-control col-md-12" [style]="{'display':'block'}" #originalWorkVersionField (onSelect)="addOriginalWorkToTrack(trackIndexCurrentlyEditing, originalWorkVersionField.value)" id="originalWorkVersion" [(ngModel)]="draftOriginalWork.version"
+                  field="displayName" [suggestions]="suggestedOriginalWorksFromVersion" (completeMethod)="getSuggestedOriginalWorks($event, draftOriginalWork)"></p-autoComplete>
+
+              </div>
+              <div class="form-group">
+                <label for="trackOriginalWorkDraftArtists">Work Artists</label>
+                <p-autoComplete inputStyleClass="form-control col-md-12" [style]="{'display':'block'}" #originalWorkArtistsField (onSelect)="addOriginalWorkToTrack(trackIndexCurrentlyEditing, originalWorkArtistsField.value)" id="originalWorkArtists" [(ngModel)]="draftOriginalWork.artists"
+                  field="displayName" [suggestions]="suggestedOriginalWorksFromArtists" (completeMethod)="getSuggestedOriginalWorks($event, draftOriginalWork)"></p-autoComplete>
+
+
+              </div>
+              <div class="form-group">
+                <label for="trackOriginalWorkDraftArtistsFeatured">Work Featured Artists</label>
+
+                <p-autoComplete inputStyleClass="form-control col-md-12" [style]="{'display':'block'}" #originalWorkArtistsFeaturedField (onSelect)="addOriginalWorkToTrack(trackIndexCurrentlyEditing, originalWorkArtistsFeaturedField.value)" id="originalWorkArtistsFeatured"
+                  [(ngModel)]="draftOriginalWork.artistsFeatured" field="displayName" [suggestions]="suggestedOriginalWorksFromArtistsFeatured" (completeMethod)="getSuggestedOriginalWorks($event, draftOriginalWork)"></p-autoComplete>
+
+              </div>
+
+
+              <button class="btn btn-primary add-button col-md-12" (click)="addOriginalWorkToTrack(trackIndexCurrentlyEditing,
+              draftOriginalWork)" (click)="draftOriginalWork = {name: '',version:'',artists:'',artistsFeatured:''}" [disabled]="draftOriginalWork.name.trim().length < 1  || draftOriginalWork.version.trim().length < 1 || draftOriginalWork.artists.trim().length < 1"><i class="fa fa-plus"></i> Add Original Work </button>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="horizontal-scroll">
+                <table class="table table-condensed" *ngIf="uploadService.trackList.results[trackIndexCurrentlyEditing].originalWorks?.length > 0">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Title</th>
+                      <th>Version</th>
+                      <th>Artists</th>
+                      <th>Featured Artists</th>
+                      <th class="text-center">Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let originalWork of uploadService.trackList.results[trackIndexCurrentlyEditing].originalWorks; let originalWorkIndex = index;">
+                      <td class="text-left">{{ originalWork.name }}</td>
+                      <td>{{ originalWork.version }}</td>
+                      <td>{{ originalWork.artistsDisplayName || originalWork.artists }}</td>
+                      <td>{{ originalWork.artistsFeaturedDisplayName || originalWork.artistsFeatured }}</td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-danger" (click)="removeOriginalWorkToTrack(originalWorkIndex)"><i class="fa fa-trash"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="animated fadeIn card" [ngClass]="{'has-error': !uploadService.trackList.results[trackIndexCurrentlyEditing].validation?.fields?.gigTypes?.isValid}">
+        <div class="card-header clearfix">
+          <h3 class="card-title">Gig Types</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Today, on this day tell us exactly your feelings on which gig type from the choices you feel this track would fit best in.  You can add as many as you want but choose the one that fits it BEST first."
+            tooltipsterPosition="top" tooltipsterEvent="click"></i>
+
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card-header clearfix">
+                <h3 class="card-title">Event</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Select the event you feel this track is best suited for at the current moment.  You can choose more than one but only one at a time." tooltipsterPosition="top"
+                  tooltipsterEvent="click"></i>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12 alphabetical-list">
+                    <button *ngFor="let gigType of gigTypes.distinctList" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.name == gigType) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('name',gigType,trackIndexCurrentlyEditing,currentTrackList)"
+                      class="btn btn-primary col-xs-12 track-setting">{{gigType}}</button>
+                  </div>
+                </div>
+                <div class="row option-selection-container">
+                  <div class="col-md-4">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <h3>DJ Timing</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Again, exactly how you feel on this day about the track.
+1 - I would play this when people are walking into the venue for the gig type selected above.
+2. - I would play this when the room is starting to heat up before the main set of the evening at the gig type selected above.
+3. - This is a prime time banger that should be played in the meat of the event of the gig type selected above." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <button *ngFor="let option of [1,2,3]" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.djTiming == option) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('djTiming',option,trackIndexCurrentlyEditing,currentTrackList)"
+                            class="btn btn-primary col-md-4 track-setting">{{option}}</button>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <h3>Energy</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Same as before except this time,
+1 - This track has no energy at all at the gig type listed above.
+2. - This track has a mediocre energy level and will create some energy in the room at the gig type selected above.
+3. - This track will light the room up and have people losing their minds at the gig type listed above." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+
+                        <button *ngFor="let option of [1,2,3]" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.energy == option) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('energy',option,trackIndexCurrentlyEditing,currentTrackList)"
+                          class="btn btn-primary col-md-4 track-setting">{{option}}</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+
+                    <div class="row">
+                      <div class="col-md-12">
+
+                        <h3>Popularity</h3><i class="fa fa-question-circle-o tooltip-indicator" tooltipster="Same as before, except THIS time,
+1 - Nobody will know this track at the gig type selected above.
+2. - Roughly 50% of the people at the gig type selected above will find this track familiar.
+3. - There no chance that everyone at the gig type selected above won’t know this one." tooltipsterPosition="top" tooltipsterEvent="click"></i>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+
+                        <button *ngFor="let option of [1,2,3]" [ngStyle]="{background: (uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.popularity == option) ? 'green' : 'none'}" (click)="uploadService.setGigTypeEntry('popularity',option,trackIndexCurrentlyEditing,currentTrackList)"
+                          class="btn btn-primary col-md-4 track-setting">{{option}}</button>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="col-md-12">
+                    <button class="btn btn-primary col-md-12 add-button" (click)="setGigType()" [disabled]="!uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.popularity || !uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.energy || !uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.djTiming || !uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypeEntry?.name"><i class="fa fa-plus"></i> Add Gig Type</button>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="horizontal-scroll">
+            <table class="table table-condensed" *ngIf="uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypes?.length > 0">
+              <thead>
+                <tr>
+                  <th>Gig Type</th>
+                  <th>DJ Timing</th>
+                  <th>Energy</th>
+                  <th>Popularity</th>
+                  <th>Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let gigType of uploadService.trackList.results[trackIndexCurrentlyEditing].gigTypes; let gigTypeIndex = index">
+                  <td>{{gigType?.name}}</td>
+                  <td>{{gigType?.djTiming}}</td>
+                  <td>{{gigType?.energy}}</td>
+                  <td>{{gigType?.popularity}}</td>
+                  <td>
+                    <button class="btn btn-sm btn-danger" (click)="uploadService.updateField('gigTypeRemove',gigTypeIndex,trackIndexCurrentlyEditing,currentTrackList)"><i class="fa fa-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <button (click)="goToNextTrack()" class="btn btn-primary col-md-12 add-button"> Save Changes & Go To Next Track <i class="fa fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>

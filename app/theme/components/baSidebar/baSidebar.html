@@ -1,0 +1,6 @@
+<aside class="al-sidebar" (mouseleave)="hoverElemTop=outOfArea">
+  <ba-menu [menuRoutes]="routes"
+           [menuHeight]="menuHeight"
+           [sidebarCollapsed]="isMenuCollapsed"
+           (expandMenu)="menuExpand($event)"></ba-menu>
+</aside>

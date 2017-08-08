@@ -1,0 +1,120 @@
+<div bsModal #releaseEditorModal="bs-modal" class="modal fade track-editor-modal" [config]="{backdrop: false}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" (onShow)="scrollUp()">
+  <!-- <div id="previous-track" (click)="goToPreviousTrack()"><i class="fa fa-angle-left"></i></div>
+  <div id="next-track" (click)="goToNextTrack()"><i class="fa fa-angle-right"></i></div> -->
+
+  <div class="modal-dialog modal-lg" *ngIf="!releases.draftList[releaseIndexCurrentlyEditing]">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" [disabled]="isSnippetUploading" (click)="releaseEditorModal.hide()">
+          <span aria-hidden="true"><i class="fa fa-times-circle text-link"></i></span>
+        </button>
+
+        <h4 class="modal-title">Create New Release</h4>
+      </div>
+      <div class="modal-body">
+        <ba-card title="Basic Information">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group" [ngClass]="{'has-success':newReleaseIsUnique, 'has-danger': !newReleaseIsUnique}">
+                <label for="release-name" >Release Name</label>
+                  <input type="text"  id="release-name" class="form-control" [ngClass]="{'form-control-success':newReleaseIsUnique, 'form-control-danger': !newReleaseIsUnique}" #releaseName [(ngModel)]="newReleaseName" (ngModelChange)="checkAgainstDuplicateReleaseName(newReleaseName)"
+                    (keyup.enter)="createRelease(releaseName.value,currencyMediaType)" autofocus />
+                  <div class="form-control-feedback" *ngIf="!newReleaseIsUnique">This release name is already taken. Please modify and try again.</div>
+                  <button class="btn btn-primary" [disabled]="!newReleaseIsUnique" (click)="createRelease(releaseName.value,currencyMediaType)" >Create</button>
+              </div>
+            </div>
+          </div>
+        </ba-card>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-dialog modal-lg" *ngIf="releases.draftList[releaseIndexCurrentlyEditing]">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="releaseEditorModal.hide()">
+          <span aria-hidden="true"><i class="fa fa-times-circle text-link"></i></span>
+        </button>
+
+        <h4 class="modal-title">Edit Release Data for {{releases.draftList[releaseIndexCurrentlyEditing].name}}</h4>
+      </div>
+      <div class="modal-body">
+                <ba-card title="Release Name">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group" [ngClass]="{'has-success':newReleaseIsUnique, 'has-danger': !newReleaseIsUnique}">
+                <label for="release-name">Release Name</label>
+                  <input type="text"  id="release-name" class="form-control" [ngClass]="{'form-control-success':newReleaseIsUnique, 'form-control-danger': !newReleaseIsUnique}" #releaseName [(ngModel)]="releases.draftList[releaseIndexCurrentlyEditing].name" (ngModelChange)="checkAgainstDuplicateReleaseName(releases.draftList[releaseIndexCurrentlyEditing].name,releases.draftList[releaseIndexCurrentlyEditing]._id)"
+                    (blur)="updateRelease(releases.draftList[releaseIndexCurrentlyEditing])" />
+                  <div class="form-control-feedback" *ngIf="!newReleaseIsUnique">This release name is already taken. Please modify and try again.</div>
+              </div>
+            </div>
+          </div>
+        </ba-card>
+        <!--<ba-card title="Basic Information" *ngIf="selectedCurrency.slug == 'audio-vault' " [ngClass]="{'has-error': !releases.draftList[releaseIndexCurrentlyEditing].validation?.fields?.description }">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="release-description">Release Description</label>
+                   <textarea id="release-description" class="form-control" #releaseDescription [(ngModel)]="releases.draftList[releaseIndexCurrentlyEditing].description" (blur)="updateRelease(releases.draftList[releaseIndexCurrentlyEditing])"></textarea>
+              </div>
+            </div>
+          </div>
+        </ba-card> -->
+
+         <!--<ba-card title="Release Snippet" *ngIf="selectedCurrency.slug == 'audio-vault' " [ngClass]="{'has-error': !releases.draftList[releaseIndexCurrentlyEditing].validation?.fields?.crooklynClanv1SampleTrackUrl }">
+          <!-- <table class="table" *ngIf="releases.draftList[releaseIndexCurrentlyEditing].tracks">
+            <thead>
+              <tr>
+                <th>Track Name</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let track of releases.draftList[releaseIndexCurrentlyEditing].tracks">
+                <td>{{track.name}}</td>
+              </tr>
+            </tbody>
+          </table> 
+          <div class="form-group">
+            <p>Snippet Preview: <span *ngIf="releases.draftList[releaseIndexCurrentlyEditing].crooklynClanv1SampleTrackFileName && !selectedUploader.queue[0]">{{releases.draftList[releaseIndexCurrentlyEditing].crooklynClanv1SampleTrackOriginalFileName}}</span>
+              <span *ngIf="!releases.draftList[releaseIndexCurrentlyEditing].crooklynClanv1SampleTrackFileName">Not Set</span>
+              <span class="submit-track-in-progress" *ngIf="selectedUploader.queue[0]">                
+                <div class="progress" style="margin-bottom: 0;">
+                    <span class="status-message" *ngIf="selectedUploader.queue[0]?.actualProgress < 100">{{selectedUploader.queue[0]?.actualProgress}}%</span>
+                    <span class="status-message" *ngIf="selectedUploader.queue[0]?.actualProgress == 100">Processing...</span>
+                    <div class="progress-bar text-center" role="progressbar" [ngStyle]="{ 'width': selectedUploader.queue[0]?.actualProgress + '%' }">
+                  </div>
+                </div>
+              </span>
+
+        <i class="fa fa-play-circle text-link" *ngIf="!isPlayerPlaying && !selectedUploader.queue[0] && releases.draftList[releaseIndexCurrentlyEditing].crooklynClanv1SampleTrackFileName" (click)="togglePlayPause(releases.draftList[releaseIndexCurrentlyEditing])"></i>
+
+        <i class="fa fa-pause-circle text-link" *ngIf="isPlayerPlaying && !selectedUploader.queue[0] && releases.draftList[releaseIndexCurrentlyEditing].crooklynClanv1SampleTrackFileName" (click)="togglePlayPause(releases.draftList[releaseIndexCurrentlyEditing])"></i>
+
+            </p>
+            <div ng2FileDrop
+              id="release-sample-upload"
+                 class="well my-drop-zone"
+              [uploader]="selectedUploader">DROP SNIPPET PREVIEW</div>
+          </div>
+        </ba-card> -->
+
+         <!--<ba-card title="Genres (Select Up To 3)" *ngIf="selectedCurrency.slug == 'audio-vault' " [ngClass]="{'has-error': !releases.draftList[releaseIndexCurrentlyEditing].validation?.fields?.genres }">
+          <div class="row">
+            <div class="col-md-12 alphabetical-list">
+              <button type="button" *ngFor="let genre of genres.list" [ngStyle]="{background: (releases.draftList[releaseIndexCurrentlyEditing].genres.indexOf(genre.id) != -1) ? 'green' : 'none'}" class="btn btn-primary col-md-12 track-setting" (click)="updateGenres(releaseIndexCurrentlyEditing, genre)">{{genre.name}}</button>
+            </div>
+          </div>
+        </ba-card>-->
+
+        <div class="row">
+          <div class="col-md-12">
+            <button (click)="modal.hide()" class="btn btn-primary col-md-12 add-button"> Save Changes <!-- & Go To Next Track --> <i class="fa fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

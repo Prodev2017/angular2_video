@@ -1,0 +1,190 @@
+@import '../../sass/conf/conf';
+@import '../../components/baMsgCenter/baMsgCenter';
+
+.page-top {
+  background-color: #000000;
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.5);
+  min-width: 320px;
+  padding: 0 12px 0 12px; }
+  .page-top .dropdown-toggle::after {
+    display: none; }
+
+    .col-xs-1-5 {
+    	width: 20%;
+    	float: left;
+    	position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    }
+    @media (min-width: 768px) {
+    	.col-sm-1-5 {
+    		width: 20%;
+    		float: left;
+    		position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    	}
+    }
+    @media (min-width: 992px) {
+    	.col-md-1-5 {
+    		width: 20%;
+    		float: left;
+    		position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    	}
+    }
+    @media (min-width: 1200px) {
+    	.col-lg-1-5 {
+    		width: 20%;
+    		float: left;
+    		position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    	}
+    }
+
+    .col-xs-4-5 {
+    	width: 80%;
+    	float: left;
+    	position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    }
+    @media (min-width: 768px) {
+    	.col-sm-4-5 {
+    		width: 80%;
+    		float: left;
+    		position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    	}
+    }
+    @media (min-width: 992px) {
+    	.col-md-4-5 {
+    		width: 80%;
+    		float: left;
+    		position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    	}
+    }
+    @media (min-width: 1200px) {
+    	.col-lg-4-5 {
+    		width: 80%;
+    		float: left;
+    		position: relative;
+    min-height: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    	}
+    }
+
+    .toolbar {
+      padding: 0px 0px 0px 15px;
+    }
+
+.blur .page-top.scrolled {
+  background-color: rgba(0, 0, 0, 0.85); }
+
+a.al-logo {
+  color: #ffffff;
+  display: block;
+  font-size: 24px;
+  font-family: "Roboto", sans-serif;
+  white-space: nowrap;
+  float: left;
+  outline: none !important;
+  line-height: 60px;
+  margin-left: -5px;
+  img {
+    max-height: 150px;
+    padding: 12px 0px;
+    max-width: 100%;
+  }
+  span {
+    color: #001264; }
+    }
+
+.user-profile {
+  float: right;
+  min-width: 230px;
+  margin-top: 10px; }
+
+.al-user-profile {
+  float: none;
+  margin-top: 10px;
+  position: absolute;
+  right: 10px;
+  top: 0px;
+  z-index: 100;
+  a {
+    display: block; }
+  img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%; }
+  }
+
+a.refresh-data {
+  color: #ffffff;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 400;
+  float: right;
+  margin-top: 13px;
+  margin-right: 26px;
+  &:hover {
+    color: #e7ba08 !important; }
+    }
+
+
+
+.al-skin-dropdown {
+  float: right;
+  margin-top: 14px;
+  margin-right: 26px;
+  .tpl-skin-panel {
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden; }
+  }
+
+.icon-palette {
+  display: inline-block;
+  width: 14px;
+  height: 13px;
+  background: url("assets/img/theme/palette.png");
+  background-size: cover; }
+
+
+.now-playing {
+  float: left; }
+
+@media screen and (max-width: 660px) {
+  .search {
+    display: none; } }
+
+@media screen and (max-width: 500px) {
+  .page-top {
+    padding: 0 20px; } }
+
+@media (max-width: 435px) {
+  .user-profile {
+    min-width: 136px; }
+  a.refresh-data {
+    margin-right: 10px; }
+  a.collapse-menu-link {
+    margin-left: 10px; }
+  .al-skin-dropdown {
+    display: none; } }
+
+.profile-toggle-link {
+  cursor: pointer; }

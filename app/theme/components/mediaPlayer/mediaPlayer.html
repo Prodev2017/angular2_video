@@ -1,0 +1,26 @@
+<div class="row" id="mediaplayer-container" [ngClass]="{'audio': fileType != 'video', 'video': fileType == 'video'}">
+  <div class="col-md-2 track-playing-information">
+    <p>
+      <small class="text-red text-uppercase">Now Playing</small>
+    </p>
+    <p>
+      <span class="track-playing-title"><strong>{{currentTrack?.name}}</strong></span><br/>
+      <span class="track-playing-version" [hidden]="!currentTrack?.version">({{ currentTrack?.version}})</span>
+    </p>
+    <p>
+      <span class="track-playing-artists"><strong>{{currentTrack?.artistPrimaryName}}</strong></span><br/>
+      <span [hidden]="currentTrack.artistsFeaturedPrimaryName" class="track-playing-featured-artists">{{currentTrack?.artistsFeaturedPrimaryName}}</span>
+    </p>
+  </div>
+      <div class="col-md-10" [hidden]="!showTrackPlayer">
+      <i class="fa fa-play-circle" (click)="togglePlay()" *ngIf="!isPlaying" aria-hidden="true"></i>
+      <i class="fa fa-pause-circle" (click)="togglePlay()" *ngIf="isPlaying" aria-hidden="true"></i>
+        <video id="player_videojs" controls #videoPlayer class="video-js vjs-default-skin" height="125">
+         <source [src]="trackUrl" type="video/mp4"/>
+        </video>
+    </div>
+
+        <!--div class="social-media-icons">
+          <i class="fa fa-cloud-download" aria-hidden="true"></i>
+          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+        </div-->

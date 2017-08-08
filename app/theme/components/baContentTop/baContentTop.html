@@ -1,0 +1,37 @@
+<div class="content-top clearfix">
+  <div class="row" id="track-list-features">
+    <div class="col-md-12">
+      <a (click)="toggleMenu()" class="collapse-menu-link ion-navicon"></a>
+
+      <!--<label for="columnSelector">Select Columns:
+        <p-multiSelect id="columnSelector" [options]="columnOptions" styleClass="columnSelector" [(ngModel)]="trackColumnsSelected" (ngModelChange)="outputSettings()"></p-multiSelect>
+      </label>-->
+      <!-- <h3 class="al-title">{{selectedCurrency}} / {{ activePageTitle }}</h3> -->
+      <div class="search bubble-container col-md-6">
+        <input id="searchInput" (keydown)="startSearch()" type="text" placeholder="Search for...">
+      </div>
+      <p-overlayPanel #op id="track-columns-selector">
+        <h3>Column Toggle</h3>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.added" (ngModelChange)="updateSelectedColumns($event)" onLabel="Added" offLabel="Added"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.editor" (ngModelChange)="updateSelectedColumns($event)" onLabel="Editor" offLabel="Editor"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.artist" (ngModelChange)="updateSelectedColumns($event)" onLabel="Artist" offLabel="Artist"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.bpm" (ngModelChange)="updateSelectedColumns($event)" onLabel="BPM" offLabel="BPM"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.key" (ngModelChange)="updateSelectedColumns($event)" onLabel="Key" offLabel="Key"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.tags" (ngModelChange)="updateSelectedColumns($event)" onLabel="Tags" offLabel="Tags"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.genres" (ngModelChange)="updateSelectedColumns($event)" onLabel="Genres" offLabel="Genres"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.year" (ngModelChange)="updateSelectedColumns($event)" onLabel="Year" offLabel="Year"></p-toggleButton>
+        <p-toggleButton [(ngModel)]="trackColumnsSelected.time" (ngModelChange)="updateSelectedColumns($event)" onLabel="Time" offLabel="Time"></p-toggleButton>
+      </p-overlayPanel>
+      <button class="btn btn-link col-md-2" (click)="op.toggle($event)">Select Columns</button>
+      <div class="crate-editor-button currency-balance bubble-container text-center col-md-2" (click)="toggleCrateEditor()">
+        <span>Crate Editor</span>
+      </div>
+      <div class="my-library-button currency-balance bubble-container text-center col-md-2" (click)="getMyLibrary()">
+        <span>My Library</span>
+      </div>
+      <!-- <div class="expiration-date bubble-container text-right">
+        <span class="text-danger">Expires:</span> 24d, 13h, 54m
+      </div> -->
+    </div>
+</div>
+</div>

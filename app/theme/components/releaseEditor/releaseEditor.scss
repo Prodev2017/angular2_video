@@ -1,0 +1,197 @@
+.modal {
+      top: 150px;
+      &.fade.in {
+        background-color: rgba(0,0,0,0.8);
+      }
+      .modal-dialog {
+        margin-top: 0px;
+      }
+      .modal-body {
+        height: 64vh;
+        overflow: auto;
+      }
+      .modal-header .fa-play-circle,
+      .modal-header .fa-pause-circle, {
+        float: right;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1;
+        color: white;
+        text-shadow: 0 1px 0 #fff;
+        margin-top: -2px;
+        margin-right: 5px;
+      }
+}
+.modal-content {
+  background-color: #000000;
+  color: white;
+
+
+}
+  .modal-content .close {
+    opacity: 1;
+
+    span {
+    color: white;
+  }
+}
+
+.col-xs-15,
+.col-sm-15,
+.col-md-15,
+.col-lg-15 {
+  position: relative;
+  min-height: 1px;
+  padding-right: 10px;
+  padding-left: 10px; }
+
+.col-xs-15 {
+  width: 20%;
+  float: left; }
+
+@media (min-width: 768px) {
+  .col-sm-15 {
+    width: 20%;
+    float: left; } }
+
+@media (min-width: 992px) {
+  .col-md-15 {
+    width: 20%;
+    float: left; } }
+
+@media (min-width: 1200px) {
+  .col-lg-15 {
+    width: 20%;
+    float: left; } }
+
+.suggestion-box {
+  position: absolute;
+  background-color: black;
+  width: 90%;
+  left: 50px;
+  z-index: 10; }
+  .suggestion-box ul li {
+    cursor: pointer; }
+
+button.btn.btn-primary {
+  border: solid 1px transparent;
+  cursor: pointer;
+  text-align:center;
+  border-radius: 7px;
+  &:hover {
+    border: solid 1px transparent;
+  }
+}
+
+.add-button {
+  margin-bottom: 20px;
+
+}
+
+#originalWorks .form-group{
+  margin-bottom: 50px;
+  overflow: visible;
+  position:relative;
+}
+
+table thead tr td,
+table tbody tr td {
+  padding: 0.75rem;
+}
+
+.track-editor-modal table.table.table-condensed > thead > tr > th {
+  text-transform: uppercase;
+}
+
+
+button.track-setting {
+  white-space:normal;
+  padding: 12px 5px;
+    margin: 2px 0px;
+    border-radius: 9px;
+    border:solid 1px transparent;
+
+    &:hover {
+      border:solid 1px white!important;
+    }
+ }
+
+#next-track,
+#previous-track {
+  position: fixed;
+  top: calc(50% - 10rem);
+  font-size: 20rem;
+  color: white;
+  opacity: 0.3;
+  -moz-transition: color 1s 0.5s;
+  -o-transition: color 1s 0.5s;
+  -webkit-transition: color 1s 0.5s;
+  transition: color 1s 0.5s;
+ }
+  #next-track:hover,
+  #previous-track:hover {
+    color: gray;
+    opacity: 0.7; }
+
+#next-track {
+  right: 15%; }
+
+#previous-track {
+  left: 15%; }
+
+  .btn.btn-primary.add-button {
+    background: green;
+  }
+
+.card > .card-body > .card > .card-body {
+  padding: 4px 6px;
+}
+
+.alphabetical-list {
+      -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+  .btn.btn-primary {
+    float:none;
+  }
+}
+
+.my-drop-zone {
+    border: dashed 1px white;
+    padding: 10px;
+  text-align:center;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  
+  height:100%;
+  background-color:red;
+      -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-transition: width .25s ease;
+    -o-transition: width .25s ease;
+    transition: width .25s ease;
+}
+
+.progress {
+  position:relative;
+  overflow:hidden;
+  height: 24px;
+  border-radius: 25px;
+  border: solid 1px transparent;
+  width:200px;
+  text-align:center;
+  display:inline-block;
+  vertical-align:middle;
+}
+
+.status-message {
+  margin:auto;
+  position:absolute;
+  z-index: 10;
+  width: 100%;
+  max-width: 100%;
+  left: 0px;
+  padding: 3px 0px;
+}

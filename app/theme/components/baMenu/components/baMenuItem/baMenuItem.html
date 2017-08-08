@@ -1,0 +1,23 @@
+<li *ngIf="!menuItem.hidden" (click)="onSelectItem(menuItem)" [title]="menuItem.title" [ngStyle]="{'background-color': (menuItem.route.type == 'currency' && appState.get('selectedCurrency')?._id == menuItem.route.id) ? menuItem.color : '' }" [ngClass]="{'al-sidebar-list-item': !child, 'ba-sidebar-sublist-item': child, 'selected': menuItem.selected || appState.get('selectedCurrency')?._id == menuItem.route.id, 'with-sub-menu': menuItem.children, 'disabled': (menuItem.route.type == 'currency' && !menuItem.enabled), 'ba-sidebar-item-expanded': menuItem.expanded}">
+
+  <a *ngIf="!menuItem.children && menuItem.route.type == 'currency'" (mouseenter)="onHoverItem($event, item)" href="javascript:void(0)" class="al-sidebar-list-link" >
+    <!-- <i *ngIf="menuItem.icon" class="{{ menuItem.icon }}"></i> --><span>{{ menuItem.title }}</span>
+  </a>
+
+  <a *ngIf="!menuItem.children && menuItem.route.type != 'currency'" (mouseenter)="onHoverItem($event, item)" [href]="menuItem.url" [target]="menuItem.target" class="al-sidebar-list-link text-center">
+    <!-- <i *ngIf="menuItem.icon" class="{{ menuItem.icon }}"></i> --><span>{{ menuItem.title }}</span>
+  </a>
+
+  <a *ngIf="menuItem.children" (mouseenter)="onHoverItem($event, item)" class="al-sidebar-list-link text-center">
+    <!-- <i *ngIf="menuItem.icon" class="{{ menuItem.icon }}"></i> --> <span>{{ menuItem.title }}</span>
+    <!-- <b class="fa fa-angle-down" [ngClass]="{'fa-angle-up': menuItem.expanded}"></b> -->
+  </a>
+
+  <ul *ngIf="menuItem.children" class="al-sidebar-sublist" [ngClass]="{'slide-right': menuItem.slideRight}">
+    <ba-menu-item [menuItem]="subItem"
+                  [child]="true"
+                  (itemHover)="onHoverItem($event)"
+                  *ngFor="let subItem of menuItem.children"></ba-menu-item>
+  </ul>
+
+</li>
