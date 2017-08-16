@@ -1,7 +1,8 @@
 <div class="auth-main">
   <div class="auth-block">
     <h1><img [src]="logoUrl" /></h1>
-    <a routerLink="/register/customer" class="auth-link">New to Crooklyn Clan? Sign up!</a>
+    <a routerLink="/register/customer" class="auth-link btn btn-warning">New to Crooklyn Clan? <strong>SIGN UP HERE</strong><br/>Users of the original Crooklyn Clan Vault will need to sign up for a new account.
+</a>
     <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)" class="form-horizontal">
 
       <div class="form-group row" [ngClass]="{'has-error': (!email.valid && email.touched), 'has-success': (email.valid && email.touched)}">

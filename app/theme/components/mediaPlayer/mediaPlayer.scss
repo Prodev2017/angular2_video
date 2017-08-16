@@ -87,3 +87,39 @@
   
 }
 
+.track-action-buttons-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    .action-button-link:hover {
+      cursor: pointer;
+    }
+    .fa.track-player-action-button {
+    font-size: 1.5rem;
+    display: inline-block;
+    padding-left: 10px;
+}
+}
+
+.media-player-videojs {
+  
+  display:flex;
+  .play-pause-button {
+    flex: 0;
+  }
+  
+  #player_videojs {
+    flex: 1;
+    .vjs-control-bar {
+      width: 100%;
+    }
+  }
+}
+
+
+.video .video-js .vjs-tech {
+  width:auto!important;
+  z-index:10;
+  
+}

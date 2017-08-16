@@ -22,6 +22,7 @@ export class MediaPlayer {
   selectedCurrencyColor:string;
   waveformUrl:string = '';
   mediaElt:any;
+  showActionButtons:boolean = false;
   fileType:string;
   showTrackPlayer:boolean = false;
   isVideoJSInitialized:boolean = false;
@@ -45,6 +46,12 @@ export class MediaPlayer {
         this.selectedCurrencyColor = data.color;
 
       }));
+      
+      this.events.push(this._state.subscribe('store.active', (data) => {
+        
+        this.showActionButtons = data;
+        
+      }))
     
     this.events.push(this._state.subscribe('waveform.seekChange', (data) => {
       
@@ -63,6 +70,7 @@ export class MediaPlayer {
       this.isPlaying = true;
 
     }));
+  
     
     this.events.push(this._state.subscribe('player.pause', () => {
       
@@ -122,13 +130,24 @@ export class MediaPlayer {
     
   }
   
+  performTrackListAction(action) {
+    console.log('clicked action', action);
+    this._state.notifyDataChanged('trackAction.execute', {action:action, track:this.currentTrack} );
+    
+  }
+  
   public initVideoJS() {
         if(!this.isVideoJSInitialized) {
           
         
         var self = this;
 
+        this.videoPlayer.nativeElement.addEventListener('contextmenu',function(e) { e.preventDefault();
+ });
+        
         videojs(this.videoPlayer.nativeElement).on('ready', function() {
+          
+          
       
           var element:any = document.querySelector('#player_videojs .vjs-control-bar');
           element.style.backgroundImage = "url(" + self.waveformUrl + ")";

@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { NgaModule } from '../../theme/nga.module';
 
 import { routing } from './tracks.routing';
+import { Router, RouterModule }  from '@angular/router';
 
 import { Tracks } from './tracks.component';
 import { TrackList } from './components/trackList/trackList.component';
 import { ModalModule, DropdownModule, TabsModule } from 'ng2-bootstrap/ng2-bootstrap';
-import {
+import { DataTableModule,
+AccordionModule,
 DataListModule,
          RadioButtonModule,
         SharedModule,
@@ -18,7 +20,6 @@ DataListModule,
         ToggleButtonModule,
         ContextMenuModule,
         CheckboxModule} from 'primeng/primeng';
-import {DataTableVirtualScrollModule} from './components/trackList/tableVirtualScroll';
 
 @NgModule({
   imports: [
@@ -26,10 +27,11 @@ import {DataTableVirtualScrollModule} from './components/trackList/tableVirtualS
     FormsModule,
     NgaModule,
     routing,
-    DataTableVirtualScrollModule,
+    DataTableModule,
     SharedModule,
     ListboxModule,
     OverlayPanelModule,
+    AccordionModule,
     ButtonModule,
     ToggleButtonModule,
     ContextMenuModule,
@@ -43,9 +45,6 @@ import {DataTableVirtualScrollModule} from './components/trackList/tableVirtualS
   declarations: [
     Tracks,
     TrackList,
-  ],
-  exports: [
-    NgaModule
   ]
 })
 export default class TracksModule {}

@@ -83,26 +83,37 @@ export class UploadService {
   updateTracksByValidationStatus() {
     
       //console.log('updating lists by validation statuses');
-      
-      this.tracksReadyToPublish.results = this.trackList.results.filter( (item) => {
+
+      var tracksReadyToPublish = this.trackList.results.filter( (item) => {
         
-        return item.validation && item.validation.isTrackValid && ( item.releases.length == 0 || item.crooklynClanv1AutoMigrated);
+        return item.validation && item.validation.isTrackValid && ( item.releases.length == 0 || item.crooklynClanv1AutoMigrated || item.inRevisionMode);
         
       });
       
-      this.tracksNotReadyToPublish.results = this.trackList.results.filter( (item) => {
+      console.log('list of tracks ready to publish', tracksReadyToPublish);
+      
+      var tracksNotReadyToPublish = this.trackList.results.filter( (item) => {
         
         return (!item.validation || !item.validation.isTrackValid) && !item.crooklynClanv1AutoMigrated;
         
       });
       
-      this.draftMigratedTracks.results = this.trackList.results.filter( (item) => {
+      var draftMigratedTracks = this.trackList.results.filter( (item) => {
         
         return (!item.validation || !item.validation.isTrackValid) && item.crooklynClanv1AutoMigrated;
         
       });
 
-      this.tracksReadyToPublishCount = this.tracksReadyToPublish.results.length;
+      var tracksReadyToPublishCount = this.tracksReadyToPublish.results.length;
+      
+      this.tracksReadyToPublish.results = tracksReadyToPublish;
+      
+      this.tracksNotReadyToPublish.results = tracksNotReadyToPublish;
+      
+      this.draftMigratedTracks.results = draftMigratedTracks;
+      
+      this.tracksReadyToPublishCount = tracksReadyToPublishCount;
+      
       
   }
 

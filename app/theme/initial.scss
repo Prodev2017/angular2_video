@@ -2,6 +2,25 @@
 @import 'sass/preloader';
 @import 'sass/ionicons';
 
+#no-mobile {
+    display:none;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 99999999;
+    top: 0;
+    background: black;
+    color: white;
+    text-align: center;
+    
+}
+@media (max-width: 967px) {
+    #no-mobile {
+        display: block;
+    }
+}
+
+
 body {
   background: #000000;
 }
@@ -36,14 +55,6 @@ body {
   position: fixed;
   width: 100%;
   bottom: 25px;
-}
-
-
-pages {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 }
 
 datepicker {
@@ -283,11 +294,14 @@ uploader .ui-datatable tbody tr.ui-widget-content td {
   margin-top: 15px;
 }
 
+/*
+Originally requested removal of scrollbar 9/23/16
+Restored default scrollbar on 6/8/17
 .ui-datatable-scrollable-body {
   &::-webkit-scrollbar {
     width: 0;
   }
-}
+}*/
 
 .ui-datatable .ui-sortable-column-icon {
   display: inline!important;
@@ -469,9 +483,9 @@ uploader tr.ui-widget-content+tr {
 }
 
 .ui-growl-item p {
-
+  
   word-wrap: break-word;
-
+  
 }
 
 .form-control:focus {
@@ -593,11 +607,9 @@ uploader tr.ui-widget-content+tr {
 
 #player_videojs.video-js .vjs-control-bar {
   position: absolute;
-  left: 232px;
   display: block;
   height: 125px;
   background-color: black;
-  width: 36vw;
 }
 
 #player_videojs.video-js .vjs-volume-menu-button,
@@ -662,7 +674,6 @@ uploader tr.ui-widget-content+tr {
 
 #mediaplayer-container.audio #player_videojs.video-js .vjs-control-bar {
   left: 15px;
-  width: 47vw;
 }
 
 #mediaplayer-container.audio .vjs-loading-spinner {
@@ -771,6 +782,10 @@ div.ui-datatable-scrollable-view{
   min-width: 1100px;
 }
 
+.publish-tracks-and-zips .ui-datatable-scrollable-view {
+  min-width: 100%;
+}
+
 .ui-paginator-bottom.ui-paginator.ui-widget.ui-widget-header.ui-unselectable-text {
   border:none;
 }
@@ -791,128 +806,37 @@ ul.footer-links {
   }
 }
 
+.ui-paginator-page.ui-paginator-element.ui-state-default.ui-corner-all.ui-state-active {
+  background: white!important;
+  color: black!important;
+}
 
 
-.responsive-table-wrap {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 1;
-  position: relative;
-  overflow: auto;
+.track-list-container .ui-accordion .ui-accordion-header.ui-state-default, 
+.track-list-container .ui-accordion .ui-accordion-header.ui-state-active {
+    font-size: 16px;
+    font-weight: bold;
+}
 
-  &::before {
-    content: ' ';
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 21px;
-    margin-top: 5px;
-    background-color: #1d1d1d;
-  }
+.btn.btn-warning {
+  color:black!important;
+}
 
-  .responsive-table {
-    max-height: calc(100vh - 327px);
+.btn.btn-warning:hover {
+  background: white!important;
+  border-color:white!important;
+  color:black!important;
+}
 
 
-    flex-shrink: 1;
+.video #player_videojs .vjs-control-bar {
+  width:calc(100% - 230px)!important;
+  left:initial!important;
+  right:0!important;
+}
 
-    overflow-x: hidden;
-    overflow-y: auto;
-    margin-top: 30px;
-
-    table {
-      width: 100%;
-      thead, tfoot {
-        th, td {
-          height: 0;
-          line-height: 0;
-          padding-top: 0;
-          padding-bottom: 0;
-          color: transparent;
-          border: none;
-          white-space: nowrap;
-
-          &>div {
-            display: inline-block;
-            top: 0;
-            line-height: 1rem;
-            color: white;
-            padding-left: 6px;
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            position: absolute;
-          }
-
-
-          &[sortable]>div {
-            cursor: pointer;
-          }
-        }
-      }
-      tbody td {
-        vertical-align: middle;
-      }
-
-      &.full-width-dividers {
-        th, td {
-          border-top: 0;
-
-        }
-
-        tbody {
-          tr td {
-            position: relative;
-          }
-        }
-      }
-    }
-
-
-
-
-
-    table {
-      th div {
-        font-size: 12px!important;
-        text-align: center;
-      }
-      tbody tr {
-        height: 8vh!important;
-        background-color: #313131;
-        border-top: 5px solid #000 !important;
-        border-bottom: 5px solid #000 !important;
-      }
-      td {
-        vertical-align: middle!important;
-        //text-align: center;
-        min-width: 50px;
-        padding-left: 6px;
-        padding-right: 6px;
-
-        .ui-cell-data {
-          font-size: 12px!important;
-          .tag-item {
-            font-size: 8px;
-            text-transform: uppercase;
-            line-height: 10px;
-            margin: 3px 0;
-          }
-        }
-
-        &.cell-actions {
-          min-width: 140px;
-        }
-
-        &[name=artist],
-        &[name=name] {
-          word-break: break-all;
-        }
-      }
-    }
-  }
-
-  &.filter-active .responsive-table {
-    max-height: calc(100vh - 577px);
-  }
-
+.ui-radiobutton-label {
+  
+  font-weight: bold!important;
+  
 }

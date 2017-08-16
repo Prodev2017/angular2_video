@@ -84,7 +84,6 @@ export class MemberProfile {
 
   setAddress() {
 
-    var thePlaceSelected = this.autocompleteAddressService.getPlace();
     var components = {
             street_number: '',
           route: '',
@@ -103,27 +102,36 @@ export class MemberProfile {
         country: 'long_name',
         postal_code: 'short_name'
       };
+      
+      if(this.autocompleteAddressService){
+        
+     
+          var thePlaceSelected = this.autocompleteAddressService.getPlace();
 
-        for (var i = 0; i < thePlaceSelected.address_components.length; i++) {
-          var addressType = thePlaceSelected.address_components[i].types[0];
-          if (componentForm[addressType]) {
-            var val = thePlaceSelected.address_components[i][componentForm[addressType]];
-            components[addressType] = val;
-          }
-        }
-        
-        var locationData = {
-          street1: components.street_number + ' ' + components.route,
-          suburb: components.sublocality_level_1 || components.locality,
-          state: components.administrative_area_level_1,
-          postcode: components.postal_code,
-          country: components.country
-        }
-        
-        
+      }
+      
+    if(thePlaceSelected && thePlaceSelected.address_components && thePlaceSelected.formatted_address) {
+      
+              for (var i = 0; i < thePlaceSelected.address_components.length; i++) {
+              var addressType = thePlaceSelected.address_components[i].types[0];
+              if (componentForm[addressType]) {
+                var val = thePlaceSelected.address_components[i][componentForm[addressType]];
+                components[addressType] = val;
+              }
+            }
+            
+            var locationData = {
+              street1: components.street_number + ' ' + components.route,
+              suburb: components.sublocality_level_1 || components.locality,
+              state: components.administrative_area_level_1,
+              postcode: components.postal_code,
+              country: components.country
+            }
+            
+                    this.addressText.setValue(thePlaceSelected.formatted_address);
         this.address.setValue(locationData);
-        this.addressText.setValue(thePlaceSelected.formatted_address);
-        
+
+    }
 
   }
   

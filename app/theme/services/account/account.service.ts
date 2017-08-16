@@ -43,6 +43,13 @@ export class Account {
   getDownloadQueueForCurrency(currencyId, filters) {
     
         var queryString = [];
+        
+            if(filters.textSearchField && filters.textSearchField.length > 0) {
+      
+      queryString.push('q=' + encodeURIComponent(filters.textSearchField));
+      
+    }
+
 
     //Genre Filter Query Parameters
     if(filters.genres && filters.genres.length > 0) {

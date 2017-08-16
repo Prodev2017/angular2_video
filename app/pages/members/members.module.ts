@@ -9,10 +9,10 @@ import { MemberProfile } from './components/profile/profile.component';
 
 import { TabsModule, DatepickerModule, ModalModule } from 'ng2-bootstrap/ng2-bootstrap';
 
-import { AccordionModule, OverlayPanelModule,
+import { AccordionModule, DataTableModule, OverlayPanelModule, 
          AutoCompleteModule, InputSwitchModule, DragDropModule, DropdownModule,
          CheckboxModule } from 'primeng/primeng';
-
+         
 import { SharedModule,
         MultiSelectModule,
         ListboxModule,
@@ -21,7 +21,6 @@ import { SharedModule,
         ContextMenuModule} from 'primeng/primeng';
 
 import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
-import {DataTableVirtualScrollModule} from '../tracks/components/trackList/tableVirtualScroll';
 
 @NgModule({
   imports: [
@@ -32,7 +31,7 @@ import {DataTableVirtualScrollModule} from '../tracks/components/trackList/table
     TabsModule,
     DatepickerModule,
     ModalModule,
-    DataTableVirtualScrollModule,
+    DataTableModule,
     OverlayPanelModule,
     FileUploadModule,
     InputSwitchModule,

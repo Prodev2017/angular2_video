@@ -11,7 +11,7 @@ const routes: Routes = [
     path: '',
     component: Login,
     children: [
-
+      
       { path: '', redirectTo: 'user', pathMatch: 'full' },
       { path: 'user',  component: UserLogin },
       { path: 'request-password-reset',  component: PasswordResetRequest },
