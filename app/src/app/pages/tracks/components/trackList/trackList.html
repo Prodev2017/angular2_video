@@ -1,0 +1,575 @@
+<div class="track-list-container">
+  <div class="row">
+    <div class="col-md-12 store-controls" #storeControls>
+      <store-selector></store-selector>
+
+      <div class="row subtabs">
+        <div class="col-md-9">
+
+          <ul class="nav nav-tabs">
+            <li role="presentation" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a class="nav-link" [routerLink]="['/pages/tracks/crates']">My Saved Crates</a></li>
+            <li role="presentation" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a class="nav-link" [routerLink]="['/pages/tracks/collections']">Featured  Collections</a></li>
+            <li role="presentation" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a class="nav-link" [routerLink]="['/pages/tracks/download-queue']">My Download Queue</a></li>
+            <li role="presentation" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a class="nav-link" [routerLink]="['/pages/tracks/library']">My Library</a></li>
+            <li role="presentation" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a class="nav-link" [routerLink]="['/pages/tracks/transactions']">My Transactions</a></li>
+
+          </ul>
+
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-primary" *ngIf="activeTab != 'transactions'" (click)="toggleFilterPanel()"><i class="fa fa-filter"></i> &nbsp;Search/Filter</button>
+          <span>Credits: </span>
+          <span class="tag tag-success" *ngIf="selectedCurrencyCreditBalance > 0">{{selectedCurrencyCreditBalance}}</span>
+          <span class="tag tag-success" *ngIf="selectedCurrencyCreditBalance == 0">0</span>
+          <span class="tag tag-success" *ngIf="selectedCurrencyCreditBalance == -1">&infin;</span>
+
+          <button class="btn btn-primary" (click)="packagePurchaseModalShow()" *ngIf="selectedCurrencyCreditBalance == 0">Buy More</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row tracks-main-panel">
+    <div class="col-md-2 track-panel-sidebar">
+      <div *ngIf="activeTab == 'crates' ">
+        <h3 class="sidebar-title">Select Crate</h3>
+        <div class="col-md-12">
+          <!--<div class="row">
+            <div class="col-md-8 collection-item" (click)="loadCollection('new-tracks-from-last-login')" [ngStyle]="{'border-left-color': (selectedCollectionId == 'new-tracks-from-last-login') ? this.currency.selectedCurrency.color : 'transparent' }" [ngClass]="{'active': selectedCollectionId == 'new-tracks-from-last-login' }"
+              (mouseenter)="applyCurrencyHoverColor($event)" (mouseleave)="removeCurrencyHoverColor($event, 'new-tracks-from-last-login')">
+              <strong>New Tracks Since Last Login</strong><br/>
+
+            </div>
+            <div class="col-md-4 collection-actions">
+              <span class="tag tag-success float-right">0</span>
+            </div>
+          </div>-->
+
+           <!--<div class="row">
+           <div class="col-md-8 collection-item" (click)="loadCollection('top-current-month')" [ngStyle]="{'border-left-color': (selectedCollectionId == 'top-current-month') ? this.currency.selectedCurrency.color : 'transparent' }" [ngClass]="{'active': selectedCollectionId == 'top-current-month' }"
+              (mouseenter)="applyCurrencyHoverColor($event)" (mouseleave)="removeCurrencyHoverColor($event, 'top-current-month')">
+              <strong>Top Tracks - This Month</strong><br/>
+
+            </div>
+            <div class="col-md-4 collection-actions">
+              <a class="btn btn-lg action-button" tooltipster="Top Tracks - This Month" tooltipsterPosition="top" tooltipsterEvent="hover"><i class="fa fa-info-circle tooltip-indicator"></i></a>
+            </div>
+          </div>-->
+           <!--<div class="row">
+            <div class="col-md-8 collection-item" (click)="loadCollection('top-last-month')" [ngStyle]="{'border-left-color': (selectedCollectionId == 'top-last-month') ? this.currency.selectedCurrency.color : 'transparent' }" [ngClass]="{'active': selectedCollectionId == 'top-last-month' }"
+              (mouseenter)="applyCurrencyHoverColor($event)" (mouseleave)="removeCurrencyHoverColor($event, 'top-last-month')">
+              <strong>Top Tracks - Last Month</strong><br/>
+
+            </div>
+            <div class="col-md-4 collection-actions">
+              <a class="btn btn-lg action-button" tooltipster="Top Tracks - Last Month" tooltipsterPosition="top" tooltipsterEvent="hover"><i class="fa fa-info-circle tooltip-indicator"></i></a>
+            </div>
+          </div>-->
+          <div class="row">
+            <div class="col-md-8 collection-item" (click)="loadCollection('top-all-time')" [ngStyle]="{'border-left-color': (selectedCollectionId == 'top-all-time') ? this.currency.selectedCurrency.color : 'transparent' }" [ngClass]="{'active': selectedCollectionId == 'top-all-time' }"
+              (mouseenter)="applyCurrencyHoverColor($event)" (mouseleave)="removeCurrencyHoverColor($event, 'top-all-time')">
+              <strong>Top Tracks - All Time</strong><br/>
+
+            </div>
+            <div class="col-md-4 collection-actions">
+            </div>
+          </div>
+
+
+
+          <div class="row" *ngFor="let crate of crates">
+            <div class="col-md-8 collection-item" (click)="applyCrate(crate)" [ngStyle]="{'border-left-color': (selectedCollectionId == crate._id) ? this.currency.selectedCurrency.color : 'transparent' }" [ngClass]="{'active': selectedCollectionId == crate._id }"
+              (mouseenter)="applyCurrencyHoverColor($event)" (mouseleave)="removeCurrencyHoverColor($event, crate._id)">
+              <strong>{{crate.name}}</strong><br/>
+
+            </div>
+            <div class="col-md-4 collection-actions">
+              <a class="btn btn-lg action-button" *ngIf="crate.description" [tooltipster]="crate.description" tooltipsterPosition="top" tooltipsterEvent="hover"><i class="fa fa-info-circle tooltip-indicator"></i></a>
+
+              <a class="btn btn-lg action-button" alt="Delete Crate" title="Delete Crate" (click)="removeCrate(crate)">
+                <i class="fa fa-trash"></i>
+              </a>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div *ngIf="activeTab == 'collections' ">
+        <h3 class="sidebar-title">Select Collection</h3>
+
+        <div class="col-md-12 ">
+          <div class="row" *ngFor="let collection of collections">
+            <div class="col-md-8 collection-item" (click)="loadCollection(collection._id)" [ngStyle]="{'border-left-color': (selectedCollectionId == collection._id) ? this.currency.selectedCurrency.color : 'transparent' }" [ngClass]="{'active': selectedCollectionId == collection._id }"
+              (mouseenter)="applyCurrencyHoverColor($event)" (mouseleave)="removeCurrencyHoverColor($event, collection._id)">
+              <strong>{{collection.name}}</strong><br/>
+              <small><em>{{collection.editorOwner.stageName}}</em></small><br/>
+
+              <small>{{collection.updatedAt | date: 'longDate' }}</small><br/>
+                            <small>DJs Following: {{collection.followerCount}} </small>
+
+            </div>
+            <div class="col-md-4 collection-actions">
+              <a class="btn btn-lg action-button" [tooltipster]="collection.description" tooltipsterPosition="top" tooltipsterEvent="hover"><i class="fa fa-info-circle tooltip-indicator"></i></a>
+              <a class="btn btn-lg action-button" alt="Save to My Crates" title="Save to My Crates" (click)="addCollectionToMyCrates(collection._id)"><i class="fa fa-plus-circle"></i></a>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+          <div *ngIf="activeTab == 'download-queue'">
+        <h3 class="sidebar-title">Actions</h3>
+        <button class="btn btn-primary" [disabled]="tracksSelected.length == 0" (click)="purchaseAndDownloadSelectedTracks(false)">Save To Library</button>
+        <br/>
+        <br/>
+                <button class="btn btn-primary" [disabled]="tracksSelected.length == 0" (click)="purchaseAndDownloadSelectedTracks(true)">Save & Download</button>
+
+</div>
+    </div>
+
+    <div class="col-md-10">
+      <div class="filters-panel hide" [ngClass]="{'show': showFilters, 'hide': !showFilters }">
+        <div class="row">
+          <div class="col-md-10">
+            <div class="row">
+              <div class="col-md-6">
+                <span>Title</span>
+                <div class="form-group">
+                  <input class="form-control column-filter" type="text" [(ngModel)]="trackListFilters.trackName" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <span>Artists</span>
+
+                <div class="form-group">
+                  <input class="form-control column-filter" type="text" [(ngModel)]="trackListFilters.artistName" />
+                </div>
+
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <p>Editors</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="currencyEditors" [(ngModel)]="trackListFilters.editors" filter="filter" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                <p>BPM</p>
+
+                <div class="form-group">
+
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.startBpm" type="number" step="1" min="0" maxlength="3" max="250" placeholder="Min" />
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.endBpm" min="0" max="250" step="1" maxlength="3" placeholder="Max" />
+                </div>
+                <p>Year</p>
+                <div class="form-group">
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.minYear" type="number" step="1" min="1950" maxlength="4" [max]="this.currentYear" placeholder="Min" />
+                  <input class="form-control column-filter" [(ngModel)]="trackListFilters.maxYear" min="1950" [max]="this.currentYear" step="1" maxlength="4" placeholder="Max" />
+                </div>
+
+
+              </div>
+              <div class="col-md-2">
+                <p>Keys</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="keyList" [(ngModel)]="trackListFilters.keys" filter="filter" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                <p>Tags</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="tagList" [(ngModel)]="trackListFilters.tags" filter="filter" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                <p>Genres</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="genresList" [(ngModel)]="trackListFilters.genres" filter="filter" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }"></p-listbox>
+
+              </div>
+              <div class="col-md-2">
+                <p>Show Columns</p>
+                <p-listbox [checkbox]="true" [multiple]="true" [options]="trackColumns" [(ngModel)]="trackColumnsSelected" [style]="{'height':filterListBoxHeight, 'font-size': filterListBoxFontSize }" (ngModelChange)="refreshTable()"></p-listbox>
+
+              </div>
+
+            </div>
+
+          </div>
+          <div class="col-md-2">
+            <p>Manage Crates</p>
+            <input type="text" class="form-control" name="crateName" [(ngModel)]="trackListFilters.name" />
+            <button class="btn btn-sm col-md-12 btn-primary crate-button" *ngIf="activeTab != 'library'" (click)="filterTrackList()">Apply</button>
+                        <button class="btn btn-sm col-md-12 btn-primary crate-button" *ngIf="activeTab == 'library'" (click)="getLibraryForCurrency()">Apply</button>
+
+            <button class="btn btn-sm col-md-12 btn-primary crate-button" (click)="clearCurrentCrate()">Reset</button>
+            <button class="btn btn-sm col-md-12 btn-primary crate-button" *ngIf="trackListFilters._id && activeTab != 'library'" (click)="updateCrate()">Update Crate</button>
+            <button class="btn btn-sm col-md-12 btn-primary crate-button" *ngIf="trackListFilters._id && activeTab != 'library'" (click)="createCrate(true)">Save As New Crate</button>
+
+            <button class="btn btn-sm col-md-12 btn-primary crate-button" *ngIf="!trackListFilters._id && activeTab != 'library'" (click)="createCrate()">Save New Create</button>
+
+          </div>
+        </div>
+      </div>
+      <div class="row">
+
+
+
+        <div class="col-md-12" *ngIf="activeTab != 'transactions'">
+          <!--<p-dataTable #trackTable *ngIf="displayTable" class="table track-list" sortField="publishDate" sortOrder="-1"-->
+                       <!--[scrollable]="true" [value]="tracks.list" expandableRows="true" [lazy]="true"-->
+                       <!--[totalRecords]="tracks.totalRecords" [emptyMessage]="trackListRestrictions || 'No tracks found.'" scrollWidth="100%"-->
+                       <!--[rows]="25" (onLazyLoad)="filterTrackList($event)" [responsive]="true" [rowsPerPageOptions]="[10,25,50]">-->
+
+          <!--<p-dataTable class="table track-list"  [value]="carsLarge" scrollable="true" scrollHeight="200px" [rows]="20" [style]="{'margin-top':'30px'}"-->
+                       <!--[lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadCarsLazy($event)">-->
+            <!--<p-header>Virtual Scrolling - 500000 Rows</p-header>-->
+            <!--<p-column field="vin" header="Vin"></p-column>-->
+            <!--<p-column field="year" header="Year"></p-column>-->
+            <!--<p-column field="brand" header="Brand"></p-column>-->
+            <!--<p-column field="color" header="Color"></p-column>-->
+          <!--</p-dataTable>-->
+
+          <ba-table class="responsive-table-wrap" [totalRecords]="tracks.totalRecords" [value]="tracks.list"
+                    [class.filter-active]="showFilters"
+                    (onLazyLoad)="filterTrackList($event)"
+                    [sortField]="'publishDate'" [sortOrder]="-1">
+
+            <table>
+              <thead #thead>
+                <tr>
+                  <th name="added"><div>Actions</div></th>
+                  <th *ngIf="trackColumnsSelected.includes('added')" name="publishDate" sortable="true">
+                    <div>
+                      Added
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div>
+                  </th>
+                  <th *ngIf="trackColumnsSelected.includes('editor')" name="editorPrimaryName" sortable="true">
+                    <div>
+                      Editor
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div>
+                  </th>
+                  <th *ngIf="trackColumnsSelected.includes('artist')" name="artistPrimaryName" sortable="true">
+                    <div>
+                      Artist
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div
+                    >
+                  </th>
+                  <th *ngIf="trackColumnsSelected.includes('bpm')" name="startBpm" sortable="true">
+                    <div>
+                      BPM
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div>
+                  </th>
+                  <th *ngIf="trackColumnsSelected.includes('key')" name="key" sortable="true">
+                    <div>
+                      Key
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div>
+                  </th>
+                  <th name="name" sortable="true">
+                    <div>
+                      Name
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div>
+                  </th>
+                  <th *ngIf="trackColumnsSelected.includes('tags')" name="tags"><div>Text</div></th>
+                  <th *ngIf="trackColumnsSelected.includes('genres')" name="genres"><div>Genres</div></th>
+                  <th *ngIf="trackColumnsSelected.includes('year')" name="releaseYear" sortable="true">
+                    <div>
+                      Year
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div>
+                  </th>
+                  <th *ngIf="trackColumnsSelected.includes('time')" name="trackLength" sortable="true">
+                    <div>
+                      Time
+                      <span class="ui-sortable-column-icon fa fa-fw fa-sort"></span>
+                    </div>
+                  </th>
+                  <th>
+                    <div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tracks.list; trackBy:item?._id">
+                  <td class="cell-actions">
+                    <span class="ui-cell-data">
+                      <div class="text-right" *ngIf="activeTab == 'download-queue'">
+                        <i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(item)" *ngIf="(trackCurrentlyLoaded._id == item._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != item._id"></i>
+                        <i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(item)" *ngIf="(trackCurrentlyLoaded._id == item._id && isPlayerPlaying)" ></i>
+                        <i class="fa fa-trash text-link" (click)="removeTrackFromDownloadQueue(item)"></i>
+                        <i class="fa fa-cloud-download text-link" (click)="downloadTrack(item, true)"></i>
+                      </div>
+
+                      <div class="text-right" *ngIf="activeTab != 'download-queue' && activeTab != 'library'">
+                        <i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(item)" *ngIf="(trackCurrentlyLoaded._id == item._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != item._id"></i>
+                        <i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(item)" *ngIf="(trackCurrentlyLoaded._id == item._id && isPlayerPlaying)" ></i>
+                        <i class="fa text-link" [ngClass]="{'fa-check-circle': item.addedToDownloadQueue, 'fa-plus-circle' : !item.addedToDownloadQueue }" (click)="addTrackToDownloadQueue(item)"></i>
+
+                        <i class="fa fa-cloud-download text-link" (click)="downloadTrack(item, true)"></i>
+                        <i class="fa fa-list text-link" (click)="downloadTrack(item, false)"></i>
+
+                      </div>
+                      <div class="text-right" *ngIf="activeTab == 'library'">
+                        <i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(item)" *ngIf="(trackCurrentlyLoaded._id == item._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != item._id"></i>
+                        <i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(item)" *ngIf="(trackCurrentlyLoaded._id == item._id && isPlayerPlaying)" ></i>
+
+                        <i class="fa fa-cloud-download text-link" (click)="downloadTrack(item, true)"></i>
+                      </div>
+                    </span>
+                  </td>
+                  <td *ngIf="trackColumnsSelected.includes('added')"><span class="ui-cell-data">{{item.createdAt | date: 'MM/dd/y'}}</span></td>
+                  <td *ngIf="trackColumnsSelected.includes('editor')"><span class="ui-cell-data">{{currencyEditorsById[item.editor]}}</span></td>
+                  <td *ngIf="trackColumnsSelected.includes('artist')" name="artist">
+                    <span class="ui-cell-data">
+                      {{ item.artistPrimaryName }}<br/><span *ngIf="item.artistsFeaturedDisplayName" class="version-subtitle">{{ item.artistsFeaturedDisplayName }}</span>
+                    </span>
+
+                  </td>
+                  <td *ngIf="trackColumnsSelected.includes('bpm')"><span class="ui-cell-data">{{item.startBpm}}</span></td>
+                  <td *ngIf="trackColumnsSelected.includes('key')">
+                    <span class="ui-cell-data">
+                      <span *ngIf="item?.inKey?.camelotKey">{{item?.inKey?.camelotKey}}<br/>{{item?.inKey?.musicKey}}</span>
+                      <span *ngIf="!item?.inKey">N/A</span>
+                    </span>
+                  </td>
+                  <td name="name">
+                    <span class="ui-cell-data">
+                      {{item.name}}<br/><span class="version-subtitle">{{ item.version }}</span>
+                    </span>
+                  </td>
+                  <td *ngIf="trackColumnsSelected.includes('tags')">
+                    <span class="ui-cell-data">
+                      <p class="tag-item" *ngIf="item.cleanDirty" [style.color]="item.cleanDirty.color">{{item.cleanDirty.name}}</p>
+                      <p class="tag-item" *ngIf="item.versionType" [style.color]="item.versionType.color">{{item.versionType.name}}</p>
+                      <p class="tag-item" *ngIf="item.introType" [style.color]="item.introType.color">{{item.introType.name}}</p>
+                      <p class="tag-item" *ngIf="item.outroType" [style.color]="item.outroType.color">{{item.outroType.name}}</p>
+                    </span>
+                  </td>
+                  <td *ngIf="trackColumnsSelected.includes('genres')">
+                    <span class="ui-cell-data">
+                      <p class="well tag-item" *ngFor="let genre of item.genres">{{genre.name}}</p>
+                    </span>
+                  </td>
+                  <td *ngIf="trackColumnsSelected.includes('year')"><span class="ui-cell-data">{{item.releaseYear}}</span></td>
+                  <td *ngIf="trackColumnsSelected.includes('time')"><span class="ui-cell-data">{{ item.trackLength | secondsToTime }}</span></td>
+                  <td>
+                    <span class="ui-cell-data"></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </ba-table>
+
+          <!--<p-dataTable #trackTable *ngIf="displayTable" class="table track-list" sortField="publishDate" [sortOrder]="-1"-->
+                       <!--scrollable="true"-->
+                       <!--[value]="tracks.list"-->
+                       <!--[lazy]="true"-->
+                       <!--[virtualScroll]="true"-->
+                       <!--[totalRecords]="tracks.totalRecords" [emptyMessage]="trackListRestrictions || 'No tracks found.'"-->
+                       <!--scrollWidth="100%"-->
+                       <!--scrollheight="400px"-->
+                       <!--(onLazyLoad)="filterTrackList($event)" [responsive]="true">-->
+            <!--<p-column expander="true" styleClass="col-icon" [style]="{'width' : '25px' }"></p-column>-->
+            <!--<p-column [style]="{'width' : '25px' }" [hidden]="activeTab != 'download-queue'">-->
+
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+              <!--<p-checkbox name="tracks" [value]="track" [(ngModel)]="tracksSelected"></p-checkbox>-->
+
+            <!--</template>-->
+
+            <!--</p-column>-->
+
+
+            <!--<p-column *ngIf="trackColumnsSelected.includes('added')" field="publishDate" [sortable]="true" header="Added">-->
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+              <!--{{ track[col.field] | date: 'MM/dd/y' }}-->
+            <!--</template>-->
+            <!--</p-column>-->
+            <!--<p-column *ngIf="trackColumnsSelected.includes('editor')" field="editorPrimaryName" filterMatchMode="in" [sortable]="true" header="Editor" [style]="{'width': trackColumnWidths.editor + '%'}">-->
+            <!--</p-column>-->
+            <!--<p-column *ngIf="trackColumnsSelected.includes('artist')" field="artistPrimaryName" [sortable]="true" header="Artist" [style]="{'width': trackColumnWidths.artist + '%', 'text-align':'left'}">-->
+
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+              <!--{{ track[col.field] }}<br/><span *ngIf="track.artistsFeaturedDisplayName" class="version-subtitle">{{ track.artistsFeaturedDisplayName }}</span>-->
+            <!--</template>-->
+            <!--</p-column>-->
+            <!--<p-column *ngIf="trackColumnsSelected.includes('bpm')" field="startBpm" [sortable]="true" header="BPM" [style]="{'width': trackColumnWidths.bpm + '%' } ">-->
+            <!--</p-column>-->
+            <!--<p-column *ngIf="trackColumnsSelected.includes('key')" [sortable]="true" header="Key" [style]="{'width': trackColumnWidths.key + '%' } ">-->
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+              <!--<span *ngIf="track?.inKey?.camelotKey">{{track?.inKey?.camelotKey}}<br/>{{track?.inKey?.musicKey}}</span>-->
+              <!--<span *ngIf="!track?.inKey">N/A</span>-->
+            <!--</template>-->
+
+            <!--</p-column>-->
+            <!--<p-column field="name" header="Title" [sortable]="true" [style]="{'width': trackColumnWidths.title + '%' , 'text-align':'left'}">-->
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+              <!--{{ track[col.field] }}<br/><span class="version-subtitle">{{ track.version }}</span>-->
+            <!--</template>-->
+            <!--</p-column>-->
+            <!--<p-column *ngIf="trackColumnsSelected.includes('tags')" header="Tags" [style]="{'overflow': 'visible'}">-->
+
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+
+              <!--<p class="tag-item" *ngIf="track.cleanDirty" [style.color]="track.cleanDirty.color">{{track.cleanDirty.name}}</p>-->
+              <!--<p class="tag-item" *ngIf="track.versionType" [style.color]="track.versionType.color">{{track.versionType.name}}</p>-->
+              <!--<p class="tag-item" *ngIf="track.introType" [style.color]="track.introType.color">{{track.introType.name}}</p>-->
+              <!--<p class="tag-item" *ngIf="track.outroType" [style.color]="track.outroType.color">{{track.outroType.name}}</p>-->
+
+            <!--</template>-->
+
+            <!--</p-column>-->
+            <!--<p-column *ngIf="trackColumnsSelected.includes('genres')" header="Genres" [style]="{'overflow': 'visible'}">-->
+
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+              <!--<p class="well tag-item" *ngFor="let genre of track.genres">{{genre.name}}</p>-->
+            <!--</template>-->
+
+            <!--</p-column>-->
+
+            <!--<p-column *ngIf="trackColumnsSelected.includes('year')" field="releaseYear" [sortable]="true" header="Year" [style]="{'width': trackColumnWidths.releaseYear + '%'}">-->
+            <!--</p-column>-->
+            <!--<p-column *ngIf="trackColumnsSelected.includes('time')" field="trackLength" [sortable]="true" header="Time" [style]="{'width': trackColumnWidths.trackLength + '%'}">-->
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+
+              <!--{{ track.trackLength | secondsToTime }}-->
+
+            <!--</template>-->
+            <!--</p-column>-->
+            <!--<p-column header="Actions" [style]="{'width': '140px'}">-->
+
+              <!--<template let-col let-track="rowData" pTemplate="body">-->
+                                  <!--<div class="text-right" *ngIf="activeTab == 'download-queue'">-->
+                    <!--<i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != track._id"></i>-->
+                    <!--<i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && isPlayerPlaying)" ></i>-->
+                    <!--<i class="fa fa-trash text-link" (click)="removeTrackFromDownloadQueue(track)"></i>-->
+                    <!--<i class="fa fa-cloud-download text-link" (click)="downloadTrack(track, true)"></i>-->
+                  <!--</div>-->
+
+              <!--<div class="text-right" *ngIf="activeTab != 'download-queue' && activeTab != 'library'">-->
+                <!--<i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != track._id"></i>-->
+                <!--<i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && isPlayerPlaying)" ></i>-->
+                <!--<i class="fa text-link" [ngClass]="{'fa-check-circle': track.addedToDownloadQueue, 'fa-plus-circle' : !track.addedToDownloadQueue }" (click)="addTrackToDownloadQueue(track)"></i>-->
+
+                <!--<i class="fa fa-cloud-download text-link" (click)="downloadTrack(track, true)"></i>-->
+                <!--<i class="fa fa-list text-link" (click)="downloadTrack(track, false)"></i>-->
+
+              <!--</div>-->
+                            <!--<div class="text-right" *ngIf="activeTab == 'library'">-->
+                <!--<i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != track._id"></i>-->
+                <!--<i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && isPlayerPlaying)" ></i>-->
+
+                <!--<i class="fa fa-cloud-download text-link" (click)="downloadTrack(track, true)"></i>-->
+
+              <!--</div>-->
+            <!--</template>-->
+            <!--</p-column>-->
+            <!--<template let-track pTemplate="rowexpansion">-->
+            <!--<div class="row">-->
+              <!--<div class="col-md-12">-->
+                <!--<p class="text-left"><strong>Description</strong></p>-->
+                <!--<p class="text-left">{{track.description}}</p>-->
+              <!--</div>-->
+              <!--<div class="col-md-6" *ngIf="track.tracksInSameReleases && track.tracksInSameReleases.length > 0">-->
+                                  <!--<p class="text-left"><strong>You Also Get</strong></p>-->
+
+                    <!--<div class="text-left" *ngFor="let affiliatedTrack of track.tracksInSameReleases">-->
+                      <!--<p>{{affiliatedTrack?.formattedName}}-->
+                      <!--<i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(affiliatedTrack)" *ngIf="(trackCurrentlyLoaded._id == affiliatedTrack?._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != affiliatedTrack?._id"></i>-->
+                      <!--<i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(affiliatedTrack)" *ngIf="(trackCurrentlyLoaded._id == affiliatedTrack?._id && isPlayerPlaying)" ></i>-->
+                      <!--<i class="fa fa-cloud-download text-link" (click)="downloadTrack(affiliatedTrack, true)"></i>-->
+<!--</p>-->
+                <!--</div>-->
+
+
+
+              <!--</div>-->
+              <!--<div class="col-md-6">-->
+                <!--<p class="text-left"><strong>Original Works Included In This Edit Are</strong></p>-->
+                <!--<p class="text-left" *ngFor="let originalWork of track.originalWorks">-->
+                  <!--{{originalWork.displayName}}-->
+                <!--</p>-->
+              <!--</div>-->
+              <!--<div class="col-md-6">-->
+                <!--&nbsp;-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</template>-->
+
+          <!--</p-dataTable>-->
+        </div>
+        <div class="col-md-12" *ngIf="activeTab == 'transactions'">
+          <p-dataTable #transactionTable class="table track-list" scrollable="true" [value]="transactions" expandableRows="true" [responsive]="true">
+            <p-column expander="true" styleClass="col-icon" [style]="{'width' : '25px' }"></p-column>
+            <p-column field="name" header="Package"></p-column>
+            <p-column field="basis" header="Basis"></p-column>
+            <p-column field="startTime" header="Purchase Date">
+              <template let-transaction="rowData" pTemplate="body">
+                            {{ transaction.startTime | date: 'medium' }}
+                          </template>
+            </p-column>
+            <p-column field="endTime" header="Valid Until">
+              <template let-transaction="rowData" pTemplate="body">
+                            {{ transaction.endTime | date: 'medium' }}
+                          </template>
+
+            </p-column>
+            <p-column field="price" header="Price">
+              <template let-transaction="rowData" pTemplate="body">
+                            {{ transaction.price | currency:'USD':true:'1.2-2' }}
+                          </template>
+            </p-column>
+
+            <template let-transaction pTemplate="rowexpansion">
+            <div class="row">
+              <div class="col-md-12">
+                  <p *ngFor="let transactionItem of transaction.transactionItems">
+                    Package Item: {{ transactionItem.name }}<br/>
+                    Credits Included: {{ transactionItem.credits }}<br/>
+                  </p>
+              </div>
+            </div>
+          </template>
+
+          </p-dataTable>
+        </div>
+      </div>
+      <!--<p-contextMenu #cm [model]="contextMenuItemsForTableColumns"></p-contextMenu>-->
+
+    </div>
+  </div>
+  <div bsModal #packagePurchaseModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" [config]="{backdrop: false}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" (click)="hideModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+          <h4 class="modal-title">Buy more credits</h4>
+        </div>
+        <div class="modal-body">
+          <form (submit)="purchaseCreditPackage(packagePurchaseForm,$event)" #packagePurchaseForm="ngForm">
+            <div class="form-group">
+              <div *ngFor="let package of currencyPackages">
+                <p-radioButton name="selectedPackage" label="{{package.name}} {{package.credits}} for {{package.price | currency:'USD':true:'1.2-2' }}" [value]="package._id" [(ngModel)]="selectedPackageId"></p-radioButton>
+                <p>This package includes:</p>
+                <ul>
+                  <li *ngFor="let packageItem of package.packageItems">{{packageItem.name}}</li>
+                </ul>
+              </div>
+            </div>
+            <div [hidden]="!currencyPackages || !currencyPackages.length > 0 || !selectedPackageId" class="form-group">
+              <div id="paypal-button"></div>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
