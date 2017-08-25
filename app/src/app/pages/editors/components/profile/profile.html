@@ -1,11 +1,11 @@
 <div class="editor-profile-container">
   <div class="row">
     <div class="col-md-6 block-center">
-      
+
       <h1 class="text-center">
         My Editor Profile
       </h1>
-      
+
       <form [formGroup]="form" (ngSubmit)="updateProfile(form.value)" class="form-horizontal ">
 
         <div class="form-group row" [ngClass]="{'has-error': (!firstName.valid), 'has-success': (firstName.valid)}">
@@ -36,22 +36,22 @@
           </div>
         </div>
 
-      <div class="form-group row" [ngClass]="{'has-error': !passwords.valid && (password.touched || repeatPassword.touched), 'has-success': passwords.valid && (password.touched || repeatPassword.touched)}">
-        <label for="inputPassword3" class="col-sm-3 control-label">Change Password</label>
+        <div class="form-group row" [ngClass]="{'has-error': !passwords.valid && (password.touched || repeatPassword.touched), 'has-success': passwords.valid && (password.touched || repeatPassword.touched)}">
+          <label for="inputPassword3" class="col-sm-3 control-label">Change Password</label>
 
-        <div class="col-sm-9">
-          <input [formControl]="password" type="password" class="form-control" id="inputPassword3" placeholder="Password">
+          <div class="col-sm-9">
+            <input [formControl]="password" type="password" class="form-control" id="inputPassword3" placeholder="Password">
+          </div>
         </div>
-      </div>
-      <div class="form-group row" [ngClass]="{'has-error': !passwords.valid && (password.touched || repeatPassword.touched), 'has-success': passwords.valid && (password.touched || repeatPassword.touched)}">
-        <label for="inputPassword4" class="col-sm-3 control-label">Repeat Password</label>
+        <div class="form-group row" [ngClass]="{'has-error': !passwords.valid && (password.touched || repeatPassword.touched), 'has-success': passwords.valid && (password.touched || repeatPassword.touched)}">
+          <label for="inputPassword4" class="col-sm-3 control-label">Repeat Password</label>
 
-        <div class="col-sm-9">
-          <input [formControl]="repeatPassword" type="password" class="form-control" id="inputPassword4" placeholder="Repeat">
-          
-          <span *ngIf="!passwords.valid && (password.touched || repeatPassword.touched)" class="help-block sub-little-text">Password must be at least 8 characters and they must match.</span>
+          <div class="col-sm-9">
+            <input [formControl]="repeatPassword" type="password" class="form-control" id="inputPassword4" placeholder="Repeat">
+
+            <span *ngIf="!passwords.valid && (password.touched || repeatPassword.touched)" class="help-block sub-little-text">Password must be at least 8 characters and they must match.</span>
+          </div>
         </div>
-      </div>
 
         <div class="form-group row" [ngClass]="{'has-error': (!yearStarted.valid), 'has-success': (yearStarted.valid)}">
           <label for="yearStarted" class="col-sm-3 control-label">Year Started</label>
@@ -59,15 +59,15 @@
             <input [formControl]="yearStarted" type="text" class="form-control" id="yearStarted" placeholder="Year Started">
           </div>
         </div>
-        
-                <div class="form-group row" [ngClass]="{'has-error': (!hometown.valid), 'has-success': (hometown.valid)}">
+
+        <div class="form-group row" [ngClass]="{'has-error': (!hometown.valid), 'has-success': (hometown.valid)}">
           <label for="hometown" class="col-sm-3 control-label">Hometown</label>
           <div class="col-sm-9">
             <input [formControl]="hometown" type="text" class="form-control" id="hometown" placeholder="Hometown">
           </div>
         </div>
-        
-                        <div class="form-group row" [ngClass]="{'has-error': (!currentLocation.valid), 'has-success': (currentLocation.valid)}">
+
+        <div class="form-group row" [ngClass]="{'has-error': (!currentLocation.valid), 'has-success': (currentLocation.valid)}">
           <label for="currentLocation" class="col-sm-3 control-label">Current Location</label>
           <div class="col-sm-9">
             <input [formControl]="currentLocation" type="text" class="form-control" id="currentLocation" placeholder="Current Location">
@@ -89,26 +89,26 @@
           <div class="col-md-9" [ngClass]="{'has-error': (!addressText.valid), 'has-success': (addressText.valid)}">
             <input #addressAutocomplete [formControl]="addressText" type="text" class="form-control" id="address" placeholder="Enter street address">
           </div>
-        
+
         </div>
         <div class="form-group row" *ngIf="account?.profile?.address?.country == 'United States'">
-          
+
           <label for="taxId" class="col-sm-3 control-label">Tax ID (US only)</label>
-          
+
           <div class="col-sm-9" *ngIf="!account.profile.taxId">
 
             For all United States-based editors, we require a completed IRS W-9 before we can issue payouts. We do not currently have a W-9 on file for your account. We will contact you shortly to complete one.
-            
+
           </div>
-                    
+
           <div class="col-sm-9" *ngIf="account.profile.taxId">
 
-            W9 on File            
-            
+            W9 on File
+
           </div>
-          
+
         </div>
-          
+
         <div class="form-group row" [ngClass]="{'has-error': (!biography.valid), 'has-success': (biography.valid)}">
           <label for="biography" class="col-sm-3 control-label">Biography</label>
           <div class="col-sm-9">
@@ -117,47 +117,51 @@
         </div>
 
         <div class="row form-group">
-                      <label for="biography" class="col-sm-3 control-label">Branding Images</label>
+          <label for="biography" class="col-sm-3 control-label">Branding Images</label>
 
           <div class="col-md-9">
-          <div class="col-md-6" [ngClass]="{'has-error': (!logoSquare.valid), 'has-success': (logoSquare.valid)}">
-            <div ng2FileDrop [uploader]="logoSquareUploader" class="well my-drop-zone">
-              Drop square logo here
+            <div class="row">
+
+              <div class="col-md-6" [ngClass]="{'has-error': (!logoSquare.valid), 'has-success': (logoSquare.valid)}">
+                <div ng2FileDrop [uploader]="logoSquareUploader" class="well my-drop-zone">
+                  Drop square logo here (PNG or JPG)
+                </div>
+                <img class="img-preview img-fluid img-responsive" src="{{account.profile.logoSquare.url}}" *ngIf="account.profile.logoSquare?.url" />
+
+              </div>
+              <div class="col-md-6" [ngClass]="{'has-error': (!logoLong.valid), 'has-success': (logoLong.valid)}">
+                <div ng2FileDrop [uploader]="logoLongUploader" class="well my-drop-zone">
+                  Drop long logo here (PNG or JPG)
+                </div>
+                <img class="img-preview img-fluid img-responsive" src="{{account.profile.logoLong.url}}" *ngIf="account.profile.logoLong?.url" />
+
+              </div>
             </div>
-            <img class="img-preview img-fluid img-responsive" src="{{account.profile.logoSquare.url}}" *ngIf="account.profile.logoSquare?.url" />
+            <div class="row">
+              <div class="col-md-6" [ngClass]="{'has-error': (!backgroundImage.valid), 'has-success': (backgroundImage.valid)}">
+                <div ng2FileDrop [uploader]="backgroundImageUploader" class="well my-drop-zone">
+                  Drop background image here (PNG or JPG)
+                </div>
+                <img class="img-preview img-fluid img-responsive" src="{{account.profile.backgroundImage.url}}" *ngIf="account.profile.backgroundImage?.url" />
 
-          </div>
-          <div class="col-md-6" [ngClass]="{'has-error': (!logoLong.valid), 'has-success': (logoLong.valid)}">
-            <div ng2FileDrop [uploader]="logoLongUploader" class="well my-drop-zone">
-              Drop long logo here
+              </div>
+
+
+              <div class="col-md-6" [ngClass]="{'has-error': (!photo.valid), 'has-success': (photo.valid)}">
+                <div ng2FileDrop [uploader]="photoUploader" class="well my-drop-zone">
+                  Drop photo here (PNG or JPG)
+                </div>
+                <img class="img-preview img-fluid img-responsive" src="{{account.profile.photo.url}}" *ngIf="account.profile.photo?.url" />
+
+              </div>
             </div>
-            <img class="img-preview img-fluid img-responsive" src="{{account.profile.logoLong.url}}" *ngIf="account.profile.logoLong?.url" />
-
           </div>
-
-          <div class="col-md-6" [ngClass]="{'has-error': (!backgroundImage.valid), 'has-success': (backgroundImage.valid)}">
-            <div ng2FileDrop [uploader]="backgroundImageUploader" class="well my-drop-zone">
-              Drop background image here
-            </div>
-            <img class="img-preview img-fluid img-responsive" src="{{account.profile.backgroundImage.url}}" *ngIf="account.profile.backgroundImage?.url" />
-
-          </div>
-
-
-          <div class="col-md-6" [ngClass]="{'has-error': (!photo.valid), 'has-success': (photo.valid)}">
-            <div ng2FileDrop [uploader]="photoUploader" class="well my-drop-zone">
-              Drop photo here
-            </div>
-            <img class="img-preview img-fluid img-responsive" src="{{account.profile.photo.url}}" *ngIf="account.profile.photo?.url" />
-
-          </div>
-        </div>
         </div>
         <div class="form-group row" [ngClass]="{'has-error': (!facebookUrl.valid && facebookUrl.touched), 'has-success': (facebookUrl.valid && facebookUrl.touched)}">
           <label for="facebookUrl" class="col-sm-3 control-label">Facebook URL</label>
           <div class="col-sm-9">
             <input [formControl]="facebookUrl" type="text" class="form-control" id="facebookUrl" placeholder="Facebook URL">
-                                  <span *ngIf="!facebookUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!facebookUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
 
@@ -166,7 +170,7 @@
           <label for="twitterUrl" class="col-sm-3 control-label">Twitter URL</label>
           <div class="col-sm-9">
             <input [formControl]="twitterUrl" type="text" class="form-control" id="twitterUrl" placeholder="Twitter URL">
-                                            <span *ngIf="!twitterUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!twitterUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
 
@@ -175,7 +179,7 @@
           <label for="instagramUrl" class="col-sm-3 control-label">Instagram URL</label>
           <div class="col-sm-9">
             <input [formControl]="instagramUrl" type="text" class="form-control" id="instagramUrl" placeholder="Instagram URL">
-                                            <span *ngIf="!instagramUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!instagramUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
         </div>
@@ -183,7 +187,7 @@
           <label for="googleUrl" class="col-sm-3 control-label">Google URL</label>
           <div class="col-sm-9">
             <input [formControl]="googleUrl" type="text" class="form-control" id="googleUrl" placeholder="Google+ URL">
-                                  <span *ngIf="!googleUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!googleUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
         </div>
@@ -192,16 +196,16 @@
           <label for="linkedinUrl" class="col-sm-3 control-label">LinkedIn URL</label>
           <div class="col-sm-9">
             <input [formControl]="linkedinUrl" type="text" class="form-control" id="linkedinUrl" placeholder="LinkedIn URL">
-                                              <span *ngIf="!linkedinUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!linkedinUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
         </div>
-        
+
         <div class="form-group row" [ngClass]="{'has-error': (!soundcloudUrl.valid && soundcloudUrl.touched), 'has-success': (soundcloudUrl.valid && soundcloudUrl.touched)}">
           <label for="soundcloudUrl" class="col-sm-3 control-label">Soundcloud URL</label>
           <div class="col-sm-9">
             <input [formControl]="soundcloudUrl" type="text" class="form-control" id="soundcloudUrl" placeholder="Soundcloud URL">
-                                                          <span *ngIf="!soundcloudUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!soundcloudUrl.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
         </div>
@@ -210,7 +214,7 @@
           <label for="soundCloudFeaturedTrackUrl1" class="col-sm-3 control-label">SoundCloud URL #1</label>
           <div class="col-sm-9">
             <input [formControl]="soundCloudFeaturedTrackUrl1" type="text" class="form-control" id="soundCloudFeaturedTrackUrl1" placeholder="SoundCloud Featured URL 1">
-                                                                      <span *ngIf="!soundCloudFeaturedTrackUrl1.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!soundCloudFeaturedTrackUrl1.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
         </div>
@@ -226,7 +230,7 @@
           <label for="soundCloudFeaturedTrackUrl2" class="col-sm-3 control-label">SoundCloud URL #2</label>
           <div class="col-sm-9">
             <input [formControl]="soundCloudFeaturedTrackUrl2" type="text" class="form-control" id="soundCloudFeaturedTrackUrl2" placeholder="SoundCloud Featured URL 2">
-                                                                                  <span *ngIf="!soundCloudFeaturedTrackUrl2.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!soundCloudFeaturedTrackUrl2.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
         </div>
@@ -242,7 +246,7 @@
           <label for="soundCloudFeaturedTrackUrl3" class="col-sm-3 control-label">SoundCloud URL #3</label>
           <div class="col-sm-9">
             <input [formControl]="soundCloudFeaturedTrackUrl3" type="text" class="form-control" id="soundCloudFeaturedTrackUrl3" placeholder="SoundCloud Featured URL 3">
-                                                                                              <span *ngIf="!soundCloudFeaturedTrackUrl3.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
+            <span *ngIf="!soundCloudFeaturedTrackUrl3.valid" class="help-block sub-little-text">Please enter a valid URL, i.e. https://www.example.com.</span>
 
           </div>
         </div>
@@ -257,7 +261,7 @@
         <div class="form-group row">
 
           <div class="col-sm-offset-2 col-sm-9">
-            <button [disabled]="!form.valid" type="submit" class="btn btn-default btn-auth">Update Profile</button>
+            <button type="submit" class="btn btn-default btn-auth">Update Profile</button>
           </div>
 
         </div>

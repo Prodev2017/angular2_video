@@ -41,6 +41,16 @@ export class Currency {
     
   }
   
+    getCharts(currencyId) {
+    
+        return this.http.get('/api/v1/members/currency/' + currencyId + '/charts/list')
+     .map((res) => {
+       return res.json();
+     });
+    
+    
+  }
+  
   getMyEditorCollections(currencyId, editorId) {
     
     return this.http.get('/api/v1/members/currency/' + currencyId + '/collections/' + editorId + '/list')
@@ -55,6 +65,14 @@ export class Currency {
       if(collectionId == 'top-all-time') {
        
         return this.http.get('/api/v1/members/currency/' + currencyId + '/top/list/' + currentPage + '?rowsPerPage=' + rowsPerPage).map(res => res.json());
+    
+      } else if(collectionId == 'top-current-month') {
+       
+        return this.http.get('/api/v1/members/currency/' + currencyId + '/top/this-month/list/' + currentPage + '?rowsPerPage=' + rowsPerPage).map(res => res.json());
+    
+      } else if(collectionId == 'top-last-month') {
+       
+        return this.http.get('/api/v1/members/currency/' + currencyId + '/top/last-month/list/' + currentPage + '?rowsPerPage=' + rowsPerPage).map(res => res.json());
     
       } else {
         
@@ -218,7 +236,16 @@ export class Currency {
     
   }
   
-     removeCollectionFromMyCrates(collectionId) {
+     removeCollection(collectionId,currencyId) {
+       
+    return this.http.get('/api/v1/members/currency/' + currencyId + '/collections/' + collectionId + '/remove')
+    .map((res) => {
+      return res.json();
+    });
+    
+  }
+  
+       removeCollectionFromMyCrates(collectionId) {
        
     let body = JSON.stringify({_id: collectionId});
     let headers = new Headers({ 'Content-Type': 'application/json' });

@@ -4,8 +4,9 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ModalModule, TabsModule } from 'ng2-bootstrap/ng2-bootstrap';
 import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
-import { SpinnerModule,
-        AutoCompleteModule,
+import { SpinnerModule, 
+        AutoCompleteModule, 
+        DataTableModule,
         SharedModule,
         OverlayPanelModule,
         ButtonModule,
@@ -24,7 +25,6 @@ import {
 import {
   BaBackTop,
   BaCard,
-  BaTable,
   BaCheckbox,
   BaContentTop,
   BaMsgCenter,
@@ -84,12 +84,10 @@ import {
   UrlValidator,
   IfHasLengthValidator
 } from './validators';
-import {DataTableVirtualScrollModule} from '../pages/tracks/components/trackList/tableVirtualScroll';
 
 const NGA_COMPONENTS = [
   BaBackTop,
   BaCard,
-  BaTable,
   BaCheckbox,
   BaContentTop,
   StoreSelector,
@@ -163,7 +161,7 @@ const NGA_VALIDATORS = [
     ModalModule,
     SpinnerModule,
     AutoCompleteModule,
-    DataTableVirtualScrollModule,
+    DataTableModule,
     SharedModule,
     OverlayPanelModule,
     ButtonModule,

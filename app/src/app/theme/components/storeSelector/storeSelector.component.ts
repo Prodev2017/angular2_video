@@ -25,8 +25,6 @@ export class StoreSelector {
     this.currencyList = this.currency.getCurrencyLinks(this.editorUploader);
     this.selectedCurrency = this.currency.selectedCurrency;
     
-    console.log('currency list from store selector', this.currencyList);
-    
   }
   
   ngAfterViewInit() {

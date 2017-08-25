@@ -5,7 +5,7 @@ import { AuthService } from '../theme/services';
 @Component({
   selector: 'pages',
   encapsulation: ViewEncapsulation.None,
-  styles: ['pages.component.css'],
+  styles: [],
   template: `
     <ba-page-top></ba-page-top>
     <site-nav></site-nav>
@@ -22,11 +22,11 @@ import { AuthService } from '../theme/services';
 export class Pages {
 
   constructor(public authService:AuthService) {
-
+    
   }
 
   ngOnInit() {
-
-
+    
+   
   }
 }

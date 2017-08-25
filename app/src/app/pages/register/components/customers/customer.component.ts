@@ -28,11 +28,13 @@ export class RegisterCustomer {
   public addressText:AbstractControl;
   public passwords:FormGroup;
   public password:AbstractControl;
+  public country:AbstractControl;
   public repeatPassword:AbstractControl;
   public phoneNumber:AbstractControl;
   public jobTitle:AbstractControl;
   public stageName:AbstractControl;
   public submitted:boolean = false;
+  public countries:Array<string> = [];
   public isCompletingSignup:boolean = false;
   public cid:string;
   public userId:string;
@@ -55,19 +57,14 @@ export class RegisterCustomer {
         'password': ['', Validators.compose([Validators.required, Validators.minLength(8)])],
         'repeatPassword': ['', Validators.compose([Validators.required, Validators.minLength(8)])],
       }, {validator: EqualPasswordsValidator.validate('password', 'repeatPassword')} ),
-      'address': [{
-              street1: null,
-              suburb: null,
-              state: null,
-              postcode: null,
-              country: null
-            }, Validators.compose([Validators.required])],
+      'country':['United States', Validators.compose([Validators.required])],
       'addressText': ['', Validators.compose([Validators.required])],
       'stageName': ['', Validators.compose([Validators.required])],
       'jobTitle': ['', Validators.compose([Validators.required])],
       'phoneNumber':['', Validators.compose([Validators.required])]
     });
 
+    this.countries = ['Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Aruba','Australia','Austria','Azerbaijan','Bahamas, The','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burma','Burundi','Cambodia','Cameroon','Canada','Cabo Verde','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo, Democratic Republic of the','Congo, Republic of the','Costa Rica','Cote d\'Ivoire','Croatia','Cuba','Curacao','Cyprus','Czechia','Denmark','Djibouti','Dominica','Dominican Republic','East Timor (see Timor-Leste)','Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Ethiopia','Fiji','Finland','France','Gabon','Gambia, The','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana','Haiti','Holy See','Honduras','Hong Kong','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kiribati','Korea, North','Korea, South','Kosovo','Kuwait','Kyrgyzstan','Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg','Macau','Macedonia','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','Norway','Oman','Pakistan','Palau','Palestinian Territories','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda','Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Sint Maarten','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Swaziland','Sweden','Switzerland','Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu','Uganda','Ukraine','United Arab Emirates','United Kingdom', 'United States','Uruguay','Uzbekistan','Vanuatu','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe'];
 
     this.firstName = this.emailVerifyForm.controls['firstName'];
     this.lastName = this.emailVerifyForm.controls['lastName'];
@@ -76,11 +73,12 @@ export class RegisterCustomer {
     this.passwords = <FormGroup> this.completeSignupForm.controls['passwords'];
     this.password = this.passwords.controls['password'];
     this.repeatPassword = this.passwords.controls['repeatPassword'];
-    this.address = this.completeSignupForm.controls['address'];
+    this.country = this.completeSignupForm.controls['country'];
     this.addressText = this.completeSignupForm.controls['addressText'];
     this.stageName = this.completeSignupForm.controls['stageName'];
     this.jobTitle = this.completeSignupForm.controls['jobTitle'];
     this.phoneNumber = this.completeSignupForm.controls['phoneNumber'];
+    
     }
 
   }
@@ -111,13 +109,12 @@ export class RegisterCustomer {
 
       });
      
-      this.autocompleteAddressService = new google.maps.places.Autocomplete(this.addressAutocomplete.nativeElement, {type: ['geocode']});
+      /*this.autocompleteAddressService = new google.maps.places.Autocomplete(this.addressAutocomplete.nativeElement, {type: ['geocode']});
       this.autocompleteAddressService.addListener('place_changed', (autocompleteResponse) => {
         
         this.setAddress();
-        
-        
-      });
+
+      });*/
 
     
   }
@@ -169,9 +166,9 @@ export class RegisterCustomer {
             }
             
                     this.addressText.setValue(thePlaceSelected.formatted_address);
+        this.address.setValue(locationData);
 
     }
-        this.address.setValue(locationData);
         
   }
 
@@ -205,7 +202,20 @@ export class RegisterCustomer {
   
     public onSignupCompletionSubmit(values:Object):void {
     this.submitted = true;
-    if (this.completeSignupForm.valid) {
+      var invalidFields = [];
+  var formControlKeys = Object.keys(this.completeSignupForm.controls);
+  
+  for(var property in this.completeSignupForm.controls) {
+    
+    if(!this.completeSignupForm.controls[property].valid) {
+      
+      invalidFields.push(property);
+      
+    }
+    
+  }
+  
+    if (invalidFields.length == 0 && this.completeSignupForm.valid) {
 
       let body = JSON.stringify(Object.assign(values,{uid: this.userId, cid: this.cid}));
       let headers = new Headers({'Content-Type': 'application/json'});
@@ -227,6 +237,11 @@ export class RegisterCustomer {
           this._state.notifyDataChanged('growlNotifications.update', {severity:'error', summary:'Error', detail: error.error});
            
       });
+      
+    } else {
+      
+              this._state.notifyDataChanged('growlNotifications.update', {severity:'error', summary:'Missing or Incomplete Fields', detail: "Please ensure you have the correct values set for the following fields: " + invalidFields.join(', ')});
+
       
     }
   }

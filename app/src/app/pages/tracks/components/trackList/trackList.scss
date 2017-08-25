@@ -260,8 +260,10 @@ p-radiobutton {
 }
 
 .filters-panel {
+  
   transition: opacity 300ms, height 300ms;
   overflow:hidden;
+  padding-top: 10px;
   
   &.hide {
     height: 0px;
@@ -274,7 +276,7 @@ p-radiobutton {
 }
 
 .sidebar-title {
-  margin-top: 0px;
+  margin-top: 15px;
 }
 
 .nav.nav-tabs.nav-stacked {
@@ -342,5 +344,16 @@ p-radiobutton {
     overflow-y: scroll;
     margin-top: 15px;
   }
+  
+}
+
+.flex {
+  display:flex;
+}
+
+.packages-column {
+  
+  height: 50vh;
+  overflow: scroll;
   
 }

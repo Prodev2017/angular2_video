@@ -38,6 +38,21 @@ export class TrackService {
     }
     
   }
+  
+  setTrackInRevisionMode(track) {
+    
+      let body = JSON.stringify({});
+      let headers = new Headers({ 'Content-Type': 'application/json' });
+      let options = new RequestOptions({ headers: headers });
+
+      return this.http.post('/api/v1/members/track/'+track._id+'/edit', body, options)
+      .map((res) => res.json())
+      .map((res) => {
+        return res;
+      });
+
+    
+  }
 
   downloadHiBitRateTrack(trackId) {
     return this.http.get('/api/v1/members/track/' + trackId + '/download/hi/').map(res => res.json());
@@ -53,6 +68,13 @@ export class TrackService {
     this.isUpdating = true;
 
     var queryString = [];
+    
+        if(filters.textSearchField && filters.textSearchField.length > 0) {
+      
+      queryString.push('q=' + encodeURIComponent(filters.textSearchField));
+      
+    }
+
 
     //Genre Filter Query Parameters
     if(filters.genres && filters.genres.length > 0) {
@@ -153,6 +175,12 @@ export class TrackService {
     this.isUpdating = true;
 
     var queryString = [];
+    
+    if(filters.textSearchField && filters.textSearchField.length > 0) {
+      
+      queryString.push('q=' + encodeURIComponent(filters.textSearchField));
+      
+    }
 
     //Genre Filter Query Parameters
     if(filters.genres && filters.genres.length > 0) {

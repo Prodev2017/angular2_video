@@ -71,7 +71,7 @@ export class Uploader {
       this.events.push(this._state.subscribe('track.updatingFinished', (data) => {
 
         this.checkTrackAndReleasesValidity();
-        this.updateTracksByValidationStatus();
+        //this.updateTracksByValidationStatus();
 
       }));
 
@@ -114,14 +114,18 @@ export class Uploader {
     addSelectedTracksToRelease(release) {
 
       this.tracksToSubmit = this.tracksToSubmit.filter( (item) => {
-
+        
         if(item.crooklynClanv1AutoMigrated) {
           this._state.notifyDataChanged('growlNotifications.update', {severity:'error', summary:'Cannot Add v1 Migrated Track to Release', detail: item.formattedName + ' cannot be added to a release because it is a migrated track from v1.'});
         }
-
-        return !item.crooklynClanv1AutoMigrated;
+        
+                if(item.inRevisionMode) {
+          this._state.notifyDataChanged('growlNotifications.update', {severity:'error', summary:'Cannot Add Published Track In Revision Mode', detail: item.formattedName + ' cannot be added to a release because it is an already published track in revision mode.'});
+        }
+        
+        return !item.crooklynClanv1AutoMigrated && !item.inRevisionMode;  
       });
-
+      
       this.tracksToSubmit.forEach( (track) => {
         this.assignTrackToRelease(track, release);
       });
@@ -132,6 +136,22 @@ export class Uploader {
 
     unselectAllTracks() {
       this.tracksToSubmit = [];
+    }
+    
+    allowAddingTracksToReleases() {
+      
+      var hasMigratedOrInRevisionTrack = this.tracksToSubmit.findIndex( (item) => {
+        
+        return item.inRevisionMode === true || item.crooklynClanv1AutoMigrated;
+        
+      });
+      
+      if(hasMigratedOrInRevisionTrack === -1 && this.tracksToSubmit.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+      
     }
 
     adjustTableHeight() {
@@ -175,24 +195,23 @@ export class Uploader {
     }
 
     ngDoCheck() {
-    //TODO: fix check
-      // this.adjustTableHeight();
+      this.adjustTableHeight();
     }
 
 ngOnDestroy() {
-
+  
         console.log('the events that we will unsubscribe from', this.events);
       for(var i = 0; i < this.events.length; i++) {
-
+        
         this._state.unsubscribe(this.events[i].event, this.events[i].callback);
-
+        
       }
-
+      
       this.events = [];
       clearInterval(this.pollingProcessId);
-
+  
 }
-
+  
 
     runAudioFileUploaderConfiguration() {
 
@@ -275,7 +294,7 @@ ngOnDestroy() {
       this.fileUploader.onProgressItem = (item: any, progress: any) => {
         this.zone.run( () => {
           var uploadQueueItemIndex = this.uploadService.trackList.results.indexOf(item);
-
+          
           this.uploadService.trackList.results[uploadQueueItemIndex].actualProgress = progress;
 
         });
@@ -572,7 +591,7 @@ ngOnDestroy() {
       this.tags.getTags();
       this.genres.getGenres();
       this.pollingProcessId = setInterval(() => {
-        this.pollForProcessingStatus()
+        this.pollForProcessingStatus() 
       }, 10000);
 
 
@@ -580,20 +599,21 @@ ngOnDestroy() {
     }
 
   ngAfterViewInit() {
-
+    
             this.setupUploaderForCurrency(this.currency.selectedCurrency);
 
   }
-
+    
     setupUploaderForCurrency(currency) {
-
-                                        this._state.notifyDataChanged('spinner.show', {});
+      
+                                        if(this.authService.authResponse.profileData.currencies.length > 0) {
+                                                                                  this._state.notifyDataChanged('spinner.show', {});
 
         this.selectedCurrencyId = currency._id;
         this.selectedCurrencySlug = currency.slug;
         this.selectedCurrency = currency;
         this.trackEditor.selectedCurrency = this.selectedCurrency;
-
+        
         this.loadDraftTracksForCurrency(this.selectedCurrencyId, 1);
        // this.loadDraftMigrationTracksForCurrency(this.selectedCurrencyId, 1);
 
@@ -608,7 +628,6 @@ ngOnDestroy() {
           });
           this.runAudioFileUploaderConfiguration();
           this.selectedUploader = this.fileUploader;
-                                        this._state.notifyDataChanged('spinner.hide', {});
 
         }
 
@@ -622,12 +641,13 @@ ngOnDestroy() {
 
           this.runVideoFileUploaderConfiguration();
           this.selectedUploader = this.videoFileUploader;
-                                        this._state.notifyDataChanged('spinner.hide', {});
+
+        }
+        } else {
 
         }
 
-
-
+      
     }
 
     getCurrencyFileUploader() {
@@ -655,12 +675,13 @@ ngOnDestroy() {
     }
 
     updateTracksByValidationStatus() {
-
+      
       this.uploadService.updateTracksByValidationStatus();
-
+            
     }
 
     loadDraftTracksForCurrency(currencyId, page) {
+                                        this._state.notifyDataChanged('spinner.show', {});
 
       this.uploadService.selectedCurrencyId = currencyId;
 
@@ -676,8 +697,9 @@ ngOnDestroy() {
 
         this.checkTrackAndReleasesValidity();
         this.updateTracksByValidationStatus();
+                                        this._state.notifyDataChanged('spinner.hide', {});
 
-        return this.uploadService.trackList;
+        return false;
 
       } );
 
@@ -685,38 +707,40 @@ ngOnDestroy() {
     }
 
     loadDraftMigrationTracksForCurrency(currencyId, page) {
+                                       // this._state.notifyDataChanged('spinner.show', {});
 
       this.uploadService.getDraftMigrationTracks(currencyId,page).subscribe((res) => {
-
+        
         this.uploadService.draftMigrationTrackList = res.Tracks || [];
 
         for(var i = 0; i < this.uploadService.draftMigrationTrackList.results.length; i++) {
 
           for(var property in this.uploadService.draftMigrationTrackList.results[i]) {
-
+            
             if(this.uploadService.trackValidationRequirements.hasOwnProperty(property)) {
               this.uploadService.validateTrackField(property,this.uploadService.draftMigrationTrackList.results[i][property],i);
               this.uploadService.updateTrackValidationStatus(i);
             }
-
+            
           }
         }
 
         this.checkTrackAndReleasesValidity();
         this.updateTracksByValidationStatus();
+                                     //   this._state.notifyDataChanged('spinner.hide', {});
 
       } );
 
     }
 
     getTracksNeedingEditing():Array<any> {
-
+      
       return this.uploadService['tracksNotReadyToPublish'].filter((track) => {
         return !track.validation.isTrackValid;
       });
-
+      
     }
-
+    
     pollForProcessingStatus() {
       console.log('polling for processing status');
       if(this.uploadService && this.uploadService.trackList && this.uploadService.trackList.results && this.uploadService.trackList.results.length > 0){
@@ -730,58 +754,58 @@ ngOnDestroy() {
                       console.log('tracks not marked as uploaded yet', trackIdsToPoll.length);
 
         for(var i = 0; i < trackIdsToPoll.length; i++) {
-
+          
           this.uploadService.getTrack(trackIdsToPoll[i]).subscribe( (res) => {
-
+            
             if(res.Track.draftTrackUploadedToS3 == true && res.Track.hiBitRateFile) {
-
+              
               var trackIndex = this.uploadService.trackList.results.findIndex( (item) => {
                 return item._id.toString() == res.Track._id.toString();
               });
-
+              
               this.uploadService.trackList.results[trackIndex].draftTrackUploadedToS3 = res.Track.draftTrackUploadedToS3;
               this.uploadService.trackList.results[trackIndex].hiBitRateFile = res.Track.hiBitRateFile;
               this.updateTracksByValidationStatus();
-
+              
             }
-
+            
           })
-
+          
         }
-
+        
       }
 
     }
 
 
     getApprovedTracks():Array<any> {
-
+      
       return this.uploadService['tracksNotReadyToPublish'].filter((track) => {
         return track.validation.isTrackValid;
       });
-
+      
     }
 
     lengthCounter(arrayToCount) {
-
+      
       return arrayToCount.length;
-
+      
     }
 
     showTrackEditor (track) {
-
+      
       var trackIndex = this.uploadService.trackList.results.findIndex( (item) => {
-
+        
         return item._id.toString() == track._id.toString();
-
+        
       })
-
+      
       this.trackEditor.trackIndexCurrentlyEditing = trackIndex;
-
+      
       this.trackEditor.activeList = this.activeList;
-
+      
       this.trackEditor.selectedCurrency = this.selectedCurrency;
-
+      
       this.trackEditor.setupUploaderForCurrency(this.selectedCurrency);
 
       this.trackEditor.modal.show();
@@ -843,31 +867,33 @@ ngOnDestroy() {
     var approvedReleases = this.releasesToSubmit.filter( (release) => {
       return release.validation && release.validation.isReleaseValid;
     });
+                                                                                  this._state.notifyDataChanged('spinner.show', {});
 
 
      //console.log(this.releasesToSubmit);
-
+     
       this.publishService.publishTracksAndReleases(this.tracksToSubmit, this.releasesToSubmit).subscribe( (response) => {
       this.publishButtonDisabled = false;
-
+      
       for(var i = 0; i < this.tracksToSubmit.length; i++) {
-
+        
         var theIndex:any = this.uploadService.tracksReadyToPublish.results.indexOf(this.tracksToSubmit[i]);
         this.uploadService.tracksReadyToPublish.results.splice(theIndex, 1);
-
+        
       }
       for(var i = 0; i < this.releasesToSubmit.length; i++) {
-
+      
         var theIndex:any = this.releases.draftList.indexOf(this.releasesToSubmit[i]);
         this.releases.draftList.splice(theIndex, 1);
-
+        
       }
-
+      
       this.tracksToSubmit = [];
       this.releasesToSubmit = [];
       this._state.notifyDataChanged('growlNotifications.update', {severity:'info', summary:'Content Submitted', detail: 'Thank you for submitting your tracks and/or releases! They will be processed and available in The Vault shortly. We will send you an email notification once it is completed.'});
       this.loadDraftTracksForCurrency(this.selectedCurrencyId,1);
       this.getDraftReleases();
+                                                                                  this._state.notifyDataChanged('spinner.hide', {});
 
 
       });
@@ -919,39 +945,41 @@ ngOnDestroy() {
     };
 
     removeTrack(track) {
+                                                                                  this._state.notifyDataChanged('spinner.show', {});
 
       var needsEditingTrackIndex = this.uploadService.trackList.results.findIndex( (item) => {
-
+        
         return track._id.toString() == item._id.toString();
-
+        
       });
-
+      
       if(needsEditingTrackIndex !== -1) {
-
+       
         this.uploadService.removeTrack(needsEditingTrackIndex).subscribe((res) => {
-
+          
           if(res.success) {
-
+            
             var filename = track.originalFileName;
-
+            
             this._state.notifyDataChanged('growlNotifications.update', {severity:'info', summary:'Track Deleted', detail: filename});
-
+            
             needsEditingTrackIndex = this.uploadService.trackList.results.findIndex( (item) => {
-
+        
               return track._id.toString() == item._id.toString();
-
+              
             });
-
+            
             this.uploadService.trackList.results.splice(needsEditingTrackIndex,1);
-
+            
             this.updateTracksByValidationStatus();
+                                                                                              this._state.notifyDataChanged('spinner.hide', {});
 
           }
         });
 
-
+        
       } else {
-
+        
         this._state.notifyDataChanged('growlNotifications.update', {severity:'info', summary:'Track Cannot Be Deleted', detail: 'This track is either a migrated track or can no longer be found to delete.'});
 
       }
@@ -990,7 +1018,7 @@ ngOnDestroy() {
         this._state.notifyDataChanged('releases.updated', {releases: res.Releases});
 
         this.releases.draftList = res.Releases;
-
+        
         for(var i = 0; i < this.releases.draftList.length; i++) {
 
           this.releases.draftList[i].validation = this.releases.validateRelease(i, this.selectedCurrency);
@@ -1020,6 +1048,7 @@ ngOnDestroy() {
     removeRelease(release) {
 
       var releaseIndex = this.releases.draftList.indexOf(release);
+                                                                                  this._state.notifyDataChanged('spinner.show', {});
 
       if(this.releases.draftList[releaseIndex].tracks.length > 0) {
         var releaseInReleasesToSubmitIndex = this.releasesToSubmit.indexOf(release);
@@ -1045,6 +1074,7 @@ ngOnDestroy() {
               }
               this.checkTrackAndReleasesValidity();
               this._state.notifyDataChanged('releases.updated', {releases: draftList.Releases});
+                                                                                  this._state.notifyDataChanged('spinner.hide', {});
 
             });
 
@@ -1055,6 +1085,7 @@ ngOnDestroy() {
         });
 
       } else {
+                                                                                  this._state.notifyDataChanged('spinner.show', {});
 
         this.releases.removeRelease(release).subscribe( (res) => {
 
@@ -1068,6 +1099,7 @@ ngOnDestroy() {
               }
               this.checkTrackAndReleasesValidity();
               this._state.notifyDataChanged('releases.updated', {releases: draftList.Releases});
+                                                                                  this._state.notifyDataChanged('spinner.hide', {});
 
             });
 
@@ -1116,11 +1148,11 @@ ngOnDestroy() {
     assignTrackToRelease(track, release) {
 
       var trackIndex = this.uploadService.trackList.results.findIndex( (item) => {
-
+        
         return track._id.toString() == item._id.toString();
-
+        
       });
-
+      
       var tracksToSubmitIndex = this.tracksToSubmit.indexOf(track);
       var selectedRelease = this.releases.draftList.find( (element, index) => {
 
@@ -1172,6 +1204,7 @@ ngOnDestroy() {
       var trackIndex = this.uploadService.trackList.results.findIndex( (trackItem) => {
         return trackItem._id.toString() == track._id.toString();
       });
+                                                                                        this._state.notifyDataChanged('spinner.show', {});
 
       this.uploadService.removeTrackFromRelease(trackIndex).subscribe( (res) => {
         this._state.notifyDataChanged('growlNotifications.update', {severity:'info', summary:'Track Removed from Release', detail: res.Track.name + ' removed from ' + release.name});
@@ -1195,6 +1228,7 @@ ngOnDestroy() {
 
           this._state.notifyDataChanged('releases.updated', {release: this.releases.draftList[releaseIndex]});
           this.releases.draftList[releaseIndex].validation = this.releases.validateRelease(releaseIndex, this.selectedCurrency);
+                                                                                  this._state.notifyDataChanged('spinner.hide', {});
 
 
         }

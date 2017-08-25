@@ -6,12 +6,11 @@ export class Autofocus implements AfterViewInit, DoCheck {
     constructor(private el: ElementRef) {}
 
     ngAfterViewInit() {
-     this.ngDoCheck();
+     this.ngDoCheck(); 
     }
-
-    ngDoCheck() {
-      //TODO: fix check
-     // this.el.nativeElement.focus();
+    
+    ngDoCheck() { 
+     this.el.nativeElement.focus(); 
     }
 
 }

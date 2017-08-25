@@ -34,7 +34,6 @@ export class Tooltipster  {
 
     
     setup() {
-        console.log(this.el, this.text, this.tooltipsterPosition, this.tooltipsterEvent );
         var $tooltipsterElement = jQuery(this.el.nativeElement);
         try {
             
@@ -44,7 +43,7 @@ export class Tooltipster  {
             }
             
         } catch(ex) {
-            console.log(ex);
+            //console.log(ex);
              $tooltipsterElement.tooltipster({
                 content: this.text,
                 side: this.tooltipsterPosition,
