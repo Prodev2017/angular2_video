@@ -36,11 +36,11 @@ export class TrackService {
       })
       .subscribe(res => this.list[trackIndex] = res.Track);
     }
-    
+
   }
-  
+
   setTrackInRevisionMode(track) {
-    
+
       let body = JSON.stringify({});
       let headers = new Headers({ 'Content-Type': 'application/json' });
       let options = new RequestOptions({ headers: headers });
@@ -51,7 +51,7 @@ export class TrackService {
         return res;
       });
 
-    
+
   }
 
   downloadHiBitRateTrack(trackId) {
@@ -60,7 +60,7 @@ export class TrackService {
 
    getLibrary (currencyId, filters, pageNumber) {
 
-  
+
     currencyId = currencyId;
     filters = filters || {};
     pageNumber = pageNumber || 1;
@@ -68,11 +68,11 @@ export class TrackService {
     this.isUpdating = true;
 
     var queryString = [];
-    
+
         if(filters.textSearchField && filters.textSearchField.length > 0) {
-      
+
       queryString.push('q=' + encodeURIComponent(filters.textSearchField));
-      
+
     }
 
 
@@ -110,12 +110,12 @@ export class TrackService {
         queryString.push('tags[]='+filters.tags[i]);
       }
     }
-    
+
     //Artist Filter Query Parameters
     if(filters.artistName) {
       queryString.push('artistName='+filters.artistName);
     }
-    
+
         if(filters.trackName) {
       queryString.push('trackName='+filters.trackName);
     }
@@ -139,7 +139,7 @@ export class TrackService {
     if(filters.sortField) {
       queryString.push('sortField='+filters.sortField);
     }
-    
+
     if(filters.sortOrder) {
       queryString.push('sortOrder='+filters.sortOrder);
     }
@@ -175,11 +175,11 @@ export class TrackService {
     this.isUpdating = true;
 
     var queryString = [];
-    
+
     if(filters.textSearchField && filters.textSearchField.length > 0) {
-      
+
       queryString.push('q=' + encodeURIComponent(filters.textSearchField));
-      
+
     }
 
     //Genre Filter Query Parameters
@@ -216,12 +216,12 @@ export class TrackService {
         queryString.push('tags[]='+filters.tags[i]);
       }
     }
-    
+
     //Artist Filter Query Parameters
     if(filters.artistName) {
       queryString.push('artistName='+filters.artistName);
     }
-    
+
         if(filters.trackName) {
       queryString.push('trackName='+filters.trackName);
     }
@@ -245,7 +245,7 @@ export class TrackService {
     if(filters.sortField) {
       queryString.push('sortField='+filters.sortField);
     }
-    
+
     if(filters.sortOrder) {
       queryString.push('sortOrder='+filters.sortOrder);
     }
@@ -257,6 +257,11 @@ export class TrackService {
 
     if(filters.autocompleteQuery) {
       queryString.push('autocompleteQuery='+encodeURIComponent(filters.autocompleteQuery));
+    }
+
+
+    if(filters.searchQuery) {
+      queryString.push('searchQuery='+encodeURIComponent(filters.searchQuery));
     }
 
     if(filters.release) {

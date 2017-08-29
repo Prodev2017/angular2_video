@@ -5,6 +5,8 @@ export * from './baMenu/components/baMenuItem';
 export * from './baMenu';
 export * from './baContentTop';
 export * from './baCard';
+export * from './baSlider';
+export * from './baTable';
 export * from './baBackTop';
 export * from './baCheckbox';
 export * from './baMultiCheckbox';

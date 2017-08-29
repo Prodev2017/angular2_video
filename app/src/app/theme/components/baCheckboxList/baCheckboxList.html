@@ -1,0 +1,8 @@
+<div>
+  <div *ngFor="let item of options">
+    <label>
+      <input type="checkbox" (change)="onCheck(item, $event)" [checked]="model.value?.includes(item.value)">
+      <span [style.color]="item.color">{{item.label}}</span>
+    </label>
+  </div>
+</div>

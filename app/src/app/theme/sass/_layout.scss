@@ -59,7 +59,7 @@ a {
 
 .al-main {
   margin-left: $left-space;
-  padding: 0px 0 34px 0;
+  padding-bottom: 5px;
   position: relative;
       height: 100%;
 }
@@ -136,10 +136,10 @@ a {
 
 .al-content {
 
-  padding: 0px 32px 8px 25px;
+  padding: 0 5px;
   margin-left: auto;
   margin-right: auto;
-
+  height: 100%;
 }
 
 @media screen and (max-width: $resXS) {

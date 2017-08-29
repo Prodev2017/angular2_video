@@ -11,8 +11,8 @@ export interface LazyLoadCallBackEvent extends LazyLoadEvent {
   selector: 'ba-table',
   styles: [require('./baTable.scss')],
   template: `
-    <div #scroll class="responsive-table" (scroll)="onScroll($event)">
-      <div class="responsive-table-scroll-wrap" [ngStyle]="{'height.px' : totalRecords * 78}">
+    <div #scroll class="responsive-table" (scroll)="onScroll($event)" *ngIf="value && value.length">
+      <div class="responsive-table-scroll-wrap" [ngStyle]="{'margin-bottom.px' : (totalRecords - value.length) * rowHeight}">
         <ng-content></ng-content>
       </div>
     </div>`
@@ -23,6 +23,9 @@ export class BaTable implements OnInit {
   @Output() onLazyLoad: EventEmitter<any> = new EventEmitter();
   @ViewChild('scroll') scrollEl;
   @ContentChild('thead') headerEl;
+  @ContentChild('tbody') bodyEl;
+
+  private expandedRowsHeight: number = 0;
 
   first: any = 0;
   rows: any;
@@ -33,10 +36,9 @@ export class BaTable implements OnInit {
   private lazyLoadInProgress = false;
   rowHeight: number = 78;
   virtualScroll: boolean = true;
+  expandedRows: any = {};
 
-  constructor() {
-    console.log(this);
-  }
+  expandedRowTemplate = `<td colspan="20">$0</td>`;
 
   private collectionHas(a, b) { //helper function (see below)
     for(var i = 0, len = a.length; i < len; i ++) {
@@ -98,12 +100,32 @@ export class BaTable implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.headerEl.nativeElement.addEventListener('click', (event) => {
-      this.ohHeaderClick(this.findParentBySelector(event.target, 'th'));
-    });
+  // toggleExpandedRow(el: HTMLElement, id: string, content: string) {
+  //   if (this.expandedRows[id]) {
+  //     if ((<HTMLElement>el.parentNode.nextSibling).classList.contains('expanded-row')) {
+  //       el.parentNode.parentNode.removeChild(el.parentNode.nextSibling);
+  //     }
+  //
+  //     delete this.expandedRows[id];
+  //   } else {
+  //     const expandedRowEl = document.createElement('tr');
+  //     expandedRowEl.classList.add('expanded-row');
+  //     expandedRowEl.innerHTML = this.expandedRowTemplate.replace('$0', content);
+  //     el.parentNode.parentNode.insertBefore(expandedRowEl, el.parentNode.nextSibling);
+  //
+  //     this.expandedRows[id] = expandedRowEl.clientHeight;
+  //
+  //     console.log(this.expandedRows[id]);
+  //   }
+  //   this.updateExpandedRowsHeight();
+  // }
 
+  ngOnInit() {
     setTimeout(() => {
+      this.headerEl.nativeElement.addEventListener('click', (event) => {
+        this.ohHeaderClick(this.findParentBySelector(event.target, 'th'));
+      });
+
       this.updateSortIndicator(this.sortField, this.sortOrder);
     });
   }
