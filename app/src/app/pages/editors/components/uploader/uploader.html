@@ -72,9 +72,7 @@
 
             <p-column header="Track Title" styleClass="text-center" field="name" [sortable]="true">
               <template let-col let-track="rowData" pTemplate="body">
-                {{ track?.name || '(not set)' }}&nbsp;&nbsp;&nbsp;<small *ngIf="track.crooklynClanv1AutoMigrated" class="tag tag-warning text-dark">Migration Only <i class="fa fa-question-circle-o tooltip-indicator" tooltipster="This track was migrated from Crooklyn Clan v1. It cannot be added to any new releases and is only published for the purposes of being listed on this version of Crooklyn Clan. It will not be republished on v1."
-                    tooltipsterPosition="top" tooltipsterEvent="click"></i></small><small *ngIf="track.inRevisionMode" class="tag tag-warning text-dark">Published / In Revision Mode <i class="fa fa-question-circle-o tooltip-indicator" tooltipster="This track is an already published track and can only be edited. It cannot be deleted and it cannot be added to releases."
-                    tooltipsterPosition="top" tooltipsterEvent="click"></i></small>
+                {{ track?.name || '(not set)' }}
               </template>
             </p-column>
 
@@ -94,7 +92,7 @@
                       <i class="fa fa-play-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != track._id"></i>
                       <i class="fa fa-pause-circle bigger text-link" (click)="togglePlayPause(track)" *ngIf="(trackCurrentlyLoaded._id == track._id && isPlayerPlaying)" ></i>
                   <i class="fa fa-pencil" title="Edit track" (click)="showTrackEditor(track)"></i>
-                  <i class="fa fa-trash" *ngIf="!track.crooklynClanv1AutoMigrated && !track.inRevisionMode" title="Remove track" (click)="removeTrack(track)"></i>
+                  <i class="fa fa-trash" title="Remove track" (click)="removeTrack(track)"></i>
                 </div>
 
               </template>
@@ -106,7 +104,7 @@
         <tab (click)="uploadService.activeTrackList = 'approved'" (select)="activeList='tracksReadyToPublish'" (click)="adjustTableHeight()" customClass="tab-heading-justify-spacing">
           <template tabHeading>
             <span>
-              <i class="glyphicon glyphicon-bell"></i> Publish Tracks & ZIPs <span class="tag tag-success">{{ uploadService.tracksReadyToPublish.results | listLength }}</span>
+              <i class="glyphicon glyphicon-bell"></i> Publish Tracks & ZIPs <span class="tag tag-success">{{ uploadService.tracksReadyToPublishCount }}</span>
             </span>
           </template>
           <div class="publish-tracks-and-zips">
@@ -115,7 +113,7 @@
             <div class="col-md-6 text-left">
               <button class="btn btn-primary" (click)="selectAllTracks()">Select All</button>
               <button class="btn btn-primary" [disabled]="tracksToSubmit.length == 0" (click)="unselectAllTracks()">Unselect All</button>
-              <button class="btn btn-primary" (click)="createRelease()" [disabled]="!allowAddingTracksToReleases()">Create Release From Selected</button>
+              <button class="btn btn-primary" (click)="createRelease()" [disabled]="tracksToSubmit.length == 0">Create Release From Selected</button>
 
             </div>
 
@@ -139,7 +137,6 @@
                   <template let-col let-track="rowData" pTemplate type="body">
                     <div class="text-left track-information">
                       <span>{{track.formattedName}}</span>&nbsp;&nbsp;&nbsp;<small *ngIf="track.crooklynClanv1AutoMigrated" class="tag tag-warning text-dark">Migration Only <i class="fa fa-question-circle-o tooltip-indicator" tooltipster="This track was migrated from Crooklyn Clan v1. It cannot be added to any new releases and is only published for the purposes of being listed on this version of Crooklyn Clan. It will not be republished on v1."
-                    tooltipsterPosition="top" tooltipsterEvent="click"></i></small><small *ngIf="track.inRevisionMode" class="tag tag-warning text-dark">Published / In Revision Mode <i class="fa fa-question-circle-o tooltip-indicator" tooltipster="This track is an already published track and can only be edited. It cannot be deleted and it cannot be added to releases."
                     tooltipsterPosition="top" tooltipsterEvent="click"></i></small>
                     </div>
                   </template>
@@ -149,7 +146,7 @@
                       <i class="fa fa-play-circle bigger text-link"  *ngIf="(trackCurrentlyLoaded._id == track._id && !isPlayerPlaying) || trackCurrentlyLoaded._id != track._id" (click)="togglePlayPause(track)"></i>
                       <i class="fa fa-pause-circle bigger text-link"  *ngIf="(trackCurrentlyLoaded._id == track._id && isPlayerPlaying)" (click)="togglePlayPause(track)"></i>
                       <i class="fa fa-pencil" *ngIf="!track.isSubmitting" (click)="showTrackEditor(track)"></i>
-                      <i class="fa fa-trash" *ngIf="!track.crooklynClanv1AutoMigrated && !track.inRevisionMode" title="Remove track" (click)="removeTrack(track)"></i>
+                      <i class="fa fa-trash" *ngIf="!track.crooklynClanv1AutoMigrated" title="Remove track" (click)="removeTrack(track)"></i>
 
                       <!--i class="fa fa-arrows fa-2x" pDraggable="addtrackstorelease" (onDragStart)="dragTrackToReleaseStart($event,track)" (onDragEnd)="dragTrackToReleaseEnd($event)"></i -->
 
@@ -171,7 +168,7 @@
                           <p-checkbox [disabled]="!release?.validation?.isReleaseValid" name="releases" [value]="release" class="text-left select-checkbox" [(ngModel)]="releasesToSubmit"></p-checkbox>
                           <span class="tag tag-link">{{ release?.tracks.length }}</span>
                           <button class="btn add-tracks-to-release" [ngClass]="{'btn-success': tracksToSubmit.length > 0,
-                          'tag-link': tracksToSubmit.length == 0 }" [disabled]="!allowAddingTracksToReleases()" title="Add selected tracks to this release" (click)="addSelectedTracksToRelease(release)">+ {{ tracksToSubmit.length }}</button>
+                          'tag-link': tracksToSubmit.length == 0 }" [disabled]="tracksToSubmit.length == 0" title="Add selected tracks to this release" (click)="addSelectedTracksToRelease(release)">+ {{ tracksToSubmit.length }}</button>
 
                         </div>
 

@@ -234,32 +234,6 @@ export class EditorTracksComponent {
       
     }
     
-    placeTrackInRevisionMode(track) {
-      
-      if(confirm('Do you wish to place this track in revision mode? It will be editable under the Uploader tab and will be momentarily unavailable for further purchase once resubmitted for processing.')) {
-                                                      this._state.notifyDataChanged('spinner.show', {});
-
-        this.tracks.setTrackInRevisionMode(track).subscribe( (res) => {
-          
-          var trackIndex = this.tracks.list.findIndex( (item) => {
-            return item._id == res.Track._id;
-          });
-          
-          this.tracks.list[trackIndex].inRevisionMode = res.Track.inRevisionMode;
-
-        this._state.notifyDataChanged('spinner.hide', {});
-        
-        this._state.notifyDataChanged('growlNotifications.update', {
-          severity:'info',
-          summary:'Track Changed To Revision Mode',
-          detail: ''}
-        );
-        
-        })
-        
-      }
-      
-    }
     
     loadTracksAndAccounting (currency) {
                                               this._state.notifyDataChanged('spinner.show', {});

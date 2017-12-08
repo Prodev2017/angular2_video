@@ -4,8 +4,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ModalModule, TabsModule } from 'ng2-bootstrap/ng2-bootstrap';
 import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
-import { SpinnerModule,
-        AutoCompleteModule,
+import { SpinnerModule, 
+        AutoCompleteModule, 
         DataTableModule,
         SharedModule,
         OverlayPanelModule,
@@ -25,8 +25,6 @@ import {
 import {
   BaBackTop,
   BaCard,
-  BaTable,
-  BaSlider,
   BaCheckbox,
   BaContentTop,
   BaMsgCenter,
@@ -86,16 +84,11 @@ import {
   UrlValidator,
   IfHasLengthValidator
 } from './validators';
-import {BaKeys} from './pipes/baKeys/baKeys.pipe';
-import {BaCheckboxList} from './components/baCheckboxList';
 
 const NGA_COMPONENTS = [
   BaBackTop,
   BaCard,
-  BaSlider,
-  BaTable,
   BaCheckbox,
-  BaCheckboxList,
   BaContentTop,
   StoreSelector,
   BaMsgCenter,
@@ -118,7 +111,6 @@ const NGA_DIRECTIVES = [
 ];
 
 const NGA_PIPES = [
-  BaKeys,
   BaAppPicturePipe,
   BaKameleonPicturePipe,
   BaProfilePicturePipe,

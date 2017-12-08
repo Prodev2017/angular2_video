@@ -71,7 +71,7 @@ export class Uploader {
       this.events.push(this._state.subscribe('track.updatingFinished', (data) => {
 
         this.checkTrackAndReleasesValidity();
-        //this.updateTracksByValidationStatus();
+        this.updateTracksByValidationStatus();
 
       }));
 
@@ -119,11 +119,7 @@ export class Uploader {
           this._state.notifyDataChanged('growlNotifications.update', {severity:'error', summary:'Cannot Add v1 Migrated Track to Release', detail: item.formattedName + ' cannot be added to a release because it is a migrated track from v1.'});
         }
         
-                if(item.inRevisionMode) {
-          this._state.notifyDataChanged('growlNotifications.update', {severity:'error', summary:'Cannot Add Published Track In Revision Mode', detail: item.formattedName + ' cannot be added to a release because it is an already published track in revision mode.'});
-        }
-        
-        return !item.crooklynClanv1AutoMigrated && !item.inRevisionMode;  
+        return !item.crooklynClanv1AutoMigrated;  
       });
       
       this.tracksToSubmit.forEach( (track) => {
@@ -136,22 +132,6 @@ export class Uploader {
 
     unselectAllTracks() {
       this.tracksToSubmit = [];
-    }
-    
-    allowAddingTracksToReleases() {
-      
-      var hasMigratedOrInRevisionTrack = this.tracksToSubmit.findIndex( (item) => {
-        
-        return item.inRevisionMode === true || item.crooklynClanv1AutoMigrated;
-        
-      });
-      
-      if(hasMigratedOrInRevisionTrack === -1 && this.tracksToSubmit.length > 0) {
-        return true;
-      } else {
-        return false;
-      }
-      
     }
 
     adjustTableHeight() {

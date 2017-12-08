@@ -128,7 +128,7 @@
         </div>
       </div>
 
-          <p-dataTable #trackTable class="table track-list" [sortField]="trackListFilters.sortField" sortOrder="-1" scrollable="true" [value]="tracks.list" scrollWidth="100%" expandableRows="true" [lazy]="true" [totalRecords]="tracks.totalRecords" [rows]="25" [paginator]="true" [pageLinks]="10" (onLazyLoad)="filterTrackList($event)"
+          <p-dataTable #trackTable class="table track-list" sortField="publishDate" sortOrder="-1" scrollable="true" [value]="tracks.list" scrollWidth="100%" expandableRows="true" [lazy]="true" [totalRecords]="tracks.totalRecords" [rows]="25" [paginator]="true" [pageLinks]="10" (onLazyLoad)="filterTrackList($event)"
             [responsive]="true" [rowsPerPageOptions]="[10,25,50]">
                         <p-column>
 
@@ -209,17 +209,7 @@
               
             </template>
             </p-column>
-            <p-column field="status" [sortable]="true" header="Status">
-                            <template let-col let-track="rowData" pTemplate="body">
-              
-              {{ track.status }}
-              
-              <span *ngIf="track.inRevisionMode"><br/>In Revision<br/></span>
-              <button class="btn btn-xs btn-warning" *ngIf="!track.inRevisionMode && (track.status == 'published' || track.status == 'error')" (click)="placeTrackInRevisionMode(track)">Edit</button>
-              
-            </template>
-
-            </p-column>
+            <p-column field="status" [sortable]="true" header="Status"></p-column>
             <p-column expander="true" styleClass="col-icon" [style]="{'width' : '25px', 'text-align':'center' }"></p-column>
 
             <template let-track pTemplate="rowexpansion">

@@ -1,12 +1,8 @@
 <aside class="al-sidebar">
-  <ul class="nav nav-justified nav-tabs">
-    <li *ngFor="let currencyItem of currencyList" class="nav-item {{currencyItem.slug}}"
-        [ngClass]=" {'disabled': !currencyItem.enabled, 'active': currencyItem._id == selectedCurrency._id }"
-        (click)="selectStore(currencyItem)"
-        [style.color]="currencyItem.color"
-        [style.background-color]="currencyItem.color"
-    >
-      <a class="nav-link" href="javascript:void(0)">{{currencyItem.name}}</a>
-    </li>
-  </ul>
-</aside>
+
+            <ul class="nav nav-justified nav-tabs">
+                <li *ngFor="let currencyItem of currencyList" class="nav-item" [ngClass]=" {'disabled': !currencyItem.enabled, 'active': currencyItem._id == selectedCurrency._id }" [ngStyle]="{'background-color': (currency.selectedCurrency._id == currencyItem._id) ? currencyItem.color : 'inherit' }" (click)="selectStore(currencyItem)"  (mouseenter)="changeBackgroundOnHover(currencyItem.color, $event)" (mouseleave)="changeBackgroundOnHover((selectedCurrency._id == currencyItem._id) ? currencyItem.color : 'inherit', $event)">
+                    <a class="nav-link" href="javascript:void(0)">{{currencyItem.name}}</a>
+                    </li>
+            </ul>
+</aside> 

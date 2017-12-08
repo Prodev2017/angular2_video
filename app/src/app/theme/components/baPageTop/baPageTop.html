@@ -1,49 +1,33 @@
-<div class="logo-container">
-  <a href="#/pages/tracks/list" class="al-logo">
-    <img [src]="logoUrl" />
-  </a>
+<div class="fixed-height-top">
+
+<div class="page-top clearfix" baScrollPosition maxHeight="50" (scrollChange)="scrolledChanged($event)"
+[ngClass]="{scrolled: isScrolled}">
+  <div class="container-1600">
+<div class="row">
+  <div class="col-md-1-5">
+    <a href="#/pages/tracks/list" class="al-logo clearfix">
+      <img [src]="logoUrl" /></a>
+    </div>
+
+    <div class="col-md-4-5 toolbar">
+      <media-player></media-player>
+
+    </div>
+  </div>
+        </div>
+
 </div>
-
-<div class="media-player-container">
-  <media-player></media-player>
 </div>
-
-<div class="right-menu-container">
-  <div class="menu-button" (click)="appState.set('topContainerIsHidden', !appState.get('topContainerIsHidden'))">Flip view</div>
-  <div class="menu-button">My account</div>
-</div>
-
-
-<!--<div class="fixed-height-top">-->
-
-<!--<div class="page-top clearfix" baScrollPosition maxHeight="50" (scrollChange)="scrolledChanged($event)"-->
-<!--[ngClass]="{scrolled: isScrolled}">-->
-  <!--<div class="container-1600">-->
-<!--<div class="row">-->
-  <!--<div class="col-md-1-5">-->
-    <!--<a href="#/pages/tracks/list" class="al-logo clearfix">-->
-      <!--<img [src]="logoUrl" /></a>-->
-    <!--</div>-->
-
-    <!--<div class="col-md-4-5 toolbar">-->
-      <!--<media-player></media-player>-->
-
-    <!--</div>-->
-  <!--</div>-->
-        <!--</div>-->
-
-<!--</div>-->
-<!--</div>-->
- <!--<div class="user-profile clearfix">-->
-        <!--<div class="dropdown al-user-profile">-->
-          <!--<a class="profile-toggle-link dropdown-toggle" id="user-profile-dd" data-toggle="dropdown" aria-expanded="false">-->
-            <!--<img src="{{ profileUrl }}">-->
-          <!--</a>-->
-          <!--<div class="dropdown-menu top-dropdown-menu profile-dropdown" aria-labelledby="user-profile-dd">-->
-            <!--<li class="dropdown-item"><i class="dropdown-arr"></i></li>-->
-            <!--<li class="dropdown-item" *ngIf="profile.userRole == 'editor'"><a [routerLink]="['/pages/editors/profile']"><i class="fa fa-user"></i>Profile</a></li>-->
-            <!--<li class="dropdown-item"><a href="javascript:void(0)" class="signout" (click)="logout()"><i class="fa fa-power-off"></i>Sign out</a></li>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--&lt;!&ndash;<ba-msg-center></ba-msg-center>&ndash;&gt;-->
-      <!--</div>-->
+ <div class="user-profile clearfix">
+        <div class="dropdown al-user-profile">
+          <a class="profile-toggle-link dropdown-toggle" id="user-profile-dd" data-toggle="dropdown" aria-expanded="false">
+            <img src="{{ profileUrl }}">
+          </a>
+          <div class="dropdown-menu top-dropdown-menu profile-dropdown" aria-labelledby="user-profile-dd">
+            <li class="dropdown-item"><i class="dropdown-arr"></i></li>
+            <li class="dropdown-item" *ngIf="profile.userRole == 'editor'"><a [routerLink]="['/pages/editors/profile']"><i class="fa fa-user"></i>Profile</a></li>
+            <li class="dropdown-item"><a href="javascript:void(0)" class="signout" (click)="logout()"><i class="fa fa-power-off"></i>Sign out</a></li>
+          </div>
+        </div>
+        <!--<ba-msg-center></ba-msg-center>-->
+      </div>

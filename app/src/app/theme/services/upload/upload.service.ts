@@ -86,11 +86,9 @@ export class UploadService {
 
       var tracksReadyToPublish = this.trackList.results.filter( (item) => {
         
-        return item.validation && item.validation.isTrackValid && ( item.releases.length == 0 || item.crooklynClanv1AutoMigrated || item.inRevisionMode);
+        return item.validation && item.validation.isTrackValid && ( item.releases.length == 0 || item.crooklynClanv1AutoMigrated);
         
       });
-      
-      console.log('list of tracks ready to publish', tracksReadyToPublish);
       
       var tracksNotReadyToPublish = this.trackList.results.filter( (item) => {
         

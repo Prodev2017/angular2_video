@@ -53,7 +53,7 @@
   }
 
   .ui-datatable tr.ui-datatable-odd {
-
+    
 
   }
 
@@ -227,12 +227,12 @@ p-radiobutton {
     .nav-item {
       text-align:center;
       flex:1;
-
+      
       .nav-link {
         padding: 5px 0;
       }
     }
-
+    
     &.nav-stacked {
       &.crate-list {
         margin-top:15px;
@@ -244,7 +244,7 @@ p-radiobutton {
 
           &.nav-item {
             text-align:left;
-
+            
             .float-right {
               float:right;
             }
@@ -253,62 +253,30 @@ p-radiobutton {
       }
     }
   }
-
+  
   .nav-item + .nav-item {
     margin-left: 0;
   }
 }
 
 .filters-panel {
+  
   transition: opacity 300ms, height 300ms;
   overflow:hidden;
-
+  padding-top: 10px;
+  
   &.hide {
-    height: 0;
+    height: 0px;
   }
-
+  
   &.show {
-    height: auto;
+    height: 250px;
   }
-
-  .form-group {
-    margin-bottom: 2px;
-  }
-
-  .filter-title {
-    background-color: #640000;
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 2px;
-    padding: 8px 0;
-    font-weight: bold;
-  }
-
-  .filter-options {
-    height: 164px;
-    padding: 4px;
-    overflow: auto;
-  }
-
-  .filter-button {
-    padding: 14px 24px;
-    background-color: #d1c800;
-    color: black;
-    border: 0;
-    cursor: pointer;
-  }
-
-  input {
-    padding: 7px 5px;
-    border-radius: 0;
-    text-align: center;
-    margin: 2px 0;
-  }
-
+  
 }
 
 .sidebar-title {
-  margin-top: 5px;
+  margin-top: 15px;
 }
 
 .nav.nav-tabs.nav-stacked {
@@ -320,7 +288,7 @@ p-radiobutton {
   float:none;
 
   }
-
+  
 }
 
 .collection-item {
@@ -360,63 +328,25 @@ p-radiobutton {
 }
 
 .subtabs {
-
+  
   margin-top: 2px;
-
+  
 }
 
 .tracks-main-panel {
-
-  flex: 1;
-  overflow: hidden;
-
+  
+  display: table;
+  height: 100%;
+  
   .track-panel-sidebar {
-    height: 100%;
-    overflow: auto;
+    display: table-cell;
+    height: calc(100% - 15px);
+    overflow-y: scroll;
+    margin-top: 15px;
   }
-
-  .track-panel-table {
-    height: 100%;
-  }
+  
 }
 
 .flex {
   display:flex;
-}
-
-.packages-column {
-
-  height: 50vh;
-  overflow: scroll;
-
-}
-
-
-.selected-filters-container {
-  display: flex;
-  padding: 4px;
-  .selected-filters-group {
-    height: 100%;
-    display: inline-block;
-  }
-
-  .filter-tag {
-    display: inline-block;
-    background-color: #680000;
-    margin-right: 4px;
-    padding: 8px 4px;
-    border-radius: 4px;
-
-    a {
-      display: inline-block;
-      height: 16px;
-      width: 16px;
-      color: red;
-      text-align: center;
-      line-height: 16px;
-      background-color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  }
 }

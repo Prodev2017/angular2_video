@@ -110,13 +110,9 @@ export class TrackEditor {
         
         this.trackEditorTitle = this.uploadService.trackList.results[this.trackIndexCurrentlyEditing].hiBitRateFile.filename.replace('tracks/draft/hi_bit_rate/', '');
         
-      } else if ( this.uploadService.trackList.results[this.trackIndexCurrentlyEditing] && this.uploadService.trackList.results[this.trackIndexCurrentlyEditing].originalFileName ) {
-        
-        this.trackEditorTitle = this.uploadService.trackList.results[this.trackIndexCurrentlyEditing].originalFileName;
-        
       } else {
         
-        this.trackEditorTitle = '';
+        this.trackEditorTitle = this.uploadService.trackList.results[this.trackIndexCurrentlyEditing].originalFileName || 'Title not set';
         
       }
 
@@ -753,6 +749,7 @@ console.log('selected currency is video');
         this.uploadService.updateTrackValidationStatus(trackIndexCurrentlyEditing);
         this.uploadService.trackList.results[trackIndexCurrentlyEditing].isChanged = false;
 
+        this.uploadService.updateTracksByValidationStatus();
 
 
         this.draftOriginalWork = {name: '', version: '', artists: '', artistsFeatured: ''};
@@ -763,26 +760,24 @@ console.log('selected currency is video');
       
       var tabListIndex = this.uploadService[this.activeList].results.findIndex( (item) => {
           
-          return res.Track._id.toString() == item._id.toString();
+          return track._id.toString() == item._id.toString();
           
       });
       
       var nextTabListIndex;
 
-      if(this.uploadService[this.activeList].results.length > 1 && tabListIndex < this.uploadService[this.activeList].results.length - 1 && (this.uploadService[this.activeList].results[tabListIndex + 1].draftTrackUploadedToS3 == true || this.uploadService[this.activeList].results[tabListIndex + 1].crooklynClanv1AutoMigrated == true)) {
+      if(this.uploadService[this.activeList].results.length > 1 && tabListIndex < this.uploadService[this.activeList].results.length - 1 && this.uploadService[this.activeList].results[tabListIndex + 1].draftTrackUploadedToS3 == true) {
+        
         nextTabListIndex = tabListIndex + 1;
-                console.log('got more to go to', tabListIndex, nextTabListIndex, this.activeList, this.uploadService[this.activeList].results, res.Track)
-
+        
       } else if ( this.uploadService[this.activeList].results.length == 1 ) {
-
+        
         nextTabListIndex = 0;
-                        console.log('at last one left', tabListIndex, nextTabListIndex)
-
+        
       } else {
-
+        
         nextTabListIndex = -1;
-                                console.log('done', tabListIndex, nextTabListIndex)
-
+        
       }
       
       if(nextTabListIndex !== -1 && this.uploadService[this.activeList].results.length > 0) {
@@ -797,13 +792,11 @@ console.log('selected currency is video');
         this.trackIndexCurrentlyEditing = nextTabListTrackIndex;
         jQuery('.modal-body').scrollTo({top:0,left:0},500);
         this._state.notifyDataChanged('track.editor.show', {});
-        this.uploadService.updateTracksByValidationStatus();
 
 
       } else {
         
         this.hideModal();
-                this.uploadService.updateTracksByValidationStatus();
 
       }
 
@@ -840,6 +833,7 @@ console.log('selected currency is video');
          
         this.uploadService.updateTrackValidationStatus(trackIndexCurrentlyEditing);
         this.uploadService.trackList.results[trackIndexCurrentlyEditing].isChanged = false;
+                this.uploadService.updateTracksByValidationStatus();
 
         this.draftOriginalWork = {name: '', version: '', artists: '', artistsFeatured: ''};
         this.draftRelease = {name: ''};
@@ -852,11 +846,12 @@ console.log('selected currency is video');
       });
       
       var prevTabListIndex;
-      if(tabListIndex > 0 && this.uploadService[this.activeList].results.length > 1 && tabListIndex <= this.uploadService[this.activeList].results.length - 1 && (this.uploadService[this.activeList].results[tabListIndex - 1].draftTrackUploadedToS3 == true || this.uploadService[this.activeList].results[tabListIndex - 1].crooklynClanv1AutoMigrated == true)) {
+
+      if(this.uploadService[this.activeList].results.length > 1 && tabListIndex <= this.uploadService[this.activeList].results.length - 1 && this.uploadService[this.activeList].results[tabListIndex - 1].draftTrackUploadedToS3 == true) {
         
         prevTabListIndex = tabListIndex - 1;
         
-      } else if ( this.uploadService[this.activeList].results.length == 1 || tabListIndex == 0) {
+      } else if ( this.uploadService[this.activeList].results.length == 1 ) {
         
         prevTabListIndex = 0;
         
@@ -878,13 +873,11 @@ console.log('selected currency is video');
         this.trackIndexCurrentlyEditing = prevTabListTrackIndex;
         jQuery('.modal-body').scrollTo({top:0,left:0},500);
         this._state.notifyDataChanged('track.editor.show', {});
-                this.uploadService.updateTracksByValidationStatus();
 
 
       } else {
         
         this.hideModal();
-                this.uploadService.updateTracksByValidationStatus();
 
       }
 

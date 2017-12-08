@@ -8,7 +8,6 @@ import { Account } from '../../services';
 import {WavesurferPlayer} from '../../components/wavesurferPlayer';
 import { Message } from 'primeng/primeng';
 import { IMAGES_ROOT, LOGO_PATH } from '../../';
-import {AppState} from '../../../app.service';
 
 @Component({
   selector: 'ba-page-top',
@@ -24,17 +23,17 @@ export class BaPageTop {
   public profileUrl:string = '/assets/img/user-default.png';
   profile:any = {userRole:''};
 
-  constructor(private _state:GlobalState, public authService: AuthService, public router: Router, public account:Account, private appState: AppState) {
+  constructor(private _state:GlobalState, public authService: AuthService, public router: Router, public account:Account) {
 
     this._state.subscribe('menu.isCollapsed', (isCollapsed) => {
       this.isMenuCollapsed = isCollapsed;
     });
 
     this._state.subscribe('profile.photo.updated', (data) => {
-      if(data.photo.url){
+      if(data.photo.url){ 
         this.profileUrl = data.photo.url;
       }
-
+      
     });
 
   }
